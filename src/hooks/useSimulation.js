@@ -14,6 +14,7 @@ import { buildCells, buildChannels, buildPlantVisuals, buildWeatherFx, gridForFa
 import { clamp } from "../utils/format.js";
 
 export function useSimulation() {
+  const [language, setLanguage] = useState("th");
   const [inputs, setInputs] = useState(DEFAULT_INPUTS);
   const [phase, setPhase] = useState("setup");
   const [stageIndex, setStageIndex] = useState(0);
@@ -143,6 +144,7 @@ export function useSimulation() {
   }, []);
 
   const setFieldStyle = useCallback((style) => setFieldStyleState(style), []);
+  const toggleLanguage = useCallback(() => setLanguage((current) => (current === "th" ? "en" : "th")), []);
   const togglePanel = useCallback(() => setShowPanel((current) => !current), []);
   const closeSummary = useCallback(() => setShowSummary(false), []);
 
@@ -271,12 +273,20 @@ export function useSimulation() {
     () =>
       Object.keys(FERTILIZER_FORMULAS).map((key) => ({
         value: key,
-        label: key === "None" ? "- ไม่ใส่ปุ๋ย / None -" : `${key} · ${FERTILIZER_FORMULAS[key].th}`,
+        label:
+          key === "None"
+            ? language === "th"
+              ? "- ไม่ใส่ปุ๋ย -"
+              : "- No fertilizer -"
+            : language === "th"
+              ? `${key} · ${FERTILIZER_FORMULAS[key].th}`
+              : `${key} · ${FERTILIZER_FORMULAS[key].n}-${FERTILIZER_FORMULAS[key].p}-${FERTILIZER_FORMULAS[key].k}`,
       })),
-    [],
+    [language],
   );
 
   return {
+    language,
     inputs,
     phase,
     stageIndex,
@@ -309,6 +319,7 @@ export function useSimulation() {
     switchVariety,
     setFarmSize,
     setFieldStyle,
+    toggleLanguage,
     togglePanel,
     closeSummary,
     setPricePerTon,

@@ -1,10 +1,10 @@
 import { SCENARIOS } from "../data/mockData.js";
+import { pickLang, t } from "../i18n.js";
 
-export default function ScenarioSelector({ onSelect }) {
+export default function ScenarioSelector({ language, onSelect }) {
   return (
     <section>
-      <div className="control-heading">Preset scenarios</div>
-      <div className="text-[10.5px] text-rice-faint">สถานการณ์ตัวอย่าง</div>
+      <div className="control-heading">{t(language, "presetScenarios")}</div>
       <div className="mt-[9px] grid grid-cols-2 gap-1.5">
         {SCENARIOS.map((scenario) => (
           <button
@@ -15,8 +15,7 @@ export default function ScenarioSelector({ onSelect }) {
               scenario.wide ? "col-span-2" : ""
             }`}
           >
-            {scenario.icon} {scenario.name}
-            <span className="mt-0.5 block text-[9px] font-normal text-rice-faint">{scenario.th}</span>
+            {scenario.icon} {pickLang(language, scenario.name, scenario.th)}
           </button>
         ))}
       </div>

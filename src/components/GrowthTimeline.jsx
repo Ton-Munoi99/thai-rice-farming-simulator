@@ -1,5 +1,7 @@
+import { pickLang, t } from "../i18n.js";
+
 export default function GrowthTimeline({ simulation }) {
-  const { stages, stageIndex, phase, isRunning, runSimulation } = simulation;
+  const { stages, stageIndex, phase, isRunning, runSimulation, language } = simulation;
   const progress = phase === "setup" ? 0 : (stageIndex / 6) * 100;
 
   return (
@@ -14,8 +16,7 @@ export default function GrowthTimeline({ simulation }) {
       >
         <span className="text-[15px]">{isRunning ? "⏳" : phase === "done" ? "↻" : "▶"}</span>
         <span className="leading-tight">
-          {isRunning ? "Running..." : phase === "done" ? "Run Again" : "Run Simulation"}
-          <span className="block text-[9.5px] font-normal opacity-80">จำลองการปลูก</span>
+          {isRunning ? t(language, "running") : phase === "done" ? t(language, "runAgain") : t(language, "runSimulation")}
         </span>
       </button>
 
@@ -43,7 +44,7 @@ export default function GrowthTimeline({ simulation }) {
                     active ? "font-bold text-rice-green" : idle ? "text-[#8b9481]" : "text-rice-muted"
                   }`}
                 >
-                  {stage.name.split(" / ")[0].replace(" Initiation", "").replace("Germination", "Seedling")}
+                  {pickLang(language, stage.name.split(" / ")[0].replace(" Initiation", "").replace("Germination", "Seedling"), stage.th)}
                 </div>
               </div>
             );

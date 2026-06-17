@@ -1,5 +1,7 @@
+import { pickLang, t } from "../i18n.js";
+
 export default function RiceFieldAnimation({ simulation }) {
-  const { field, stage, displayStageIndex, phase, liveModel, showPanel, togglePanel } = simulation;
+  const { field, stage, displayStageIndex, phase, liveModel, showPanel, togglePanel, language } = simulation;
 
   return (
     <section className="relative min-h-0 flex-1 overflow-auto">
@@ -8,12 +10,12 @@ export default function RiceFieldAnimation({ simulation }) {
           <Sky fx={field.fx} />
           <RuralScenery />
           <Plot field={field} condition={liveModel.condition} />
-          <StageCaption stage={stage} index={displayStageIndex} />
-          {field.awd ? <Badge className="bottom-3.5 left-[84px] bg-[#217696]/95">💧 AWD water system · นาเปียกสลับแห้ง</Badge> : null}
+          <StageCaption language={language} stage={stage} index={displayStageIndex} />
+          {field.awd ? <Badge className="bottom-3.5 left-[84px] bg-[#217696]/95">💧 {language === "th" ? "ระบบน้ำ AWD · เปียกสลับแห้ง" : "AWD water system"}</Badge> : null}
           {phase === "setup" ? (
             <Badge className="bottom-3.5 right-4 bg-rice-text/85">
               <span className="inline-block h-2 w-2 rounded-full bg-rice-amber animate-shimmer" />
-              Adjust conditions, then press <b>Run Simulation</b>
+              {language === "th" ? "ปรับเงื่อนไข แล้วกด" : "Adjust conditions, then press"} <b>{t(language, "runSimulation")}</b>
             </Badge>
           ) : null}
         </div>
@@ -32,8 +34,8 @@ export default function RiceFieldAnimation({ simulation }) {
             {liveModel.growthScore}
           </span>
           <span className="text-left leading-tight">
-            <b className="block text-[12px] text-rice-text">Health {liveModel.label}</b>
-            <span className="block text-[10px] text-[#7a8576]">เปิดแผงข้อมูล</span>
+            <b className="block text-[12px] text-rice-text">{t(language, "health")} {pickLang(language, liveModel.label, liveModel.labelTh)}</b>
+            <span className="block text-[10px] text-[#7a8576]">{t(language, "openPanel")}</span>
           </span>
         </button>
       ) : null}
@@ -305,12 +307,12 @@ function Pump({ show }) {
   );
 }
 
-function StageCaption({ stage, index }) {
+function StageCaption({ language, stage, index }) {
   return (
     <div className="absolute left-[18px] top-3.5 z-[9] rounded-[11px] bg-white/85 px-[13px] py-2 shadow-soft backdrop-blur">
       <div className="text-[10px] font-bold tracking-[.5px] text-rice-green">STAGE {String(index + 1).padStart(2, "0")} / 07</div>
-      <div className="text-[15px] font-bold leading-tight">{stage.name}</div>
-      <div className="text-[11px] text-[#7a8576]">{stage.th} · {stage.desc}</div>
+      <div className="text-[15px] font-bold leading-tight">{pickLang(language, stage.name, stage.th)}</div>
+      {language === "en" ? <div className="text-[11px] text-[#7a8576]">{stage.desc}</div> : null}
     </div>
   );
 }

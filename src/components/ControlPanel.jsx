@@ -1,35 +1,36 @@
 import { FERTILIZER_FORMULAS, SELECT_OPTIONS } from "../data/mockData.js";
+import { OPTION_LABELS, optionLabel, pickLang, t } from "../i18n.js";
 import { clamp } from "../utils/format.js";
 import FarmSystemSelector from "./FarmSystemSelector.jsx";
 import ScenarioSelector from "./ScenarioSelector.jsx";
 
 export default function ControlPanel({ simulation }) {
   const { inputs, setInput, setApplication, switchVariety, varietyKey, nutrientTotals, formulaOptions } = simulation;
+  const { language } = simulation;
 
   return (
     <aside className="absolute bottom-24 left-0 top-0 z-30 flex w-[316px] flex-none flex-col border-r border-rice-border bg-rice-panel shadow-float md:relative md:bottom-auto md:top-auto md:z-auto md:shadow-none">
       <div className="flex-none px-4 pb-2 pt-3.5">
         <section className="mb-3.5">
-          <div className="control-heading">Rice variety · พันธุ์ข้าว</div>
+          <div className="control-heading">{t(language, "riceVariety")}</div>
           <div className="mt-2 flex gap-[7px]">
             <VarietyButton active={varietyKey === "white"} onClick={() => switchVariety("white")}>
-              🌾 ข้าวขาว
-              <span>White (RD)</span>
+              🌾 {t(language, "whiteRice")}
             </VarietyButton>
             <VarietyButton active={varietyKey === "jasmine"} accent="gold" onClick={() => switchVariety("jasmine")}>
-              🌸 หอมมะลิ
-              <span>Hom Mali</span>
+              🌸 {t(language, "homMali")}
             </VarietyButton>
           </div>
         </section>
-        <ScenarioSelector onSelect={simulation.applyScenario} />
+        <ScenarioSelector language={language} onSelect={simulation.applyScenario} />
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 pb-4 pt-1.5">
-        <FarmSystemSelector onSelect={simulation.applyFarmSystemPreset} />
-        <AutoRecommendationPanel recommendation={simulation.autoRecommendation} onApply={simulation.applyAutoRecommendation} />
+        <FarmSystemSelector language={language} onSelect={simulation.applyFarmSystemPreset} />
+        <AutoRecommendationPanel language={language} recommendation={simulation.autoRecommendation} onApply={simulation.applyAutoRecommendation} />
 
         <FertilizerProgram
+          language={language}
           applications={inputs.applications}
           stages={simulation.fertilizerStages}
           formulaOptions={formulaOptions}
@@ -42,49 +43,34 @@ export default function ControlPanel({ simulation }) {
           onChange={setApplication}
         />
 
-        <ControlCard icon="💧" title="Water management" th="การจัดการน้ำ">
-          <FieldLabel>Irrigation method <span>วิธีให้น้ำ</span></FieldLabel>
-          <Select value={inputs.water} onChange={(value) => setInput("water", value)} options={SELECT_OPTIONS.water} labels={{
-            Rainfed: "Rainfed / อาศัยน้ำฝน",
-            "Alternate Wet-Dry (AWD)": "Alternate Wet-Dry (AWD) / เปียกสลับแห้ง",
-            "Continuous Flooding": "Continuous Flooding / ขังน้ำตลอด",
-          }} />
+        <ControlCard icon="💧" title={t(language, "waterManagement")}>
+          <FieldLabel>{t(language, "irrigationMethod")}</FieldLabel>
+          <Select language={language} value={inputs.water} onChange={(value) => setInput("water", value)} options={SELECT_OPTIONS.water} labels={OPTION_LABELS.water} />
           <Slider
-            label="Groundwater pump"
-            th="น้ำบาดาล"
+            label={t(language, "groundwaterPump")}
             value={inputs.groundwater}
             accent="#3b9fd6"
             onChange={(value) => setInput("groundwater", value)}
           />
         </ControlCard>
 
-        <ControlCard icon="🟤" title="Soil condition" th="สภาพดิน">
-          <Select value={inputs.soil} onChange={(value) => setInput("soil", value)} options={SELECT_OPTIONS.soil} labels={{
-            "Poor / Sandy": "Poor / Sandy - ดินทรายเลว",
-            "Medium Loam": "Medium Loam - ดินร่วนปานกลาง",
-            "Rich Clay-Loam": "Rich Clay-Loam - ดินร่วนเหนียวดี",
-          }} />
+        <ControlCard icon="🟤" title={t(language, "soilCondition")}>
+          <Select language={language} value={inputs.soil} onChange={(value) => setInput("soil", value)} options={SELECT_OPTIONS.soil} labels={OPTION_LABELS.soil} />
         </ControlCard>
 
-        <ControlCard icon="🐛" title="Threats" th="ศัตรูพืช โรค วัชพืช">
-          <Slider label="Pest outbreak" th="แมลง" value={inputs.pest} accent="#c2562f" onChange={(value) => setInput("pest", value)} />
-          <Slider label="Disease outbreak" th="โรคพืช" value={inputs.disease} accent="#a0682f" onChange={(value) => setInput("disease", value)} />
-          <Slider label="Weed pressure" th="วัชพืช" value={inputs.weed} accent="#7a8b3a" onChange={(value) => setInput("weed", value)} />
+        <ControlCard icon="🐛" title={t(language, "threats")}>
+          <Slider label={t(language, "pestOutbreak")} value={inputs.pest} accent="#c2562f" onChange={(value) => setInput("pest", value)} />
+          <Slider label={t(language, "diseaseOutbreak")} value={inputs.disease} accent="#a0682f" onChange={(value) => setInput("disease", value)} />
+          <Slider label={t(language, "weedPressure")} value={inputs.weed} accent="#7a8b3a" onChange={(value) => setInput("weed", value)} />
         </ControlCard>
 
-        <ControlCard icon="⛅" title="Weather scenario" th="สภาพอากาศ">
-          <Select value={inputs.weather} onChange={(value) => setInput("weather", value)} options={SELECT_OPTIONS.weather} labels={{
-            "Good Monsoon": "Good Monsoon - มรสุมดี",
-            Normal: "Normal - ปกติ",
-            Drought: "Drought - ภัยแล้ง",
-            "Heavy Rain / Flood": "Heavy Rain / Flood - ฝนหนัก/น้ำท่วม",
-          }} />
+        <ControlCard icon="⛅" title={t(language, "weatherScenario")}>
+          <Select language={language} value={inputs.weather} onChange={(value) => setInput("weather", value)} options={SELECT_OPTIONS.weather} labels={OPTION_LABELS.weather} />
         </ControlCard>
 
-        <ControlCard icon="⏱️" title="Management timing" th="ความตรงเวลาในการจัดการ">
+        <ControlCard icon="⏱️" title={t(language, "managementTiming")}>
           <Slider
-            label="Timing discipline"
-            th="ใส่ปุ๋ย/จัดน้ำตรงเวลา"
+            label={t(language, "timingDiscipline")}
             value={inputs.managementTiming}
             accent="#2f8f4e"
             onChange={(value) => setInput("managementTiming", value)}
@@ -95,26 +81,25 @@ export default function ControlPanel({ simulation }) {
   );
 }
 
-function AutoRecommendationPanel({ recommendation, onApply }) {
+function AutoRecommendationPanel({ language, recommendation, onApply }) {
   return (
     <section className="mt-[11px] rounded-[13px] border border-[#d7e8cf] bg-gradient-to-br from-[#eef8ee] to-white px-3.5 py-[13px]">
       <div className="mb-2 flex items-start justify-between gap-2">
         <div>
-          <div className="text-[12.5px] font-bold text-rice-dark">Auto recommendation</div>
-          <div className="text-[10px] text-rice-faint">แนะนำสูตรจากเงื่อนไขปัจจุบัน</div>
+          <div className="text-[12.5px] font-bold text-rice-dark">{t(language, "autoRecommendation")}</div>
+          <div className="text-[10px] text-rice-faint">{t(language, "autoRecommendationSub")}</div>
         </div>
         <button
           type="button"
           onClick={onApply}
           className="rounded-[9px] bg-rice-green px-3 py-1.5 text-[10.5px] font-bold text-white shadow-[0_3px_8px_rgba(47,143,78,.22)] transition hover:bg-rice-dark"
         >
-          Apply
+          {t(language, "apply")}
         </button>
       </div>
 
       <div className="rounded-[10px] border border-[#dce9d5] bg-white px-2.5 py-2">
-        <div className="text-[11px] font-bold text-[#2c5e36]">{recommendation.headline}</div>
-        <div className="text-[10px] text-[#7ba384]">{recommendation.headlineTh}</div>
+        <div className="text-[11px] font-bold text-[#2c5e36]">{pickLang(language, recommendation.headline, recommendation.headlineTh)}</div>
 
         <div className="mt-2 grid grid-cols-3 gap-1.5">
           {recommendation.applications.map((app) => (
@@ -134,21 +119,21 @@ function AutoRecommendationPanel({ recommendation, onApply }) {
 
         <div className="mt-2 text-[9.5px] leading-snug text-[#697763]">
           {recommendation.reasons.slice(0, 2).map((reason) => (
-            <div key={reason.en}>• {reason.th}</div>
+            <div key={reason.en}>• {pickLang(language, reason.en, reason.th)}</div>
           ))}
         </div>
         <div className="mt-1 text-[9px] leading-snug text-[#9aa394]">
-          Chemical/IPM auto budget: ฿{Math.round(recommendation.chemicalProgram.cost).toLocaleString("en-US")}/rai
+          {language === "th" ? "งบยา/IPM อัตโนมัติ" : "Chemical/IPM auto budget"}: ฿{Math.round(recommendation.chemicalProgram.cost).toLocaleString("en-US")}/rai
         </div>
       </div>
     </section>
   );
 }
 
-function FertilizerProgram({ applications, stages, formulaOptions, nutrientTotals, nutrientTargets, onChange }) {
+function FertilizerProgram({ language, applications, stages, formulaOptions, nutrientTotals, nutrientTargets, onChange }) {
   return (
-    <ControlCard icon="🧪" title="Fertilizer program" th="แผนใส่ปุ๋ยแบ่งช่วง">
-      <p className="mb-2.5 text-[10px] leading-snug text-rice-faint">แบ่งใส่ตามระยะข้าว · เลือกสูตรและปริมาณได้ในแต่ละช่วง</p>
+    <ControlCard icon="🧪" title={t(language, "fertilizerProgram")}>
+      <p className="mb-2.5 text-[10px] leading-snug text-rice-faint">{t(language, "fertilizerHint")}</p>
       {stages.map((stage, index) => {
         const app = applications[index];
         const formula = FERTILIZER_FORMULAS[app.formula] ?? FERTILIZER_FORMULAS.None;
@@ -162,9 +147,9 @@ function FertilizerProgram({ applications, stages, formulaOptions, nutrientTotal
               <span className="text-[14px]">{stage.icon}</span>
               <div className="min-w-0 flex-1">
                 <div className="text-[11.5px] font-bold text-[#3c473a]">
-                  {stage.en} <span className="font-normal text-[#9aa394]">{stage.th}</span>
+                  {pickLang(language, stage.en, stage.th)}
                 </div>
-                <div className="text-[9px] text-[#a4ad98]">{stage.when} · {stage.tip}</div>
+                {language === "th" ? <div className="text-[9px] text-[#a4ad98]">{stage.when} · {stage.tip}</div> : null}
               </div>
             </div>
             <select
@@ -178,8 +163,7 @@ function FertilizerProgram({ applications, stages, formulaOptions, nutrientTotal
             </select>
             <Slider
               compact
-              label="Rate"
-              th="ปริมาณ"
+              label={t(language, "rate")}
               suffix="kg/rai"
               value={app.rate}
               max={40}
@@ -193,12 +177,12 @@ function FertilizerProgram({ applications, stages, formulaOptions, nutrientTotal
           </div>
         );
       })}
-      <NutrientTotals totals={nutrientTotals} targets={nutrientTargets} />
+      <NutrientTotals language={language} totals={nutrientTotals} targets={nutrientTargets} />
     </ControlCard>
   );
 }
 
-function NutrientTotals({ totals, targets }) {
+function NutrientTotals({ language, totals, targets }) {
   const colorFor = (value, target) => {
     if (value < target * 0.55 || value > target * 1.7) return "#d2603a";
     if (value < target * 0.85 || value > target * 1.3) return "#e0a82e";
@@ -207,7 +191,7 @@ function NutrientTotals({ totals, targets }) {
 
   return (
     <div className="mt-1 rounded-[10px] border border-[#e4ebda] bg-[#f4f7ef] px-3 py-2.5">
-      <div className="mb-1.5 text-[10px] font-semibold text-[#7a8576]">Total nutrients · ธาตุอาหารรวม (kg/rai)</div>
+      <div className="mb-1.5 text-[10px] font-semibold text-[#7a8576]">{t(language, "totalNutrients")}</div>
       <div className="grid grid-cols-3 gap-[7px] text-center">
         {[
           ["N", totals.N, targets.N],
@@ -223,7 +207,7 @@ function NutrientTotals({ totals, targets }) {
         ))}
       </div>
       <div className="mt-1.5 text-[9px] text-[#9aa394]">
-        เป้าหมายพันธุ์นี้ N≈{targets.N} · P≈{targets.P} · K≈{targets.K}
+        {t(language, "targetNutrients")} N≈{targets.N} · P≈{targets.P} · K≈{targets.K}
       </div>
     </div>
   );
@@ -244,14 +228,13 @@ function VarietyButton({ active, accent = "green", children, onClick }) {
   );
 }
 
-function ControlCard({ icon, title, th, children }) {
+function ControlCard({ icon, title, children }) {
   return (
     <section className="mt-[11px] rounded-[13px] border border-rice-card bg-white px-3.5 py-[13px]">
       <div className="mb-2.5 flex items-center gap-[7px]">
         <span className="text-[15px]">{icon}</span>
         <div>
           <div className="text-[12.5px] font-bold">{title}</div>
-          <div className="text-[10px] text-rice-faint">{th}</div>
         </div>
       </div>
       {children}
@@ -260,26 +243,26 @@ function ControlCard({ icon, title, th, children }) {
 }
 
 function FieldLabel({ children }) {
-  return <label className="text-[10.5px] text-rice-muted [&_span]:text-[#9aa394]">{children}</label>;
+  return <label className="text-[10.5px] text-rice-muted">{children}</label>;
 }
 
-function Select({ value, options, labels = {}, onChange }) {
+function Select({ language, value, options, labels = {}, onChange }) {
   return (
     <select value={value} onChange={(event) => onChange(event.target.value)} className="control-select mt-[5px]">
       {options.map((option) => (
-        <option key={option} value={option}>{labels[option] ?? option}</option>
+        <option key={option} value={option}>{optionLabel(language, option, labels)}</option>
       ))}
     </select>
   );
 }
 
-function Slider({ label, th, value, onChange, accent, max = 100, suffix = "%", compact = false }) {
+function Slider({ label, value, onChange, accent, max = 100, suffix = "%", compact = false }) {
   const displayValue = suffix === "%" ? `${value}%` : `${value} ${suffix}`;
 
   return (
     <div className={compact ? "mt-2" : "mt-2.5"}>
       <div className="mb-[3px] flex justify-between text-[11px] text-rice-muted">
-        <span>{label} <span className="text-[#9aa394]">{th}</span></span>
+        <span>{label}</span>
         <b className="font-display" style={{ color: value > 45 && max === 100 ? accent : undefined }}>{displayValue}</b>
       </div>
       <input

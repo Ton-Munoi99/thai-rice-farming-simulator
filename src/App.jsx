@@ -13,11 +13,13 @@ export default function App() {
     <AppLayout
       farmSize={simulation.farmSize}
       fieldStyle={simulation.fieldStyle}
+      language={simulation.language}
       showPanel={simulation.showPanel}
       score={simulation.score}
       variety={simulation.varietyInfo}
       onFarmSize={simulation.setFarmSize}
       onFieldStyle={simulation.setFieldStyle}
+      onToggleLanguage={simulation.toggleLanguage}
       onTogglePanel={simulation.togglePanel}
     >
       <ControlPanel simulation={simulation} />

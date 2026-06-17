@@ -1,14 +1,16 @@
-import { formatNumber } from "../utils/format.js";
+import { LANGUAGES, pickLang, t } from "../i18n.js";
 
 export default function AppLayout({
   children,
   farmSize,
   fieldStyle,
+  language,
   showPanel,
   score,
   variety,
   onFarmSize,
   onFieldStyle,
+  onToggleLanguage,
   onTogglePanel,
 }) {
   return (
@@ -19,16 +21,16 @@ export default function AppLayout({
             🌾
           </div>
           <div className="min-w-0 leading-tight">
-            <div className="truncate text-[16px] font-bold tracking-[.2px]">Wet-Season Rice Simulator</div>
+            <div className="truncate text-[16px] font-bold tracking-[.2px]">{t(language, "appTitle")}</div>
             <div className="truncate text-[11px] opacity-85">
-              นาข้าวนาปี - {variety.icon} {variety.name} · {variety.en}
+              {t(language, "farmSubtitle")} - {variety.icon} {pickLang(language, variety.en, variety.name)}
             </div>
           </div>
         </div>
 
         <div className="flex flex-none items-center gap-[9px] overflow-x-auto">
           <div className="hidden items-center gap-1.5 rounded-[9px] bg-white/15 py-1 pl-[11px] pr-2 sm:flex">
-            <span className="text-[11px] opacity-90">Farm size · พื้นที่</span>
+            <span className="text-[11px] opacity-90">{t(language, "farmSize")}</span>
             <HeaderStepButton onClick={() => onFarmSize(farmSize - 1)}>-</HeaderStepButton>
             <input
               aria-label="Farm size in rai"
@@ -40,24 +42,33 @@ export default function AppLayout({
               className="h-7 w-12 rounded-md border-0 bg-white px-1 text-center font-display text-[13px] font-bold text-rice-dark outline-none"
             />
             <HeaderStepButton onClick={() => onFarmSize(farmSize + 1)}>+</HeaderStepButton>
-            <span className="text-[11px] opacity-90">ไร่</span>
+            <span className="text-[11px] opacity-90">{t(language, "rai")}</span>
           </div>
 
           <div className="hidden gap-1 rounded-[9px] bg-white/15 p-1 lg:flex">
             <StyleButton active={fieldStyle === "clumps"} onClick={() => onFieldStyle("clumps")}>
-              Lush clumps
+              {t(language, "lushClumps")}
             </StyleButton>
             <StyleButton active={fieldStyle === "blades"} onClick={() => onFieldStyle("blades")}>
-              Fine blades
+              {t(language, "fineBlades")}
             </StyleButton>
           </div>
+
+          <button
+            type="button"
+            onClick={onToggleLanguage}
+            className="whitespace-nowrap rounded-[9px] bg-white px-3 py-[7px] text-[12px] font-bold text-rice-dark transition hover:bg-white/90"
+            aria-label={t(language, "language")}
+          >
+            {LANGUAGES[language]} / {language === "th" ? "EN" : "ไทย"}
+          </button>
 
           <button
             type="button"
             onClick={onTogglePanel}
             className="whitespace-nowrap rounded-[9px] bg-white/15 px-3 py-[7px] text-[12px] font-semibold text-white transition hover:bg-white/25"
           >
-            {showPanel ? "Hide panel · ซ่อนแผง" : "Show panel · ดูแผง"}
+            {showPanel ? t(language, "hidePanel") : t(language, "showPanel")}
           </button>
         </div>
       </header>
@@ -77,8 +88,8 @@ export default function AppLayout({
               {score.growthScore}
             </span>
             <span className="text-left leading-tight">
-              <b className="block text-[12px] text-rice-text">Health {score.label}</b>
-              <span className="block text-[10px] text-[#7a8576]">เปิดแผงข้อมูล</span>
+              <b className="block text-[12px] text-rice-text">{t(language, "health")} {pickLang(language, score.label, score.labelTh)}</b>
+              <span className="block text-[10px] text-[#7a8576]">{t(language, "openPanel")}</span>
             </span>
           </button>
         ) : null}

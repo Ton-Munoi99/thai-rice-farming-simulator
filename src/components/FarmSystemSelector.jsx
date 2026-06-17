@@ -1,10 +1,10 @@
 import { FARM_SYSTEM_PRESETS } from "../data/mockData.js";
+import { pickLang, t } from "../i18n.js";
 
-export default function FarmSystemSelector({ onSelect }) {
+export default function FarmSystemSelector({ language, onSelect }) {
   return (
     <section className="mt-3.5">
-      <div className="control-heading">Farm system presets</div>
-      <div className="text-[10.5px] text-rice-faint">ระบบนา / พื้นที่ตัวอย่าง</div>
+      <div className="control-heading">{t(language, "farmSystemPresets")}</div>
       <div className="mt-[9px] grid grid-cols-2 gap-1.5">
         {FARM_SYSTEM_PRESETS.map((preset) => (
           <button
@@ -15,9 +15,8 @@ export default function FarmSystemSelector({ onSelect }) {
               preset.wide ? "col-span-2" : ""
             }`}
           >
-            {preset.icon} {preset.name}
-            <span className="mt-0.5 block text-[9px] font-normal text-rice-faint">{preset.th}</span>
-            <span className="mt-1 block text-[8.5px] font-normal leading-snug text-[#7ba384]">{preset.note}</span>
+            {preset.icon} {pickLang(language, preset.name, preset.th)}
+            {language === "th" ? <span className="mt-1 block text-[8.5px] font-normal leading-snug text-[#7ba384]">{preset.note}</span> : null}
           </button>
         ))}
       </div>
