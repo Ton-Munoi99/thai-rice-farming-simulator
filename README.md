@@ -4,6 +4,10 @@ Interactive front-end simulator for Thai wet-season rice farming. The app lets u
 
 This phase is a client-side prototype: React UI, mock agronomic assumptions, no backend, no database, and no login.
 
+Live demo: https://thai-rice-farming-simulator.netlify.app
+
+Source code: https://github.com/Ton-Munoi99/thai-rice-farming-simulator
+
 ## Features
 
 - Scenario presets for normal, drought, flood, pest outbreak, excess fertilizer, and farm system defaults.
