@@ -51,14 +51,16 @@ export function buildCells(fieldStyle, cols, rows) {
     rows,
     cells: raw.map((cell, index) => {
       const depth = cell.sum / Math.max(1, cols + rows - 2);
-      const leafCount = isFineBlade ? 7 : 5;
+      const leafCount = isFineBlade ? 9 : 7;
       const leaves = Array.from({ length: leafCount }, (_, leafIndex) => {
         const centered = leafCount <= 1 ? 0 : leafIndex / (leafCount - 1) - 0.5;
         const jitter = seededRandom((index + 1) * 9 + leafIndex * 3.3);
+        const side = leafIndex % 2 === 0 ? -1 : 1;
         return {
-          rotation: centered * (isFineBlade ? 96 : 80) + (jitter - 0.5) * 16,
-          length: (isFineBlade ? 30 : 26) + jitter * (isFineBlade ? 7 : 9) - Math.abs(centered) * 6,
-          width: isFineBlade ? 2.4 + jitter * 1.2 : 5.5 + jitter * 2.2,
+          rotation: centered * (isFineBlade ? 104 : 88) + (jitter - 0.5) * 18,
+          length: (isFineBlade ? 48 : 42) + jitter * (isFineBlade ? 14 : 16) - Math.abs(centered) * 8,
+          width: isFineBlade ? 2.2 + jitter * 1.2 : 4.6 + jitter * 2.1,
+          x: side * (1.2 + jitter * 3.8) + centered * 2,
           brightness: jitter - 0.5,
         };
       });
@@ -73,7 +75,7 @@ export function buildCells(fieldStyle, cols, rows) {
         y: cell.isoY - baseMinY,
         z: cell.sum,
         depth,
-        scale: 0.82 + depth * 0.3,
+        scale: 0.86 + depth * 0.32,
         tw: TILE_WIDTH,
         th: TILE_HEIGHT,
         soilTone: seededRandom((index + 1) * 5.1),
@@ -82,6 +84,7 @@ export function buildCells(fieldStyle, cols, rows) {
         swayDelay: swaySeed * -2.5,
         swayName: index % 2 === 0 ? "sway" : "swayB",
         leaves,
+        baseSpread: isFineBlade ? 19 + seededRandom((index + 1) * 6.7) * 7 : 23 + seededRandom((index + 1) * 6.7) * 9,
       };
     }),
   };
@@ -144,8 +147,8 @@ export function buildPlantVisuals(cells, condition, stageFraction) {
   return cells.map((cell) => {
     const damageThreshold = 1 - ((condition.pest * 0.5 + condition.disease * 0.5) / 100) * 0.55;
     const isDamaged = cell.damaged > damageThreshold && stageFraction > 0.3;
-    const baseHeight = 70;
-    const height = baseHeight * stageFraction * condition.vigor * cell.scale * (isDamaged ? 0.5 : 1);
+    const baseHeight = 76;
+    const height = baseHeight * stageFraction * condition.vigor * cell.scale * (isDamaged ? 0.52 : 1);
     const lodging = condition.lodging ? 10 + cell.soilTone * 10 : 0;
 
     const soilHue = condition.shortage ? 30 : 28;
@@ -157,14 +160,19 @@ export function buildPlantVisuals(cells, condition, stageFraction) {
       Math.max(1, Math.round(cell.leaves.length * (isDamaged ? 0.48 : 0.6 + condition.density * 0.5))),
     );
 
-    const leaves = cell.leaves.slice(0, leafAmount).map((leaf) => {
+    const stageScale = clamp(stageFraction * 1.28, 0.18, 1.18);
+    const leaves = cell.leaves.slice(0, leafAmount).map((leaf, leafIndex) => {
       const curl = condition.shortage ? 14 : 0;
+      const leafHeight = clamp(leaf.length * stageScale * condition.vigor * cell.scale * (isDamaged ? 0.64 : 1), 8, height * 1.05);
+      const leafWidth = leaf.width * clamp(0.72 + stageFraction * 0.5, 0.7, 1.15);
+      const droop = stageFraction > 0.72 ? (stageFraction - 0.72) * 18 * (leaf.rotation > 0 ? 1 : -1) : 0;
       return {
-        width: `${leaf.width.toFixed(1)}px`,
-        height: `${leaf.length.toFixed(0)}px`,
-        marginLeft: `${(-leaf.width / 2).toFixed(1)}px`,
+        width: `${leafWidth.toFixed(1)}px`,
+        height: `${leafHeight.toFixed(0)}px`,
+        marginLeft: `${(-leafWidth / 2 + leaf.x).toFixed(1)}px`,
+        opacity: clamp(0.62 + stageFraction * 0.42 - (isDamaged && leafIndex > leafAmount * 0.55 ? 0.25 : 0), 0.45, 1),
         background: leafColor(condition, ripe, leaf.brightness + (isDamaged ? -0.25 : 0)),
-        transform: `rotate(${(leaf.rotation + curl * (leaf.rotation > 0 ? 1 : -1)).toFixed(1)}deg)`,
+        transform: `rotate(${(leaf.rotation + droop + curl * (leaf.rotation > 0 ? 1 : -1)).toFixed(1)}deg)`,
       };
     });
 
@@ -178,27 +186,41 @@ export function buildPlantVisuals(cells, condition, stageFraction) {
       ...cell,
       showPlant,
       soilStyle: {
-        background: `linear-gradient(160deg, hsl(${soilHue}, ${soilSat}%, ${soilLight + 6}%), hsl(${soilHue}, ${soilSat}%, ${
-          soilLight - 4
-        }%))`,
+        background: `linear-gradient(160deg, hsl(${soilHue}, ${soilSat}%, ${soilLight + 9}%), hsl(${soilHue}, ${soilSat}%, ${
+          soilLight - 5
+        }%) 68%, hsl(${soilHue}, ${soilSat}%, ${soilLight - 9}%))`,
+        boxShadow: condition.flooded
+          ? "inset 0 0 0 1px rgba(255,255,255,.12), inset 0 10px 16px rgba(83,157,193,.34)"
+          : "inset 0 0 0 1px rgba(255,255,255,.08), inset 0 -8px 12px rgba(62,45,26,.18)",
       },
       growthStyle: {
-        transform: `translate(-50%, -${(height + cell.th * 0.18).toFixed(0)}px) rotate(${lodging.toFixed(0)}deg)`,
+        transform: `translate(-50%, ${(cell.th * 0.12).toFixed(0)}px) rotate(${lodging.toFixed(0)}deg)`,
       },
       swayStyle: {
         animation: `${cell.swayName} ${cell.swayDur.toFixed(2)}s ease-in-out ${cell.swayDelay.toFixed(2)}s infinite`,
+      },
+      clumpBaseStyle: {
+        width: `${(cell.baseSpread * clamp(0.55 + stageFraction * 0.65, 0.55, 1.18) * condition.density).toFixed(0)}px`,
+        height: `${(7 + stageFraction * 7).toFixed(0)}px`,
+        opacity: clamp(0.55 + stageFraction * 0.35, 0.45, 0.9),
+      },
+      plantShadowStyle: {
+        width: `${(cell.baseSpread * 1.45 * clamp(condition.density, 0.42, 1)).toFixed(0)}px`,
+        height: `${(cell.th * 0.22).toFixed(0)}px`,
+        opacity: clamp(0.08 + stageFraction * 0.18, 0.06, 0.24),
       },
       leaves,
       showPanicle,
       panicleStyle: showPanicle
         ? {
-            bottom: `${(baseHeight * 0.62).toFixed(0)}px`,
-            height: `${(18 + ripe * 10).toFixed(0)}px`,
+            bottom: `${(height * 0.68).toFixed(0)}px`,
+            height: `${(20 + ripe * 16).toFixed(0)}px`,
+            width: `${(4 + ripe * 1.2).toFixed(1)}px`,
             background: `linear-gradient(to bottom, hsl(${panicleHue}, ${panicleSat}%, ${
               panicleLight + 8
             }%), hsl(${panicleHue}, ${panicleSat}%, ${panicleLight - 6}%))`,
-            transform: `rotate(${(8 + ripe * 22).toFixed(0)}deg)`,
-            boxShadow: `0 0 0 1px hsl(${panicleHue}, ${panicleSat}%, ${panicleLight - 12}%)`,
+            transform: `rotate(${(10 + ripe * 25).toFixed(0)}deg)`,
+            boxShadow: `0 0 0 1px hsl(${panicleHue}, ${panicleSat}%, ${panicleLight - 12}%), 5px 3px 0 -3px hsla(${panicleHue}, ${panicleSat}%, ${panicleLight - 10}%, .6)`,
           }
         : null,
     };

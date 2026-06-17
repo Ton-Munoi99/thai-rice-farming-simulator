@@ -7,7 +7,7 @@ export default function RiceFieldAnimation({ simulation }) {
         <div className="relative flex-none" style={{ width: field.sceneW, height: field.sceneH }}>
           <Sky fx={field.fx} />
           <RuralScenery />
-        <Plot field={field} condition={liveModel.condition} />
+          <Plot field={field} condition={liveModel.condition} />
           <StageCaption stage={stage} index={displayStageIndex} />
           {field.awd ? <Badge className="bottom-3.5 left-[84px] bg-[#217696]/95">💧 AWD water system · นาเปียกสลับแห้ง</Badge> : null}
           {phase === "setup" ? (
@@ -194,7 +194,7 @@ function Plot({ field, condition }) {
   return (
     <div className="absolute bottom-0 left-0 right-0 top-[165px] z-[3]">
       <div className="absolute inset-0">
-        <div className="absolute bottom-[8%] left-[2%] right-[2%] top-[2%] z-0 bg-[radial-gradient(ellipse_at_50%_30%,rgba(120,95,60,0),rgba(90,70,45,.12))]" />
+        <div className="absolute bottom-[8%] left-[2%] right-[2%] top-[2%] z-0 bg-[radial-gradient(ellipse_at_50%_30%,rgba(120,95,60,0),rgba(70,55,34,.16))]" />
         {field.channels.map((channel, index) => (
           <div
             key={`channel-${index}`}
@@ -244,7 +244,7 @@ function RiceCell({ cell }) {
   return (
     <div className="absolute h-0 w-0" style={{ left: cell.x, top: cell.y, zIndex: cell.z }}>
       <div
-        className="absolute [clip-path:polygon(50%_0,100%_50%,50%_100%,0_50%)] shadow-[inset_0_0_0_1px_rgba(255,255,255,.05)] transition-colors duration-1000"
+        className="absolute [clip-path:polygon(50%_0,100%_50%,50%_100%,0_50%)] transition-colors duration-1000"
         style={{
           left: -cell.tw / 2,
           top: -cell.th / 2,
@@ -255,18 +255,26 @@ function RiceCell({ cell }) {
       />
       {cell.showPlant ? (
         <div className="absolute left-0 top-0 h-0 w-0 origin-bottom transition-transform duration-[1500ms]" style={cell.growthStyle}>
+          <div
+            className="absolute left-1/2 top-[-2px] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(35,30,18,.38),rgba(35,30,18,0)_70%)]"
+            style={cell.plantShadowStyle}
+          />
           <div className="absolute bottom-0 left-0 h-0 w-0 origin-bottom" style={cell.swayStyle}>
+            <div
+              className="absolute bottom-[-4px] left-1/2 -translate-x-1/2 rounded-[50%] bg-[linear-gradient(180deg,rgba(72,126,54,.72),rgba(45,82,35,.9))] shadow-[inset_0_1px_0_rgba(255,255,255,.18)]"
+              style={cell.clumpBaseStyle}
+            />
             {cell.leaves.map((leaf, index) => (
               <div
                 key={index}
-                className="absolute bottom-0 left-1/2 origin-bottom rounded-[60%_60%_14%_14%/88%_88%_12%_12%] shadow-[inset_-1px_0_0_rgba(0,0,0,.06)]"
+                className="rice-leaf absolute bottom-0 left-1/2 origin-bottom"
                 style={leaf}
               />
             ))}
             {cell.showPanicle ? (
               <div
-                className="absolute left-1/2 w-1 origin-bottom rounded-[3px]"
-                style={{ marginLeft: -2, ...cell.panicleStyle }}
+                className="rice-panicle absolute left-1/2 origin-bottom rounded-[4px]"
+                style={{ marginLeft: -2.5, ...cell.panicleStyle }}
               />
             ) : null}
           </div>
