@@ -1,7 +1,7 @@
 import { pickLang, t } from "../i18n.js";
 
 export default function RiceFieldAnimation({ simulation }) {
-  const { field, stage, displayStageIndex, phase, liveModel, showPanel, togglePanel, language } = simulation;
+  const { field, stage, displayStageIndex, phase, liveModel, language } = simulation;
 
   return (
     <section className="relative min-h-0 flex-1 overflow-auto">
@@ -10,7 +10,7 @@ export default function RiceFieldAnimation({ simulation }) {
           <Sky fx={field.fx} />
           <RuralScenery />
           <Plot field={field} condition={liveModel.condition} />
-          <StageCaption language={language} stage={stage} index={displayStageIndex} />
+          {phase !== "setup" ? <StageCaption language={language} stage={stage} index={displayStageIndex} /> : null}
           {field.awd ? <Badge className="bottom-3.5 left-[84px] bg-[#217696]/95">💧 {language === "th" ? "ระบบน้ำ AWD · เปียกสลับแห้ง" : "AWD water system"}</Badge> : null}
           {phase === "setup" ? (
             <Badge className="bottom-3.5 right-4 bg-rice-text/85">
@@ -21,24 +21,6 @@ export default function RiceFieldAnimation({ simulation }) {
         </div>
       </div>
 
-      {!showPanel ? (
-        <button
-          type="button"
-          onClick={togglePanel}
-          className="absolute right-4 top-4 z-20 flex items-center gap-[9px] rounded-[13px] bg-white/95 py-2 pl-[9px] pr-3.5 shadow-float backdrop-blur"
-        >
-          <span
-            className="flex h-[31px] w-[31px] items-center justify-center rounded-full font-display text-[14px] font-bold text-white"
-            style={{ background: liveModel.color }}
-          >
-            {liveModel.growthScore}
-          </span>
-          <span className="text-left leading-tight">
-            <b className="block text-[12px] text-rice-text">{t(language, "health")} {pickLang(language, liveModel.label, liveModel.labelTh)}</b>
-            <span className="block text-[10px] text-[#7a8576]">{t(language, "openPanel")}</span>
-          </span>
-        </button>
-      ) : null}
     </section>
   );
 }
