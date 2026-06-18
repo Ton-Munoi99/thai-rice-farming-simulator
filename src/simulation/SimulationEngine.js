@@ -48,6 +48,42 @@ export const COST_ITEMS = [
   { key: "transport", label: "ขนส่ง/อื่นๆ Transport" },
 ];
 
+function estimateStrawHarvest(inputs, estimatedYieldKgPerRai, context, flags) {
+  const totalResidueKgPerRai = Math.round(estimatedYieldKgPerRai * 1.25);
+  const baseCollectableRatio = 0.82;
+
+  let collectionFactor = 1;
+  if (inputs.weather === "Good Monsoon") collectionFactor += 0.03;
+  if (inputs.weather === "Drought") collectionFactor -= 0.06;
+  if (inputs.weather === "Heavy Rain / Flood") collectionFactor -= 0.25;
+  if (flags.shortage) collectionFactor -= 0.08;
+  if (flags.flooded) collectionFactor -= 0.16;
+  if (flags.nExcess) collectionFactor -= 0.06;
+
+  collectionFactor -= clamp((inputs.disease - 30) * 0.003, 0, 0.18);
+  collectionFactor -= clamp((inputs.pest - 45) * 0.0015, 0, 0.08);
+  collectionFactor -= clamp((inputs.weed - 35) * 0.002, 0, 0.12);
+  collectionFactor -= clamp((72 - inputs.managementTiming) * 0.004, 0, 0.18);
+  collectionFactor = clamp(collectionFactor, 0.42, 1.08);
+
+  const collectableKgPerRai = Math.round(estimatedYieldKgPerRai * baseCollectableRatio * collectionFactor);
+  const pricePerKg = clamp(Number(context.strawPricePerKg) || 0, 0, 10);
+  const revenuePerRai = Math.round((collectableKgPerRai * pricePerKg) / 10) * 10;
+
+  return {
+    totalResidueKgPerRai,
+    collectableKgPerRai,
+    collectionFactor,
+    collectionPercent: totalResidueKgPerRai > 0 ? Math.round((collectableKgPerRai / totalResidueKgPerRai) * 100) : 0,
+    pricePerKg,
+    revenuePerRai,
+    reference: {
+      collectableRangeKgPerRai: [400, 500],
+      totalResidueKgPerRai: 650,
+    },
+  };
+}
+
 function estimateChemicalProgram(inputs, baseCost) {
   const items = [];
   let cost = baseCost;
@@ -522,6 +558,8 @@ export function computeSimulation(inputs, context) {
   quality = clamp(quality, 0.74, 1);
 
   const estimatedYieldKgPerRai = Math.round(variety.potential * Math.pow(growthScore / 100, 1.25) * (0.9 + 0.1 * quality));
+  const flags = { nDeficient, nExcess, shortage, flooded };
+  const straw = estimateStrawHarvest(inputs, estimatedYieldKgPerRai, context, flags);
   const { breakdown: costBreakdown, chemicalProgram } = buildCostBreakdown(
     variety,
     nutrients,
@@ -529,9 +567,9 @@ export function computeSimulation(inputs, context) {
     context.costOverrides,
   );
   const costPerRai = costBreakdown.reduce((sum, item) => sum + item.value, 0);
-  const revenuePerRai = Math.round(((estimatedYieldKgPerRai * context.pricePerTon) / 1000) * quality / 10) * 10;
+  const riceRevenuePerRai = Math.round(((estimatedYieldKgPerRai * context.pricePerTon) / 1000) * quality / 10) * 10;
+  const revenuePerRai = riceRevenuePerRai + straw.revenuePerRai;
   const profitPerRai = revenuePerRai - costPerRai;
-  const flags = { nDeficient, nExcess, shortage, flooded };
 
   const condition = {
     greenness: nDeficient ? -0.75 : nExcess ? 0.9 : clamp((Nt - variety.idealN) / 10, -0.3, 0.35),
@@ -630,7 +668,9 @@ export function computeSimulation(inputs, context) {
     chemicalProgram,
     costPerRai,
     revenuePerRai,
+    riceRevenuePerRai,
     profitPerRai,
+    straw,
     quality,
     nutrients,
     nutrientTotals: { N: Nt, P: Pt, K: Kt },
@@ -651,6 +691,7 @@ export function computeSimulation(inputs, context) {
       growthScore,
       estimatedYieldKgPerRai,
       revenuePerRai,
+      riceRevenuePerRai,
       costPerRai,
       profitPerRai,
       costBreakdown,

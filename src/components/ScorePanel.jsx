@@ -78,6 +78,41 @@ export default function ScorePanel({ simulation }) {
           </div>
         </section>
 
+        <section className="mt-[9px] rounded-[12px] border border-[#d7e8cf] bg-[#f8fbf4] px-[13px] py-2.5">
+          <div className="mb-2 flex items-start justify-between gap-2">
+            <div className="leading-tight">
+              <div className="text-[11px] font-semibold text-[#3c473a]">{t(language, "strawIncome")}</div>
+              <div className="text-[9.5px] text-rice-faint">{t(language, "strawReference")}</div>
+            </div>
+            <div className="text-right">
+              <div className="font-display text-[17px] font-bold text-[#8a7040]">{formatNumber(model.straw.collectableKgPerRai)}</div>
+              <div className="text-[8.5px] text-rice-faint">kg/{t(language, "rai")}</div>
+            </div>
+          </div>
+          <div className="flex items-center justify-between gap-2">
+            <div className="leading-tight">
+              <div className="text-[10px] font-semibold text-[#5f755c]">{t(language, "strawPrice")}</div>
+              <div className="text-[8.5px] text-rice-faint">
+                {language === "th" ? "เก็บได้" : "collection"} {model.straw.collectionPercent}% · {t(language, "strawRevenue")} ฿{formatNumber(model.straw.revenuePerRai)}
+              </div>
+            </div>
+            <div className="flex items-center gap-[5px]">
+              <SmallButton onClick={() => simulation.setStrawPricePerKg(simulation.strawPricePerKg - 0.1)}>-</SmallButton>
+              <input
+                aria-label="Straw price per kg"
+                value={simulation.strawPricePerKg}
+                type="number"
+                min="0"
+                max="10"
+                step="0.1"
+                onChange={(event) => simulation.setStrawPricePerKg(event.target.value)}
+                className="w-[58px] rounded-lg border border-[#dde3d6] bg-white px-1 py-1 text-center font-display text-[12px] font-bold text-[#3c473a] outline-none"
+              />
+              <SmallButton onClick={() => simulation.setStrawPricePerKg(simulation.strawPricePerKg + 0.1)}>+</SmallButton>
+            </div>
+          </div>
+        </section>
+
         <section className="mt-[13px] flex flex-col gap-[11px]">
           {indicators.map(([name, value, color, suffix]) => (
             <div key={name}>
@@ -122,7 +157,9 @@ export default function ScorePanel({ simulation }) {
           <div className="rounded-[11px] border border-rice-card bg-white px-[11px] py-2.5">
             <div className="text-[9.5px] text-rice-faint">{t(language, "revenue")}</div>
             <div className="font-display text-[15px] font-semibold text-[#3c473a]">฿{formatNumber(model.revenuePerRai)}</div>
-            <div className="text-[9px] text-[#b6ad8a]">@฿{formatNumber(simulation.pricePerTon)}/{language === "th" ? "ตัน" : "ton"}</div>
+            <div className="text-[9px] text-[#b6ad8a]">
+              {t(language, "riceRevenue")} ฿{formatNumber(model.riceRevenuePerRai)} + {language === "th" ? "ฟาง" : "straw"} ฿{formatNumber(model.straw.revenuePerRai)}
+            </div>
           </div>
           <div
             className="rounded-[11px] px-[11px] py-2.5 text-white"

@@ -18,6 +18,8 @@ export default function SummaryDashboard({ simulation }) {
     [t(language, "soilHealth"), `${model.soilHealth}%`, scoreColor(model.soilHealth)],
     [t(language, "productionCost"), `฿${formatNumber(model.costPerRai)}`, "#3c473a"],
     [t(language, "revenue"), `฿${formatNumber(model.revenuePerRai)}`, "#3c473a"],
+    [t(language, "strawIncome"), `${formatNumber(model.straw.collectableKgPerRai)} kg/rai`, "#8a7040"],
+    [t(language, "strawRevenue"), `฿${formatNumber(model.straw.revenuePerRai)}`, "#8a7040"],
   ];
 
   return (
@@ -38,7 +40,7 @@ export default function SummaryDashboard({ simulation }) {
         </header>
 
         <div className="px-[26px] py-[22px]">
-          <div className="grid grid-cols-2 gap-[11px] md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-[11px] md:grid-cols-5">
             {metrics.map(([name, value, color]) => (
               <div key={name} className="rounded-[13px] border border-rice-card bg-white px-[13px] py-3">
                 <div className="text-[10px] leading-tight text-rice-faint">{name}</div>
@@ -57,6 +59,9 @@ export default function SummaryDashboard({ simulation }) {
               <div className="text-[12px] opacity-90">{profitPositive ? t(language, "profit") : t(language, "loss")} {t(language, "perRai")}</div>
               <div className="mt-0.5 text-[11px] opacity-80">
                 For {simulation.farmSize} rai: {signedBaht(model.profitPerRai * simulation.farmSize)}
+              </div>
+              <div className="mt-0.5 text-[10px] opacity-75">
+                {t(language, "riceRevenue")} ฿{formatNumber(model.riceRevenuePerRai)} + {language === "th" ? "ฟาง" : "straw"} ฿{formatNumber(model.straw.revenuePerRai)}/{t(language, "rai")}
               </div>
             </div>
             <div className="font-display text-[30px] font-bold">{signedBaht(model.profitPerRai)}</div>
