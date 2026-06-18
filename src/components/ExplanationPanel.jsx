@@ -84,7 +84,7 @@ function factorText(language, factor) {
     pestDisease: `Pest, disease, and weed pressure reduce growth and raise chemical/IPM costs${valueText}.`,
     soilWeather: `Soil, weather, and timing set the growth baseline${valueText}.`,
     yield: "Yield is estimated from growth score and variety potential.",
-    revenue: "Revenue is based on yield and the adjusted sale price after condition-linked quality discounts/premiums.",
+    revenue: "Revenue is based on yield and the user-set market price, with only wet-harvest moisture reducing revenue.",
     cost: "Cost pressure comes from the largest editable cost items per rai.",
     chemicals: "Chemical/IPM cost increases when pest, disease, or weed pressure rises.",
     profit: "Profit equals revenue minus total cost per rai.",

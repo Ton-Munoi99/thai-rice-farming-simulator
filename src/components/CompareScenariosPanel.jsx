@@ -83,9 +83,6 @@ function CompareRow({ language, slot, isBest, onLoad, onClear }) {
           <div className="mt-0.5 text-[8.5px] leading-snug text-[#9aa394]">
             {t(language, "cost")} ฿{formatNumber(model.costPerRai)} · {t(language, "revenue")} ฿{formatNumber(model.revenuePerRai)}
           </div>
-          <div className="mt-0.5 text-[8.5px] leading-snug text-[#9aa394]">
-            {t(language, "adjustedSalePrice")} ฿{formatNumber(model.priceAdjustment.adjustedPricePerTon)}/t
-          </div>
         </div>
         <div className="text-right">
           <div className={`font-display text-[12px] font-bold ${profitPositive ? "text-rice-green" : "text-rice-red"}`}>
