@@ -14,6 +14,7 @@ import { buildCells, buildChannels, buildPlantVisuals, buildWeatherFx, gridForFa
 import { clamp } from "../utils/format.js";
 
 export function useSimulation() {
+  const defaultVarietyKey = "white";
   const [language, setLanguage] = useState("th");
   const [inputs, setInputs] = useState(DEFAULT_INPUTS);
   const [phase, setPhase] = useState("setup");
@@ -22,8 +23,8 @@ export function useSimulation() {
   const [showPanel, setShowPanel] = useState(true);
   const [fieldStyle, setFieldStyleState] = useState("clumps");
   const [farmSize, setFarmSizeState] = useState(10);
-  const [varietyKey, setVarietyKey] = useState("white");
-  const [pricePerTon, setPricePerTonState] = useState(8000);
+  const [varietyKey, setVarietyKey] = useState(defaultVarietyKey);
+  const [pricePerTon, setPricePerTonState] = useState(VARIETIES[defaultVarietyKey].salePricePerTon);
   const [strawPricePerKg, setStrawPricePerKgState] = useState(1);
   const [costOverrides, setCostOverrides] = useState({});
   const [compareSlots, setCompareSlots] = useState([null, null, null]);
@@ -116,6 +117,7 @@ export function useSimulation() {
       resetToSetup();
       setCostOverrides({});
       setVarietyKey(preset.variety);
+      setPricePerTonState(VARIETIES[preset.variety].salePricePerTon);
       setInputs({
         ...preset.inputs,
         applications: preset.inputs.applications.map((app) => ({ ...app })),
@@ -130,6 +132,7 @@ export function useSimulation() {
       resetToSetup();
       const next = VARIETIES[nextVariety];
       setVarietyKey(nextVariety);
+      setPricePerTonState(next.salePricePerTon);
       setCostOverrides({});
       setInputs((current) => ({
         ...current,
