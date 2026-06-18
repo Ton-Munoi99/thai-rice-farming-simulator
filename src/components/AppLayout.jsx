@@ -29,8 +29,8 @@ export default function AppLayout({
         </div>
 
         <div className="flex flex-none items-center gap-[9px] overflow-x-auto">
-          <div className="hidden items-center gap-1.5 rounded-lg bg-white/10 py-1 pl-[11px] pr-2 sm:flex">
-            <span className="text-[11px] opacity-90">{t(language, "farmSize")}</span>
+          <div className="flex items-center gap-1.5 rounded-lg bg-white/10 py-1 pl-2 pr-2 sm:pl-[11px]">
+            <span className="hidden text-[11px] opacity-90 sm:inline">{t(language, "farmSize")}</span>
             <HeaderStepButton onClick={() => onFarmSize(farmSize - 1)}>-</HeaderStepButton>
             <input
               aria-label="Farm size in rai"
@@ -39,10 +39,10 @@ export default function AppLayout({
               type="number"
               value={farmSize}
               onChange={(event) => onFarmSize(event.target.value)}
-              className="h-7 w-12 rounded-md border-0 bg-[#fffdf7] px-1 text-center font-display text-[13px] font-bold text-rice-dark outline-none"
+              className="h-7 w-11 rounded-md border-0 bg-[#fffdf7] px-1 text-center font-display text-[13px] font-bold text-rice-dark outline-none sm:w-12"
             />
             <HeaderStepButton onClick={() => onFarmSize(farmSize + 1)}>+</HeaderStepButton>
-            <span className="text-[11px] opacity-90">{t(language, "rai")}</span>
+            <span className="hidden text-[11px] opacity-90 sm:inline">{t(language, "rai")}</span>
           </div>
 
           <div className="hidden gap-1 rounded-lg bg-white/10 p-1 lg:flex">

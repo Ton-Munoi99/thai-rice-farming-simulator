@@ -27,7 +27,7 @@ export default function ScorePanel({ simulation }) {
   ];
 
   return (
-    <aside className="hidden w-[296px] flex-none flex-col overflow-y-auto border-l border-rice-border bg-rice-panel lg:flex">
+    <aside className="fixed bottom-24 right-3 top-[70px] z-40 flex w-[min(300px,calc(100vw-24px))] flex-none flex-col overflow-y-auto border border-rice-border bg-rice-panel shadow-float lg:static lg:z-auto lg:w-[296px] lg:border-y-0 lg:border-r-0 lg:shadow-none">
       <div className="px-[17px] py-4">
         <div className="control-heading">{t(language, "liveHealthScore")}</div>
         <div className="text-[10.5px] text-rice-faint">{t(language, "realTime")}</div>
@@ -241,7 +241,12 @@ function CostRow({ language, item, onChange }) {
           {item.isOverridden ? "manual" : "auto"}
         </span>
       </span>
-      <CostStepper value={item.value} step={50} onChange={onChange} />
+      <CostStepper
+        value={item.value}
+        step={50}
+        ariaLabel={`${label} ${language === "th" ? "ต่อไร่" : "cost per rai"}`}
+        onChange={onChange}
+      />
     </div>
   );
 }
@@ -251,7 +256,13 @@ function TotalCostRow({ language, value, onChange }) {
     <div className="mt-2 rounded-lg border border-[#d9e2d1] bg-[#f7faf4] px-2 py-2">
       <div className="mb-1 flex items-center justify-between gap-2 text-[12px] font-bold text-rice-dark">
         <span>{language === "th" ? "รวมต้นทุน" : "Total cost"}</span>
-        <CostStepper value={value} step={100} onChange={onChange} strong />
+        <CostStepper
+          value={value}
+          step={100}
+          ariaLabel={language === "th" ? "รวมต้นทุนต่อไร่" : "Total cost per rai"}
+          onChange={onChange}
+          strong
+        />
       </div>
       <div className="text-[9px] leading-snug text-[#8a9686]">
         {language === "th" ? "แก้ยอดรวมเพื่อปรับสัดส่วนต้นทุนย่อยทั้งหมดต่อไร่" : "Edit total to scale all cost items per rai."}
@@ -281,14 +292,14 @@ function ChemicalProgramNote({ language, model }) {
   );
 }
 
-function CostStepper({ value, onChange, step, strong = false }) {
+function CostStepper({ value, onChange, step, ariaLabel = "Cost per rai", strong = false }) {
   const next = (raw) => onChange(Math.max(0, Math.round(Number(raw) || 0)));
 
   return (
     <div className="flex flex-none items-center gap-1">
       <SmallButton onClick={() => next(value - step)}>-</SmallButton>
       <input
-        aria-label="Cost per rai"
+        aria-label={ariaLabel}
         type="number"
         min="0"
         step={step}

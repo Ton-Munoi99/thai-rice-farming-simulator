@@ -15,12 +15,13 @@ import { clamp } from "../utils/format.js";
 
 export function useSimulation() {
   const defaultVarietyKey = "white";
+  const defaultShowPanel = () => (typeof window === "undefined" ? true : window.innerWidth >= 1024);
   const [language, setLanguage] = useState("th");
   const [inputs, setInputs] = useState(DEFAULT_INPUTS);
   const [phase, setPhase] = useState("setup");
   const [stageIndex, setStageIndex] = useState(0);
   const [showSummary, setShowSummary] = useState(false);
-  const [showPanel, setShowPanel] = useState(true);
+  const [showPanel, setShowPanel] = useState(defaultShowPanel);
   const [fieldStyle, setFieldStyleState] = useState("clumps");
   const [farmSize, setFarmSizeState] = useState(10);
   const [varietyKey, setVarietyKey] = useState(defaultVarietyKey);

@@ -213,7 +213,7 @@ export function buildAutoRecommendation(inputs, varietyKey) {
   const reasons = [];
 
   reasons.push({
-    en: `${variety.name}: base plan targets about N ${variety.idealN}, P₂O₅ ${variety.idealP}, K₂O ${variety.idealK} kg/rai`,
+    en: `${variety.en}: base plan targets about N ${variety.idealN}, P₂O₅ ${variety.idealP}, K₂O ${variety.idealK} kg/rai`,
     th: `ใช้เป้าหมายธาตุอาหารตามพันธุ์ ${variety.name}`,
   });
 

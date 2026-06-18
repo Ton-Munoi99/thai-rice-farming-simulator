@@ -78,7 +78,7 @@ function CompareRow({ language, slot, isBest, onLoad, onClear }) {
             {pickLang(language, slot.varietyKey === "jasmine" ? "Hom Mali" : "White rice", slot.varietyName)} · {slot.savedAt}
           </div>
           <div className="mt-0.5 text-[9px] leading-snug text-rice-faint">
-            {formatNumber(model.estimatedYieldKgPerRai)} kg/rai · {t(language, "risk")} {model.riskLevel}
+            {formatNumber(model.estimatedYieldKgPerRai)} kg/rai · {t(language, "risk")} {pickLang(language, model.riskLevel, model.riskLevelTh)}
           </div>
           <div className="mt-0.5 text-[8.5px] leading-snug text-[#9aa394]">
             {t(language, "cost")} ฿{formatNumber(model.costPerRai)} · {t(language, "revenue")} ฿{formatNumber(model.revenuePerRai)}
