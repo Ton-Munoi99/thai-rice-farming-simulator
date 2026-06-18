@@ -83,7 +83,7 @@ export default function ControlPanel({ simulation }) {
 
 function AutoRecommendationPanel({ language, recommendation, onApply }) {
   return (
-    <section className="mt-[11px] rounded-[13px] border border-[#d7e8cf] bg-gradient-to-br from-[#eef8ee] to-white px-3.5 py-[13px]">
+    <section className="mt-[11px] rounded-lg border border-[#d9e2d1] bg-[#f7faf4] px-3.5 py-[13px]">
       <div className="mb-2 flex items-start justify-between gap-2">
         <div>
           <div className="text-[12.5px] font-bold text-rice-dark">{t(language, "autoRecommendation")}</div>
@@ -92,18 +92,18 @@ function AutoRecommendationPanel({ language, recommendation, onApply }) {
         <button
           type="button"
           onClick={onApply}
-          className="rounded-[9px] bg-rice-green px-3 py-1.5 text-[10.5px] font-bold text-white shadow-[0_3px_8px_rgba(47,143,78,.22)] transition hover:bg-rice-dark"
+          className="rounded-md bg-rice-green px-3 py-1.5 text-[10.5px] font-bold text-white shadow-soft transition hover:bg-rice-dark"
         >
           {t(language, "apply")}
         </button>
       </div>
 
-      <div className="rounded-[10px] border border-[#dce9d5] bg-white px-2.5 py-2">
+      <div className="border-t border-[#d9e2d1] pt-2">
         <div className="text-[11px] font-bold text-[#2c5e36]">{pickLang(language, recommendation.headline, recommendation.headlineTh)}</div>
 
         <div className="mt-2 grid grid-cols-3 gap-1.5">
           {recommendation.applications.map((app) => (
-            <div key={app.stage} className="rounded-[8px] border border-[#edf1e8] bg-[#fbfcf8] px-1.5 py-1.5 text-center">
+            <div key={app.stage} className="text-center">
               <div className="text-[8.5px] font-semibold text-[#7a8576]">{app.stage}</div>
               <div className="font-display text-[10.5px] font-bold text-[#3c473a]">{app.formula}</div>
               <div className="text-[8.5px] text-rice-faint">{app.rate} kg/rai</div>
@@ -111,7 +111,7 @@ function AutoRecommendationPanel({ language, recommendation, onApply }) {
           ))}
         </div>
 
-        <div className="mt-2 flex justify-between rounded-[8px] bg-[#f4f7ef] px-2 py-1.5 text-[9.5px] text-[#63715f]">
+        <div className="mt-2 flex justify-between border-t border-[#d9e2d1] pt-1.5 text-[9.5px] text-[#63715f]">
           <span>N {recommendation.nutrients.N.toFixed(1)}</span>
           <span>P₂O₅ {recommendation.nutrients.P.toFixed(1)}</span>
           <span>K₂O {recommendation.nutrients.K.toFixed(1)}</span>
@@ -140,7 +140,7 @@ function FertilizerProgram({ language, applications, stages, formulaOptions, nut
         return (
           <div
             key={stage.key}
-            className="mb-[9px] rounded-[11px] border border-[#ebefe4] bg-rice-panel px-[11px] py-2.5"
+            className="mb-[9px] rounded-lg border border-[#ebe7dc] bg-[#fffdf9] px-[11px] py-2.5"
             style={{ borderLeft: `3px solid ${stage.accent}` }}
           >
             <div className="mb-[7px] flex items-center gap-1.5">
@@ -190,7 +190,7 @@ function NutrientTotals({ language, totals, targets }) {
   };
 
   return (
-    <div className="mt-1 rounded-[10px] border border-[#e4ebda] bg-[#f4f7ef] px-3 py-2.5">
+    <div className="mt-1 rounded-lg border border-[#ebe7dc] bg-[#fbfaf6] px-3 py-2.5">
       <div className="mb-1.5 text-[10px] font-semibold text-[#7a8576]">{t(language, "totalNutrients")}</div>
       <div className="grid grid-cols-3 gap-[7px] text-center">
         {[
@@ -198,7 +198,7 @@ function NutrientTotals({ language, totals, targets }) {
           ["P₂O₅", totals.P, targets.P],
           ["K₂O", totals.K, targets.K],
         ].map(([label, value, target]) => (
-          <div key={label} className="rounded-[9px] border border-rice-card bg-white px-1 py-1.5">
+          <div key={label} className="px-1 py-1.5">
             <div className="text-[9px] text-rice-faint">{label}</div>
             <div className="font-display text-[14px] font-bold" style={{ color: colorFor(value, target) }}>
               {value.toFixed(1)}
@@ -214,12 +214,12 @@ function NutrientTotals({ language, totals, targets }) {
 }
 
 function VarietyButton({ active, accent = "green", children, onClick }) {
-  const activeClass = accent === "gold" ? "border-rice-gold bg-[#fff8ec] text-[#9a6e18]" : "border-rice-green bg-[#eef8ee] text-rice-dark";
+  const activeClass = accent === "gold" ? "border-rice-gold bg-[#fff8ec] text-[#9a6e18]" : "border-rice-green bg-[#f1f6ef] text-rice-dark";
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`flex-1 rounded-[10px] border px-2 py-[9px] text-center text-[12px] font-semibold transition ${
+      className={`flex-1 rounded-lg border px-2 py-[9px] text-center text-[12px] font-semibold transition ${
         active ? `border-2 ${activeClass}` : "border-rice-border bg-white text-[#7a8576]"
       }`}
     >
@@ -230,7 +230,7 @@ function VarietyButton({ active, accent = "green", children, onClick }) {
 
 function ControlCard({ icon, title, children }) {
   return (
-    <section className="mt-[11px] rounded-[13px] border border-rice-card bg-white px-3.5 py-[13px]">
+    <section className="mt-[11px] rounded-lg border border-rice-card bg-white px-3.5 py-[13px]">
       <div className="mb-2.5 flex items-center gap-[7px]">
         <span className="text-[15px]">{icon}</span>
         <div>

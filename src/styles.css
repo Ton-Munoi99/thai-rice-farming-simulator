@@ -16,7 +16,7 @@ body,
 
 body {
   font-family: "IBM Plex Sans Thai", system-ui, sans-serif;
-  background: #eef1e8;
+  background: #f3f1ea;
 }
 
 ::-webkit-scrollbar {
@@ -33,7 +33,7 @@ input[type="range"] {
   appearance: none;
   height: 6px;
   border-radius: 6px;
-  background: #e3e8dc;
+  background: #e7e2d7;
   outline: none;
 }
 
@@ -84,11 +84,11 @@ input {
 
 @layer components {
   .control-heading {
-    @apply text-[11px] font-bold uppercase tracking-[.5px] text-[#5a6b58];
+    @apply text-[11px] font-bold uppercase tracking-[.5px] text-[#657066];
   }
 
   .control-select {
-    @apply w-full cursor-pointer rounded-[9px] border border-[#dde3d6] bg-white px-2.5 py-2 text-[12px] text-[#3c473a] outline-none transition focus:border-rice-green focus:ring-2 focus:ring-rice-green/10;
+    @apply w-full cursor-pointer rounded-lg border border-[#dedbd0] bg-[#fffdf9] px-2.5 py-2 text-[12px] text-[#3c473a] outline-none transition focus:border-rice-green focus:ring-2 focus:ring-rice-green/10;
   }
 }
 

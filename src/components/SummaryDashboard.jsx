@@ -9,6 +9,14 @@ export default function SummaryDashboard({ simulation }) {
   const model = simulation.activeModel;
   const { language } = simulation;
   const profitPositive = model.profitPerRai >= 0;
+  const totals = {
+    riceRevenue: model.riceRevenuePerRai * simulation.farmSize,
+    strawRevenue: model.straw.revenuePerRai * simulation.farmSize,
+    revenue: model.revenuePerRai * simulation.farmSize,
+    cost: model.costPerRai * simulation.farmSize,
+    profit: model.profitPerRai * simulation.farmSize,
+    strawKg: model.straw.collectableKgPerRai * simulation.farmSize,
+  };
   const metrics = [
     [t(language, "estimatedYield"), `${formatNumber(model.estimatedYieldKgPerRai)} kg/rai`, "#c8901c"],
     [t(language, "growthScore"), `${model.growthScore} / 100`, "#2f8f4e"],
@@ -23,11 +31,10 @@ export default function SummaryDashboard({ simulation }) {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(20,30,22,.66)] p-6">
-      <section className="max-h-[92vh] w-[880px] max-w-[96%] animate-fade-up overflow-y-auto rounded-[20px] bg-rice-panel shadow-modal">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(37,42,38,.46)] p-6">
+      <section className="max-h-[92vh] w-[920px] max-w-[96%] animate-fade-up overflow-y-auto rounded-xl bg-rice-panel shadow-modal">
         <header
-          className="flex items-center justify-between rounded-t-[20px] px-[26px] py-5 text-white"
-          style={{ background: `linear-gradient(120deg, ${model.headerGradient[0]}, ${model.headerGradient[1]})` }}
+          className="flex items-center justify-between rounded-t-xl border-b border-[#d8ddd2] bg-[#2f5d50] px-[26px] py-5 text-white"
         >
           <div>
             <div className="text-[11px] font-semibold tracking-[.5px] opacity-85">{t(language, "harvestSummary")}</div>
@@ -42,18 +49,33 @@ export default function SummaryDashboard({ simulation }) {
         <div className="px-[26px] py-[22px]">
           <div className="grid grid-cols-2 gap-[11px] md:grid-cols-5">
             {metrics.map(([name, value, color]) => (
-              <div key={name} className="rounded-[13px] border border-rice-card bg-white px-[13px] py-3">
+              <div key={name} className="rounded-lg border border-rice-card bg-white px-[13px] py-3">
                 <div className="text-[10px] leading-tight text-rice-faint">{name}</div>
                 <div className="mt-1 font-display text-[19px] font-bold" style={{ color }}>{value}</div>
               </div>
             ))}
           </div>
 
+          <div className="mt-3.5 rounded-lg border border-[#d8ddd2] bg-[#fbfaf6] px-[18px] py-[15px]">
+            <div className="mb-2 flex items-baseline justify-between gap-3">
+              <div>
+                <div className="text-[12px] font-bold text-[#2f3b34]">{t(language, "farmTotals")}</div>
+                <div className="text-[10px] text-rice-faint">{simulation.farmSize} {t(language, "rai")}</div>
+              </div>
+              <div className={`font-display text-[24px] font-bold ${totals.profit >= 0 ? "text-[#2f6b48]" : "text-[#a24b2b]"}`}>
+                {signedBaht(totals.profit)}
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-x-5 gap-y-2 border-t border-[#ebe7dd] pt-2 md:grid-cols-4">
+              <SummaryTotal label={t(language, "totalRevenue")} value={`฿${formatNumber(totals.revenue)}`} />
+              <SummaryTotal label={t(language, "totalCost")} value={`฿${formatNumber(totals.cost)}`} />
+              <SummaryTotal label={t(language, "riceTotal")} value={`฿${formatNumber(totals.riceRevenue)}`} />
+              <SummaryTotal label={t(language, "strawTotal")} value={`฿${formatNumber(totals.strawRevenue)}`} />
+            </div>
+          </div>
+
           <div
-            className="mt-3.5 flex items-center justify-between rounded-[14px] px-[18px] py-[15px] text-white"
-            style={{
-              background: profitPositive ? "linear-gradient(135deg,#2f8f4e,#6fae3f)" : "linear-gradient(135deg,#c2562f,#d2603a)",
-            }}
+            className={`mt-3.5 flex items-center justify-between rounded-lg px-[18px] py-[15px] text-white ${profitPositive ? "bg-[#2f6b48]" : "bg-[#a24b2b]"}`}
           >
             <div>
               <div className="text-[12px] opacity-90">{profitPositive ? t(language, "profit") : t(language, "loss")} {t(language, "perRai")}</div>
@@ -67,7 +89,7 @@ export default function SummaryDashboard({ simulation }) {
             <div className="font-display text-[30px] font-bold">{signedBaht(model.profitPerRai)}</div>
           </div>
 
-          <div className="mt-3 flex items-center justify-between rounded-[14px] bg-gradient-to-r from-[#1f8a5b] to-[#37b074] px-[18px] py-[13px] text-white">
+          <div className="mt-3 flex items-center justify-between rounded-lg bg-[#2f5d50] px-[18px] py-[13px] text-white">
             <div>
               <div className="text-[12px] font-semibold opacity-95">🌍 {t(language, "carbonCredit")}</div>
               <div className="mt-0.5 text-[11px] opacity-80">
@@ -80,7 +102,7 @@ export default function SummaryDashboard({ simulation }) {
             </div>
           </div>
 
-          <div className="mt-4 rounded-[14px] border border-rice-card bg-white px-4 py-3">
+          <div className="mt-4 rounded-lg border border-rice-card bg-white px-4 py-3">
             <ExplanationPanel language={language} model={model} compact />
           </div>
 
@@ -106,6 +128,15 @@ export default function SummaryDashboard({ simulation }) {
           </div>
         </div>
       </section>
+    </div>
+  );
+}
+
+function SummaryTotal({ label, value }) {
+  return (
+    <div className="min-w-0">
+      <div className="text-[9.5px] leading-tight text-rice-faint">{label}</div>
+      <div className="mt-0.5 font-display text-[16px] font-bold text-[#2f3b34]">{value}</div>
     </div>
   );
 }

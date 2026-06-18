@@ -11,7 +11,7 @@ export default function ScenarioSelector({ language, onSelect }) {
             type="button"
             key={scenario.key}
             onClick={() => onSelect(scenario.key)}
-            className={`rounded-[10px] border border-rice-border bg-white px-[9px] py-2 text-left text-[11px] font-semibold leading-tight text-[#3c473a] transition hover:border-rice-green hover:bg-[#f4faf2] ${
+            className={`rounded-lg border border-rice-border bg-[#fffdf9] px-[9px] py-2 text-left text-[11px] font-semibold leading-tight text-[#3c473a] transition hover:border-rice-green hover:bg-[#f7faf4] ${
               scenario.wide ? "col-span-2" : ""
             }`}
           >

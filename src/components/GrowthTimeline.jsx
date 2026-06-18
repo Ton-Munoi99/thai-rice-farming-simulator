@@ -10,8 +10,8 @@ export default function GrowthTimeline({ simulation }) {
         type="button"
         disabled={isRunning}
         onClick={runSimulation}
-        className={`flex flex-none items-center gap-[9px] rounded-[13px] px-5 py-3 text-left font-sans text-[14px] font-bold text-white shadow-[0_4px_12px_rgba(47,143,78,.30)] transition ${
-          isRunning ? "cursor-default bg-[#9aa394]" : "bg-gradient-to-br from-rice-dark to-rice-green hover:brightness-105"
+        className={`flex flex-none items-center gap-[9px] rounded-lg px-5 py-3 text-left font-sans text-[14px] font-bold text-white shadow-soft transition ${
+          isRunning ? "cursor-default bg-[#99968c]" : "bg-rice-dark hover:bg-rice-green"
         }`}
       >
         <span className="text-[15px]">{isRunning ? "⏳" : phase === "done" ? "↻" : "▶"}</span>
@@ -31,10 +31,10 @@ export default function GrowthTimeline({ simulation }) {
                 <div
                   className={`flex h-[26px] w-[26px] items-center justify-center rounded-full border-2 text-[13px] transition ${
                     active
-                      ? "border-rice-green bg-rice-green text-white shadow-[0_0_0_4px_rgba(47,143,78,.15)]"
+                      ? "border-rice-green bg-rice-green text-white shadow-[0_0_0_4px_rgba(63,111,88,.12)]"
                       : done
-                        ? "border-transparent bg-[#bfe0c4] text-rice-green"
-                        : "border-transparent bg-[#eef1e7] text-[#aab2a0]"
+                        ? "border-transparent bg-[#dce8d8] text-rice-green"
+                        : "border-transparent bg-[#ece8df] text-[#99968c]"
                   }`}
                 >
                   {stage.icon}
@@ -50,9 +50,9 @@ export default function GrowthTimeline({ simulation }) {
             );
           })}
         </div>
-        <div className="absolute left-3.5 right-3.5 top-[13px] z-[1] h-[3px] rounded-[3px] bg-[#e3e8dc]">
+        <div className="absolute left-3.5 right-3.5 top-[13px] z-[1] h-[2px] rounded-[3px] bg-[#e7e2d7]">
           <div
-            className="h-full rounded-[3px] bg-gradient-to-r from-rice-green to-rice-mid transition-[width] duration-[1500ms]"
+            className="h-full rounded-[3px] bg-rice-green transition-[width] duration-[1500ms]"
             style={{ width: `${progress}%` }}
           />
         </div>

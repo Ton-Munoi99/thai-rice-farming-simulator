@@ -11,7 +11,7 @@ export default function FarmSystemSelector({ language, onSelect }) {
             type="button"
             key={preset.key}
             onClick={() => onSelect(preset.key)}
-            className={`rounded-[10px] border border-[#d7e8cf] bg-[#fbfdf8] px-[9px] py-2 text-left text-[11px] font-semibold leading-tight text-[#3c473a] transition hover:border-rice-green hover:bg-[#f1f8ee] ${
+            className={`rounded-lg border border-[#d9e2d1] bg-[#fffdf9] px-[9px] py-2 text-left text-[11px] font-semibold leading-tight text-[#3c473a] transition hover:border-rice-green hover:bg-[#f7faf4] ${
               preset.wide ? "col-span-2" : ""
             }`}
           >

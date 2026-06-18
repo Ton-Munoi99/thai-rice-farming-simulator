@@ -10,6 +10,14 @@ export default function ScorePanel({ simulation }) {
   const { language } = simulation;
   const circumference = 2 * Math.PI * 58;
   const profitPositive = model.profitPerRai >= 0;
+  const totals = {
+    riceRevenue: model.riceRevenuePerRai * simulation.farmSize,
+    strawRevenue: model.straw.revenuePerRai * simulation.farmSize,
+    revenue: model.revenuePerRai * simulation.farmSize,
+    cost: model.costPerRai * simulation.farmSize,
+    profit: model.profitPerRai * simulation.farmSize,
+    strawKg: model.straw.collectableKgPerRai * simulation.farmSize,
+  };
 
   const indicators = [
     [t(language, "fertilizerEfficiency"), model.fertilizerEfficiency, scoreColor(model.fertilizerEfficiency), "%"],
@@ -24,7 +32,7 @@ export default function ScorePanel({ simulation }) {
         <div className="control-heading">{t(language, "liveHealthScore")}</div>
         <div className="text-[10.5px] text-rice-faint">{t(language, "realTime")}</div>
 
-        <section className="mt-2.5 flex flex-col items-center rounded-[15px] border border-rice-card bg-white pb-2.5 pt-3.5">
+        <section className="mt-2.5 flex flex-col items-center rounded-lg border border-rice-card bg-white pb-2.5 pt-3.5">
           <div className="relative h-[140px] w-[140px]">
             <svg width="140" height="140" viewBox="0 0 140 140" className="-rotate-90">
               <circle cx="70" cy="70" r="58" fill="none" stroke="#eef1e7" strokeWidth="13" />
@@ -49,7 +57,7 @@ export default function ScorePanel({ simulation }) {
           <div className="mt-1 text-[13px] font-bold" style={{ color: model.color }}>{pickLang(language, model.label, model.labelTh)}</div>
         </section>
 
-        <section className="mt-[11px] flex items-center justify-between rounded-[14px] border border-[#f0e3bf] bg-gradient-to-br from-[#fff6e0] to-[#fffdf5] px-[15px] py-[13px]">
+        <section className="mt-[11px] flex items-center justify-between rounded-lg border border-[#e6dcc8] bg-[#fffaf0] px-[15px] py-[13px]">
           <div>
             <div className="text-[11px] font-semibold text-[#9a8638]">{t(language, "estimatedYield")}</div>
             <div className="text-[10px] text-[#b6ad8a]">kg / {t(language, "rai")}</div>
@@ -57,7 +65,7 @@ export default function ScorePanel({ simulation }) {
           <div className="font-display text-[30px] font-bold text-rice-gold">{formatNumber(model.estimatedYieldKgPerRai)}</div>
         </section>
 
-        <section className="mt-[9px] flex items-center justify-between gap-2 rounded-[12px] border border-rice-card bg-white px-[13px] py-2.5">
+        <section className="mt-[9px] flex items-center justify-between gap-2 rounded-lg border border-rice-card bg-white px-[13px] py-2.5">
           <div className="leading-tight">
             <div className="text-[11px] font-semibold text-[#3c473a]">{t(language, "salePrice")}</div>
             <div className="text-[9.5px] text-rice-faint">{t(language, "bahtPerTon")}</div>
@@ -78,7 +86,7 @@ export default function ScorePanel({ simulation }) {
           </div>
         </section>
 
-        <section className="mt-[9px] rounded-[12px] border border-[#d7e8cf] bg-[#f8fbf4] px-[13px] py-2.5">
+        <section className="mt-[9px] rounded-lg border border-[#d9e2d1] bg-[#f7faf4] px-[13px] py-2.5">
           <div className="mb-2 flex items-start justify-between gap-2">
             <div className="leading-tight">
               <div className="text-[11px] font-semibold text-[#3c473a]">{t(language, "strawIncome")}</div>
@@ -113,6 +121,25 @@ export default function ScorePanel({ simulation }) {
           </div>
         </section>
 
+        <section className="mt-[9px] rounded-lg border border-[#d8ddd2] bg-[#fbfaf6] px-[13px] py-3">
+          <div className="mb-2 flex items-baseline justify-between">
+            <div className="text-[11px] font-bold text-[#2f3b34]">{t(language, "farmTotals")}</div>
+            <div className="text-[9px] text-rice-faint">{simulation.farmSize} {t(language, "rai")}</div>
+          </div>
+          <div className="grid grid-cols-2 gap-x-3 gap-y-2 border-t border-[#ebe7dd] pt-2">
+            <TotalMetric label={t(language, "totalRevenue")} value={`฿${formatNumber(totals.revenue)}`} tone="ink" />
+            <TotalMetric label={t(language, "totalCost")} value={`฿${formatNumber(totals.cost)}`} tone="muted" />
+            <TotalMetric label={t(language, "riceTotal")} value={`฿${formatNumber(totals.riceRevenue)}`} tone="muted" />
+            <TotalMetric label={t(language, "strawTotal")} value={`฿${formatNumber(totals.strawRevenue)}`} tone="straw" />
+          </div>
+          <div className={`mt-2 rounded-md px-2.5 py-2 ${totals.profit >= 0 ? "bg-[#eef6ed] text-[#2f6b48]" : "bg-[#fbefeb] text-[#a24b2b]"}`}>
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[10px] font-semibold">{t(language, "totalProfit")}</span>
+              <span className="font-display text-[14px] font-bold">{signedBaht(totals.profit)}</span>
+            </div>
+          </div>
+        </section>
+
         <section className="mt-[13px] flex flex-col gap-[11px]">
           {indicators.map(([name, value, color, suffix]) => (
             <div key={name}>
@@ -129,13 +156,13 @@ export default function ScorePanel({ simulation }) {
 
         <ExplanationPanel language={language} model={model} />
 
-        <section className="mt-3.5 rounded-[13px] border border-rice-card bg-white px-[13px] py-3">
+        <section className="mt-3.5 rounded-lg border border-rice-card bg-white px-[13px] py-3">
           <div className="mb-2 flex items-center justify-between">
             <div className="text-[11px] font-bold text-[#3c473a]">{t(language, "costBreakdown")}</div>
             <button
               type="button"
               onClick={simulation.resetCosts}
-              className="rounded-md border border-[#dde3d6] bg-[#f8faf4] px-2 py-1 text-[9.5px] font-semibold text-rice-muted transition hover:bg-white"
+              className="rounded-md border border-[#dedbd0] bg-[#fbfaf6] px-2 py-1 text-[9.5px] font-semibold text-rice-muted transition hover:bg-white"
             >
               {t(language, "reset")}
             </button>
@@ -154,17 +181,14 @@ export default function ScorePanel({ simulation }) {
         </section>
 
         <section className="mt-[9px] grid grid-cols-2 gap-2">
-          <div className="rounded-[11px] border border-rice-card bg-white px-[11px] py-2.5">
+          <div className="rounded-lg border border-rice-card bg-white px-[11px] py-2.5">
             <div className="text-[9.5px] text-rice-faint">{t(language, "revenue")}</div>
             <div className="font-display text-[15px] font-semibold text-[#3c473a]">฿{formatNumber(model.revenuePerRai)}</div>
             <div className="text-[9px] text-[#b6ad8a]">
               {t(language, "riceRevenue")} ฿{formatNumber(model.riceRevenuePerRai)} + {language === "th" ? "ฟาง" : "straw"} ฿{formatNumber(model.straw.revenuePerRai)}
             </div>
           </div>
-          <div
-            className="rounded-[11px] px-[11px] py-2.5 text-white"
-            style={{ background: profitPositive ? "linear-gradient(135deg,#2f8f4e,#6fae3f)" : "linear-gradient(135deg,#c2562f,#d2603a)" }}
-          >
+          <div className={`rounded-lg px-[11px] py-2.5 ${profitPositive ? "bg-[#2f6b48] text-white" : "bg-[#a24b2b] text-white"}`}>
             <div className="text-[9.5px] opacity-90">{profitPositive ? t(language, "profit") : t(language, "loss")}</div>
             <div className="font-display text-[15px] font-bold">{signedBaht(model.profitPerRai)}</div>
             <div className="text-[9px] opacity-80">{t(language, "perRai")}</div>
@@ -188,10 +212,21 @@ function SmallButton({ children, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="h-[22px] w-[22px] rounded-[7px] border border-[#dde3d6] bg-[#f8faf4] p-0 text-[14px] font-bold leading-none text-[#3c473a] transition hover:bg-white"
+      className="h-[22px] w-[22px] rounded-md border border-[#dedbd0] bg-[#fbfaf6] p-0 text-[14px] font-bold leading-none text-[#3c473a] transition hover:bg-white"
     >
       {children}
     </button>
+  );
+}
+
+function TotalMetric({ label, value, tone }) {
+  const color = tone === "ink" ? "text-[#2f3b34]" : tone === "straw" ? "text-[#8a7040]" : "text-[#657066]";
+
+  return (
+    <div className="min-w-0">
+      <div className="text-[8.5px] leading-tight text-rice-faint">{label}</div>
+      <div className={`mt-0.5 font-display text-[13px] font-bold ${color}`}>{value}</div>
+    </div>
   );
 }
 
@@ -213,7 +248,7 @@ function CostRow({ language, item, onChange }) {
 
 function TotalCostRow({ language, value, onChange }) {
   return (
-    <div className="mt-2 rounded-[10px] border border-[#d7e8cf] bg-[#f4faf2] px-2 py-2">
+    <div className="mt-2 rounded-lg border border-[#d9e2d1] bg-[#f7faf4] px-2 py-2">
       <div className="mb-1 flex items-center justify-between gap-2 text-[12px] font-bold text-rice-dark">
         <span>{language === "th" ? "รวมต้นทุน" : "Total cost"}</span>
         <CostStepper value={value} step={100} onChange={onChange} strong />
@@ -259,7 +294,7 @@ function CostStepper({ value, onChange, step, strong = false }) {
         step={step}
         value={Math.round(value)}
         onChange={(event) => next(event.target.value)}
-        className={`w-[68px] rounded-lg border border-[#dde3d6] bg-white px-1 py-1 text-center font-display text-[12px] outline-none ${
+        className={`w-[68px] rounded-lg border border-[#dedbd0] bg-white px-1 py-1 text-center font-display text-[12px] outline-none ${
           strong ? "font-bold text-rice-dark" : "font-semibold text-[#3c473a]"
         }`}
       />
@@ -272,7 +307,7 @@ function CarbonCard({ simulation }) {
   const model = simulation.liveModel;
   const { language } = simulation;
   return (
-    <section className="mt-3.5 rounded-[14px] border border-[#d7e8cf] bg-gradient-to-br from-[#ecf6ec] to-[#f4faf2] px-3.5 py-[13px]">
+    <section className="mt-3.5 rounded-lg border border-[#d9e2d1] bg-[#f7faf4] px-3.5 py-[13px]">
       <div className="mb-2.5 flex items-center gap-[7px]">
         <span className="text-[15px]">🌍</span>
         <div>
@@ -283,7 +318,7 @@ function CarbonCard({ simulation }) {
         <CarbonMetric label={t(language, "emissions")} value={model.carbon.co2PerRai.toFixed(2)} />
         <CarbonMetric label={t(language, "reduced")} value={`-${model.carbon.co2Reduction.toFixed(2)}`} positive />
       </div>
-      <div className="mt-2 flex items-center justify-between rounded-[11px] bg-gradient-to-br from-[#1f8a5b] to-[#2fae6e] px-3 py-2.5 text-white">
+      <div className="mt-2 flex items-center justify-between rounded-lg bg-rice-dark px-3 py-2.5 text-white">
         <div className="leading-tight">
           <div className="text-[10.5px] opacity-90">{t(language, "carbonCredit")}</div>
           <div className="text-[9px] opacity-80">vs continuous flooding · {simulation.farmSize} {t(language, "rai")}</div>

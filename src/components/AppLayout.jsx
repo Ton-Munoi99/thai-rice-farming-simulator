@@ -15,9 +15,9 @@ export default function AppLayout({
 }) {
   return (
     <div className="flex h-screen w-full flex-col overflow-hidden bg-rice-bg text-rice-text">
-      <header className="flex h-[58px] flex-none items-center justify-between gap-3 bg-gradient-to-r from-rice-dark to-rice-green px-5 text-white">
+      <header className="flex h-[58px] flex-none items-center justify-between gap-3 border-b border-[#284d43] bg-rice-dark px-5 text-white">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="flex h-[34px] w-[34px] flex-none items-center justify-center rounded-[9px] bg-white/15 text-[19px]">
+          <div className="flex h-[34px] w-[34px] flex-none items-center justify-center rounded-lg bg-white/10 text-[19px]">
             🌾
           </div>
           <div className="min-w-0 leading-tight">
@@ -29,7 +29,7 @@ export default function AppLayout({
         </div>
 
         <div className="flex flex-none items-center gap-[9px] overflow-x-auto">
-          <div className="hidden items-center gap-1.5 rounded-[9px] bg-white/15 py-1 pl-[11px] pr-2 sm:flex">
+          <div className="hidden items-center gap-1.5 rounded-lg bg-white/10 py-1 pl-[11px] pr-2 sm:flex">
             <span className="text-[11px] opacity-90">{t(language, "farmSize")}</span>
             <HeaderStepButton onClick={() => onFarmSize(farmSize - 1)}>-</HeaderStepButton>
             <input
@@ -39,13 +39,13 @@ export default function AppLayout({
               type="number"
               value={farmSize}
               onChange={(event) => onFarmSize(event.target.value)}
-              className="h-7 w-12 rounded-md border-0 bg-white px-1 text-center font-display text-[13px] font-bold text-rice-dark outline-none"
+              className="h-7 w-12 rounded-md border-0 bg-[#fffdf7] px-1 text-center font-display text-[13px] font-bold text-rice-dark outline-none"
             />
             <HeaderStepButton onClick={() => onFarmSize(farmSize + 1)}>+</HeaderStepButton>
             <span className="text-[11px] opacity-90">{t(language, "rai")}</span>
           </div>
 
-          <div className="hidden gap-1 rounded-[9px] bg-white/15 p-1 lg:flex">
+          <div className="hidden gap-1 rounded-lg bg-white/10 p-1 lg:flex">
             <StyleButton active={fieldStyle === "clumps"} onClick={() => onFieldStyle("clumps")}>
               {t(language, "lushClumps")}
             </StyleButton>
@@ -57,7 +57,7 @@ export default function AppLayout({
           <button
             type="button"
             onClick={onToggleLanguage}
-            className="whitespace-nowrap rounded-[9px] bg-white px-3 py-[7px] text-[12px] font-bold text-rice-dark transition hover:bg-white/90"
+            className="whitespace-nowrap rounded-lg bg-[#fffdf7] px-3 py-[7px] text-[12px] font-bold text-rice-dark transition hover:bg-white"
             aria-label={t(language, "language")}
           >
             {LANGUAGES[language]} / {language === "th" ? "EN" : "ไทย"}
@@ -66,7 +66,7 @@ export default function AppLayout({
           <button
             type="button"
             onClick={onTogglePanel}
-            className="whitespace-nowrap rounded-[9px] bg-white/15 px-3 py-[7px] text-[12px] font-semibold text-white transition hover:bg-white/25"
+            className="whitespace-nowrap rounded-lg bg-white/10 px-3 py-[7px] text-[12px] font-semibold text-white transition hover:bg-white/20"
           >
             {showPanel ? t(language, "hidePanel") : t(language, "showPanel")}
           </button>
@@ -79,7 +79,7 @@ export default function AppLayout({
           <button
             type="button"
             onClick={onTogglePanel}
-            className="absolute right-4 top-[74px] z-20 flex items-center gap-[9px] rounded-[13px] bg-white/95 py-2 pl-[9px] pr-3.5 font-sans shadow-float backdrop-blur"
+            className="absolute right-4 top-[74px] z-20 flex items-center gap-[9px] rounded-lg border border-rice-card bg-[#fffdf7]/95 py-2 pl-[9px] pr-3.5 font-sans shadow-float backdrop-blur"
           >
             <span
               className="flex h-[31px] w-[31px] items-center justify-center rounded-full font-display text-[14px] font-bold text-white"
@@ -103,7 +103,7 @@ function HeaderStepButton({ children, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="flex h-5 w-5 items-center justify-center rounded-md bg-white/90 p-0 text-[15px] font-bold leading-none text-rice-dark transition hover:bg-white"
+      className="flex h-5 w-5 items-center justify-center rounded-md bg-[#fffdf7] p-0 text-[15px] font-bold leading-none text-rice-dark transition hover:bg-white"
     >
       {children}
     </button>
@@ -115,8 +115,8 @@ function StyleButton({ active, children, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-[7px] px-[11px] py-[5px] text-[11.5px] font-semibold transition ${
-        active ? "bg-white text-rice-dark" : "bg-transparent text-white/80 hover:text-white"
+      className={`rounded-md px-[11px] py-[5px] text-[11.5px] font-semibold transition ${
+        active ? "bg-[#fffdf7] text-rice-dark" : "bg-transparent text-white/75 hover:text-white"
       }`}
     >
       {children}

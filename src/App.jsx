@@ -23,7 +23,7 @@ export default function App() {
       onTogglePanel={simulation.togglePanel}
     >
       <ControlPanel simulation={simulation} />
-      <main className="flex min-w-0 flex-1 flex-col bg-[#dfe6d6]">
+      <main className="flex min-w-0 flex-1 flex-col bg-[#e8eadf]">
         <RiceFieldAnimation simulation={simulation} />
         <GrowthTimeline simulation={simulation} />
       </main>
