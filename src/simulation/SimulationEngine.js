@@ -262,6 +262,64 @@ function buildCostBreakdown(variety, nutrients, inputs, overrides = {}) {
   return { breakdown, chemicalProgram };
 }
 
+function buildPriceAdjustment({ inputs, variety, nutrients, basePricePerTon, flags, scores }) {
+  const adjustments = [];
+  const add = (key, label, th, percent, tone = percent >= 0 ? "good" : "warning") => {
+    if (percent === 0) return;
+    adjustments.push({
+      key,
+      label,
+      th,
+      percent,
+      bahtPerTon: Math.round((basePricePerTon * percent) / 10) * 10,
+      tone,
+    });
+  };
+
+  if (flags.nDeficient) add("n-deficit", "Low nitrogen: pale grain risk", "ไนโตรเจนต่ำ: เสี่ยงเมล็ดไม่เต็ม", -0.04, "warning");
+  if (flags.nExcess) add("n-excess", "Excess nitrogen: lodging / soft grain", "ไนโตรเจนเกิน: เสี่ยงล้มและคุณภาพลด", -0.08, "danger");
+  if (!flags.nDeficient && !flags.nExcess && scores.fertilizer >= 82) add("fertilizer-balance", "Balanced fertilizer supports grade", "ปุ๋ยสมดุลช่วยคุณภาพข้าว", 0.01, "good");
+  if (nutrients.K < variety.idealK * 0.7) add("low-k", "Low potassium: weaker grain filling", "โพแทสเซียมต่ำ: เมล็ดเติมไม่ดี", -0.04, "warning");
+
+  if (flags.shortage) add("water-shortage", "Water shortage lowers grain fill", "ขาดน้ำทำให้เมล็ดลีบ/น้ำหนักลด", -0.07, "danger");
+  if (flags.flooded) add("flooded", "Flood / excess water quality discount", "น้ำท่วม/น้ำมาก หักคุณภาพ", -0.08, "danger");
+  if (!flags.shortage && !flags.flooded && scores.water >= 85) add("water-stable", "Stable water improves grain quality", "น้ำพอดีช่วยคุณภาพเมล็ด", 0.01, "good");
+
+  if (inputs.soil === "Poor / Sandy") add("poor-soil", "Poor sandy soil lowers grain uniformity", "ดินทรายเลว เมล็ดสม่ำเสมอน้อยลง", -0.03, "warning");
+  if (inputs.soil === "Rich Clay-Loam") add("rich-soil", "Good soil supports uniform grain", "ดินดีช่วยให้เมล็ดสม่ำเสมอ", 0.01, "good");
+
+  if (inputs.pest >= 75) add("severe-pest", "Severe pest damage", "แมลงระบาดหนัก หักราคาคุณภาพ", -0.06, "danger");
+  else if (inputs.pest >= 45) add("pest", "Pest pressure", "แมลงระบาด หักราคาบางส่วน", -0.03, "warning");
+
+  if (inputs.disease >= 65) add("severe-disease", "Severe disease / stained grain", "โรคหนัก เสี่ยงเมล็ดด่าง/คุณภาพต่ำ", -0.08, "danger");
+  else if (inputs.disease >= 40) add("disease", "Disease pressure", "โรคพืช หักราคาบางส่วน", -0.04, "warning");
+
+  if (inputs.weed >= 65) add("heavy-weed", "Heavy weed competition", "วัชพืชสูง แย่งอาหารจนคุณภาพลด", -0.04, "warning");
+  else if (inputs.weed >= 40) add("weed", "Weed competition", "วัชพืชกดคุณภาพเล็กน้อย", -0.02, "warning");
+
+  if (inputs.weather === "Good Monsoon") add("good-monsoon", "Good monsoon harvest quality", "มรสุมดีช่วยคุณภาพข้าว", 0.02, "good");
+  if (inputs.weather === "Drought") add("drought-weather", "Drought market quality discount", "ภัยแล้ง หักราคาคุณภาพ", -0.05, "danger");
+  if (inputs.weather === "Heavy Rain / Flood") add("heavy-rain", "Heavy rain / wet harvest discount", "ฝนหนัก/เก็บเกี่ยวชื้น หักราคา", -0.07, "danger");
+
+  if (scores.timing < 55) add("late-timing", "Late management / harvest timing", "จัดการช้า เสี่ยงความชื้นและคุณภาพตก", -0.06, "danger");
+  else if (scores.timing < 70) add("soft-timing", "Timing is slightly late", "เวลาจัดการค่อนข้างช้า", -0.03, "warning");
+  else if (scores.timing >= 86) add("timely", "Good timing protects grade", "จัดการตรงเวลาดี ช่วยรักษาเกรด", 0.01, "good");
+
+  const rawPercent = adjustments.reduce((sum, item) => sum + item.percent, 0);
+  const factor = clamp(1 + rawPercent, 0.65, 1.06);
+  const adjustedPricePerTon = Math.round((basePricePerTon * factor) / 10) * 10;
+  const priceDeltaPerTon = adjustedPricePerTon - basePricePerTon;
+
+  return {
+    basePricePerTon,
+    adjustedPricePerTon,
+    priceDeltaPerTon,
+    factor,
+    rawPercent,
+    adjustments,
+  };
+}
+
 function scoreTone(value, inverse = false) {
   const good = inverse ? value <= 25 : value >= 75;
   const fair = inverse ? value <= 50 : value >= 55;
@@ -283,12 +341,14 @@ function buildExplanations({
   growthScore,
   estimatedYieldKgPerRai,
   revenuePerRai,
+  riceRevenuePerRai,
   costPerRai,
   profitPerRai,
   costBreakdown,
   chemicalProgram,
   flags,
   quality,
+  priceAdjustment,
 }) {
   const topScoreFactors = [
     {
@@ -356,7 +416,9 @@ function buildExplanations({
       label: "Revenue",
       th: "รายได้",
       tone: revenuePerRai >= costPerRai ? "good" : "warning",
-      text: `รายได้ ${Math.round(revenuePerRai).toLocaleString("en-US")} baht/rai หลังปรับคุณภาพ (${Math.round(quality * 100)}%)`,
+      text: `รายได้ข้าว ${Math.round(riceRevenuePerRai).toLocaleString("en-US")} baht/rai จากราคาสุทธิ ${priceAdjustment.adjustedPricePerTon.toLocaleString(
+        "en-US",
+      )} baht/ton (${Math.round((quality - 1) * 100)}%)`,
     },
     {
       key: "cost",
@@ -550,15 +612,26 @@ export function computeSimulation(inputs, context) {
       0.1 * timingScore,
   );
 
-  let quality = 1;
-  if (nExcess) quality -= 0.08;
-  if (inputs.disease > 50) quality -= 0.07;
-  if (flooded) quality -= 0.06;
-  if (inputs.pest > 60) quality -= 0.05;
-  quality = clamp(quality, 0.74, 1);
-
-  const estimatedYieldKgPerRai = Math.round(variety.potential * Math.pow(growthScore / 100, 1.25) * (0.9 + 0.1 * quality));
   const flags = { nDeficient, nExcess, shortage, flooded };
+  const priceAdjustment = buildPriceAdjustment({
+    inputs,
+    variety,
+    nutrients,
+    basePricePerTon: context.pricePerTon,
+    flags,
+    scores: {
+      fertilizer: fertilizerScore,
+      water: waterScore,
+      soil: soilScore,
+      weather: weatherScore,
+      timing: timingScore,
+    },
+  });
+  const quality = priceAdjustment.factor;
+  const yieldQualityFactor = Math.min(quality, 1);
+  const estimatedYieldKgPerRai = Math.round(
+    variety.potential * Math.pow(growthScore / 100, 1.25) * (0.9 + 0.1 * yieldQualityFactor),
+  );
   const straw = estimateStrawHarvest(inputs, estimatedYieldKgPerRai, context, flags);
   const { breakdown: costBreakdown, chemicalProgram } = buildCostBreakdown(
     variety,
@@ -567,7 +640,10 @@ export function computeSimulation(inputs, context) {
     context.costOverrides,
   );
   const costPerRai = costBreakdown.reduce((sum, item) => sum + item.value, 0);
-  const riceRevenuePerRai = Math.round(((estimatedYieldKgPerRai * context.pricePerTon) / 1000) * quality / 10) * 10;
+  priceAdjustment.revenueImpactPerRai =
+    Math.round(((estimatedYieldKgPerRai * priceAdjustment.priceDeltaPerTon) / 1000) / 10) * 10;
+  const riceRevenuePerRai =
+    Math.round(((estimatedYieldKgPerRai * priceAdjustment.adjustedPricePerTon) / 1000) / 10) * 10;
   const revenuePerRai = riceRevenuePerRai + straw.revenuePerRai;
   const profitPerRai = revenuePerRai - costPerRai;
 
@@ -672,6 +748,7 @@ export function computeSimulation(inputs, context) {
     profitPerRai,
     straw,
     quality,
+    priceAdjustment,
     nutrients,
     nutrientTotals: { N: Nt, P: Pt, K: Kt },
     condition,
@@ -698,6 +775,7 @@ export function computeSimulation(inputs, context) {
       chemicalProgram,
       flags,
       quality,
+      priceAdjustment,
     }),
     flags,
   };

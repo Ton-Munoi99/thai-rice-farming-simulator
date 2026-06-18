@@ -67,7 +67,7 @@ export default function ScorePanel({ simulation }) {
 
         <section className="mt-[9px] flex items-center justify-between gap-2 rounded-lg border border-rice-card bg-white px-[13px] py-2.5">
           <div className="leading-tight">
-            <div className="text-[11px] font-semibold text-[#3c473a]">{t(language, "salePrice")}</div>
+            <div className="text-[11px] font-semibold text-[#3c473a]">{t(language, "baseSalePrice")}</div>
             <div className="text-[9.5px] text-rice-faint">{t(language, "bahtPerTon")}</div>
           </div>
           <div className="flex items-center gap-[5px]">
@@ -85,6 +85,8 @@ export default function ScorePanel({ simulation }) {
             <SmallButton onClick={() => simulation.setPricePerTon(simulation.pricePerTon + 100)}>+</SmallButton>
           </div>
         </section>
+
+        <PriceAdjustmentCard language={language} model={model} />
 
         <section className="mt-[9px] rounded-lg border border-[#d9e2d1] bg-[#f7faf4] px-[13px] py-2.5">
           <div className="mb-2 flex items-start justify-between gap-2">
@@ -228,6 +230,81 @@ function TotalMetric({ label, value, tone }) {
       <div className={`mt-0.5 font-display text-[13px] font-bold ${color}`}>{value}</div>
     </div>
   );
+}
+
+function PriceAdjustmentCard({ language, model }) {
+  const price = model.priceAdjustment;
+  const isDiscount = price.priceDeltaPerTon < 0;
+  const visibleAdjustments = price.adjustments
+    .filter((item) => item.percent !== 0)
+    .sort((a, b) => Math.abs(b.percent) - Math.abs(a.percent))
+    .slice(0, 5);
+
+  return (
+    <section className="mt-[9px] rounded-lg border border-[#e6dcc8] bg-[#fffaf0] px-[13px] py-2.5">
+      <div className="flex items-start justify-between gap-2">
+        <div className="leading-tight">
+          <div className="text-[11px] font-bold text-[#3c473a]">{t(language, "adjustedSalePrice")}</div>
+          <div className="text-[9.5px] text-rice-faint">{t(language, "priceAdjustment")}</div>
+        </div>
+        <div className="text-right">
+          <div className={`font-display text-[18px] font-bold ${isDiscount ? "text-[#a24b2b]" : "text-[#2f6b48]"}`}>
+            ฿{formatNumber(price.adjustedPricePerTon)}
+          </div>
+          <div className="text-[8.5px] text-rice-faint">/{language === "th" ? "ตัน" : "ton"}</div>
+        </div>
+      </div>
+
+      <div className="mt-2 grid grid-cols-2 gap-1.5 border-t border-[#f0e3bf] pt-2">
+        <PriceMiniMetric
+          label={t(language, "priceImpact")}
+          value={`${signedTonBaht(price.priceDeltaPerTon)}/t`}
+          danger={isDiscount}
+        />
+        <PriceMiniMetric
+          label={t(language, "qualityFactor")}
+          value={`${Math.round(price.factor * 100)}%`}
+          danger={isDiscount}
+        />
+      </div>
+
+      <div className="mt-2 flex flex-col gap-1">
+        {visibleAdjustments.map((item) => (
+          <div key={item.key} className="flex items-start justify-between gap-2 text-[9.3px] leading-snug">
+            <span className="min-w-0 text-[#6d644f]">{pickLang(language, item.label, item.th)}</span>
+            <span className={`flex-none font-display font-bold ${item.percent < 0 ? "text-[#a24b2b]" : "text-[#2f6b48]"}`}>
+              {formatPercent(item.percent)} · {signedTonBaht(item.bahtPerTon)}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-1.5 text-[8.5px] leading-snug text-[#9f8b62]">
+        {language === "th"
+          ? `ผลต่อรายได้ข้าว ${signedBaht(price.revenueImpactPerRai)}/ไร่ จากราคาฐาน ${formatNumber(price.basePricePerTon)} บาท/ตัน`
+          : `Rice revenue impact ${signedBaht(price.revenueImpactPerRai)}/rai from base ฿${formatNumber(price.basePricePerTon)}/ton.`}
+      </div>
+    </section>
+  );
+}
+
+function PriceMiniMetric({ label, value, danger }) {
+  return (
+    <div className="rounded-md bg-white/70 px-2 py-1.5">
+      <div className="text-[8.5px] text-rice-faint">{label}</div>
+      <div className={`font-display text-[11.5px] font-bold ${danger ? "text-[#a24b2b]" : "text-[#2f6b48]"}`}>{value}</div>
+    </div>
+  );
+}
+
+function formatPercent(value) {
+  const percent = Math.round(value * 100);
+  return `${percent > 0 ? "+" : ""}${percent}%`;
+}
+
+function signedTonBaht(value) {
+  const prefix = value >= 0 ? "+฿" : "-฿";
+  return `${prefix}${formatNumber(Math.abs(value))}`;
 }
 
 function CostRow({ language, item, onChange }) {

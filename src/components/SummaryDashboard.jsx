@@ -26,6 +26,7 @@ export default function SummaryDashboard({ simulation }) {
     [t(language, "soilHealth"), `${model.soilHealth}%`, scoreColor(model.soilHealth)],
     [t(language, "productionCost"), `฿${formatNumber(model.costPerRai)}`, "#3c473a"],
     [t(language, "revenue"), `฿${formatNumber(model.revenuePerRai)}`, "#3c473a"],
+    [t(language, "adjustedSalePrice"), `฿${formatNumber(model.priceAdjustment.adjustedPricePerTon)}/t`, model.priceAdjustment.priceDeltaPerTon < 0 ? "#a24b2b" : "#2f6b48"],
     [t(language, "strawIncome"), `${formatNumber(model.straw.collectableKgPerRai)} kg/rai`, "#8a7040"],
     [t(language, "strawRevenue"), `฿${formatNumber(model.straw.revenuePerRai)}`, "#8a7040"],
   ];
@@ -84,6 +85,9 @@ export default function SummaryDashboard({ simulation }) {
               </div>
               <div className="mt-0.5 text-[10px] opacity-75">
                 {t(language, "riceRevenue")} ฿{formatNumber(model.riceRevenuePerRai)} + {language === "th" ? "ฟาง" : "straw"} ฿{formatNumber(model.straw.revenuePerRai)}/{t(language, "rai")}
+              </div>
+              <div className="mt-0.5 text-[10px] opacity-75">
+                {t(language, "adjustedSalePrice")} ฿{formatNumber(model.priceAdjustment.adjustedPricePerTon)}/t ({model.priceAdjustment.priceDeltaPerTon >= 0 ? "+" : ""}{formatNumber(model.priceAdjustment.priceDeltaPerTon)})
               </div>
             </div>
             <div className="font-display text-[30px] font-bold">{signedBaht(model.profitPerRai)}</div>
