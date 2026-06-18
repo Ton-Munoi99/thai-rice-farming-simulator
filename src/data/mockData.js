@@ -11,17 +11,17 @@ export const STAGES = [
 export const GROWTH_FRACTIONS = [0, 0.16, 0.4, 0.58, 0.74, 0.9, 1];
 
 export const FERTILIZER_FORMULAS = {
-  None: { n: 0, p: 0, k: 0, price: 0, th: "ไม่ใส่" },
-  "18-46-0": { n: 18, p: 46, k: 0, price: 30, th: "DAP รองพื้น P สูง" },
-  "16-20-0": { n: 16, p: 20, k: 0, price: 26, th: "รองพื้น" },
-  "16-16-8": { n: 16, p: 16, k: 8, price: 27, th: "สมดุล เร่งต้น" },
-  "15-15-15": { n: 15, p: 15, k: 15, price: 28, th: "เสมอ สมดุล" },
-  "20-10-10": { n: 20, p: 10, k: 10, price: 27, th: "เร่งต้น N สูง" },
-  "46-0-0": { n: 46, p: 0, k: 0, price: 22, th: "ยูเรีย เร่ง N" },
-  "21-0-0": { n: 21, p: 0, k: 0, price: 18, th: "แอมโมเนียมซัลเฟต" },
-  "15-5-20": { n: 15, p: 5, k: 20, price: 26, th: "รับรวง K สูง" },
-  "13-13-21": { n: 13, p: 13, k: 21, price: 28, th: "รับรวง K สูง" },
-  "0-0-60": { n: 0, p: 0, k: 60, price: 26, th: "โพแทช K" },
+  None: { n: 0, p: 0, k: 0, price: 0, th: "ไม่ใส่", en: "No fertilizer" },
+  "18-46-0": { n: 18, p: 46, k: 0, price: 30, th: "DAP รองพื้น P สูง", en: "DAP / high-P basal" },
+  "16-20-0": { n: 16, p: 20, k: 0, price: 26, th: "รองพื้น", en: "Basal fertilizer" },
+  "16-16-8": { n: 16, p: 16, k: 8, price: 27, th: "สมดุล เร่งต้น", en: "Balanced early growth" },
+  "15-15-15": { n: 15, p: 15, k: 15, price: 28, th: "เสมอ สมดุล", en: "Balanced complete" },
+  "20-10-10": { n: 20, p: 10, k: 10, price: 27, th: "เร่งต้น N สูง", en: "High-N vegetative boost" },
+  "46-0-0": { n: 46, p: 0, k: 0, price: 22, th: "ยูเรีย เร่ง N", en: "Urea / nitrogen boost" },
+  "21-0-0": { n: 21, p: 0, k: 0, price: 18, th: "แอมโมเนียมซัลเฟต", en: "Ammonium sulfate" },
+  "15-5-20": { n: 15, p: 5, k: 20, price: 26, th: "รับรวง K สูง", en: "High-K panicle support" },
+  "13-13-21": { n: 13, p: 13, k: 21, price: 28, th: "รับรวง K สูง", en: "High-K grain filling" },
+  "0-0-60": { n: 0, p: 0, k: 60, price: 26, th: "โพแทช K", en: "Potash / potassium" },
 };
 
 export const FERTILIZER_STAGES = [

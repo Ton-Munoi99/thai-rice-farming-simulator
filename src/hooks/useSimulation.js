@@ -292,7 +292,7 @@ export function useSimulation() {
               : "- No fertilizer -"
             : language === "th"
               ? `${key} · ${FERTILIZER_FORMULAS[key].th}`
-              : `${key} · ${FERTILIZER_FORMULAS[key].n}-${FERTILIZER_FORMULAS[key].p}-${FERTILIZER_FORMULAS[key].k}`,
+              : `${key} · ${FERTILIZER_FORMULAS[key].en}`,
       })),
     [language],
   );
