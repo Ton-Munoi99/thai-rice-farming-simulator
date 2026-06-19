@@ -73,7 +73,7 @@ export default function ScorePanel({ simulation }) {
           <div className="flex items-center gap-[5px]">
             <SmallButton onClick={() => simulation.setPricePerTon(simulation.pricePerTon - 100)}>-</SmallButton>
             <input
-              aria-label="Sale price per ton"
+              aria-label="Average paddy price per ton"
               value={simulation.pricePerTon}
               type="number"
               min="1000"

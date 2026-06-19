@@ -56,7 +56,7 @@ export const TEXT = {
   liveHealthScore: { en: "Live health score", th: "คะแนนสุขภาพข้าว" },
   realTime: { en: "Real-time estimate", th: "ประเมินเรียลไทม์" },
   estimatedYield: { en: "Estimated yield", th: "ผลผลิตคาดการณ์" },
-  salePrice: { en: "Sale price", th: "ราคาขาย" },
+  salePrice: { en: "Average paddy price", th: "ราคาข้าวเปลือกเฉลี่ย" },
   linkedCostDrivers: { en: "Linked cost drivers", th: "ต้นทุนที่เพิ่มจากเงื่อนไข" },
   autoCostImpact: { en: "Auto cost impact", th: "ผลกระทบต้นทุนอัตโนมัติ" },
   moistureNote: { en: "Rice price stays market-driven; only wet-harvest moisture can discount revenue.", th: "ราคาข้าวเป็นราคาตลาด; ระบบหักรายได้เฉพาะกรณีความชื้นจากเก็บเกี่ยวเปียก" },
