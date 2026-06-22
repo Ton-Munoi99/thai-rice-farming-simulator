@@ -23,10 +23,10 @@ export default function ControlPanel({ simulation }) {
           </div>
         </section>
         <ScenarioSelector language={language} onSelect={simulation.applyScenario} />
-        <WhiteRiceSurvivalPanel simulation={simulation} />
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 pb-4 pt-1.5">
+        <WhiteRiceSurvivalPanel simulation={simulation} />
         <FarmSystemSelector language={language} onSelect={simulation.applyFarmSystemPreset} />
         <AutoRecommendationPanel language={language} recommendation={simulation.autoRecommendation} onApply={simulation.applyAutoRecommendation} />
 
