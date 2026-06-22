@@ -27,6 +27,7 @@ export default function SummaryDashboard({ simulation }) {
     [t(language, "productionCost"), `฿${formatNumber(model.costPerRai)}`, "#3c473a"],
     [t(language, "revenue"), `฿${formatNumber(model.revenuePerRai)}`, "#3c473a"],
     [t(language, "strawIncome"), `${formatNumber(model.straw.collectableKgPerRai)} kg/rai`, "#8a7040"],
+    [t(language, "surplusStraw"), `${formatNumber(model.straw.surplusKgPerRai)} kg/rai`, "#8a7040"],
     [t(language, "strawRevenue"), `฿${formatNumber(model.straw.revenuePerRai)}`, "#8a7040"],
   ];
 

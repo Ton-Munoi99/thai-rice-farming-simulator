@@ -101,7 +101,7 @@ export default function ScorePanel({ simulation }) {
             <div className="leading-tight">
               <div className="text-[10px] font-semibold text-[#5f755c]">{t(language, "strawPrice")}</div>
               <div className="text-[8.5px] text-rice-faint">
-                {language === "th" ? "เก็บได้" : "collection"} {model.straw.collectionPercent}% · {t(language, "strawRevenue")} ฿{formatNumber(model.straw.revenuePerRai)}
+                RPR {model.straw.residueToPaddyRatio} · SAF {model.straw.surplusAvailabilityFactor} · {t(language, "collectionAdjusted")} {model.straw.collectionPercent}%
               </div>
             </div>
             <div className="flex items-center gap-[5px]">
@@ -117,6 +117,20 @@ export default function ScorePanel({ simulation }) {
                 className="w-[58px] rounded-lg border border-[#dde3d6] bg-white px-1 py-1 text-center font-display text-[12px] font-bold text-[#3c473a] outline-none"
               />
               <SmallButton onClick={() => simulation.setStrawPricePerKg(simulation.strawPricePerKg + 0.1)}>+</SmallButton>
+            </div>
+          </div>
+          <div className="mt-2 grid grid-cols-3 gap-1.5 border-t border-[#d9e2d1] pt-2 text-[8.5px] text-rice-faint">
+            <div>
+              <span className="block font-semibold text-[#5f755c]">{t(language, "totalStraw")}</span>
+              {formatNumber(model.straw.totalResidueKgPerRai)} kg/{t(language, "rai")}
+            </div>
+            <div>
+              <span className="block font-semibold text-[#5f755c]">{t(language, "surplusStraw")}</span>
+              {formatNumber(model.straw.surplusKgPerRai)} kg/{t(language, "rai")}
+            </div>
+            <div>
+              <span className="block font-semibold text-[#5f755c]">{t(language, "strawRevenue")}</span>
+              ฿{formatNumber(model.straw.revenuePerRai)}
             </div>
           </div>
         </section>

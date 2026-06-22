@@ -49,8 +49,11 @@ export const COST_ITEMS = [
 ];
 
 function estimateStrawHarvest(inputs, estimatedYieldKgPerRai, context, flags) {
-  const totalResidueKgPerRai = Math.round(estimatedYieldKgPerRai * 1.25);
-  const baseCollectableRatio = 0.82;
+  // Rice-map method: total rice straw = paddy production x RPR, then surplus straw = total straw x SAF.
+  const residueToPaddyRatio = 1.169;
+  const surplusAvailabilityFactor = 0.583;
+  const totalResidueKgPerRai = Math.round(estimatedYieldKgPerRai * residueToPaddyRatio);
+  const surplusKgPerRai = Math.round(totalResidueKgPerRai * surplusAvailabilityFactor);
 
   let collectionFactor = 1;
   if (inputs.weather === "Good Monsoon") collectionFactor += 0.03;
@@ -66,20 +69,25 @@ function estimateStrawHarvest(inputs, estimatedYieldKgPerRai, context, flags) {
   collectionFactor -= clamp((72 - inputs.managementTiming) * 0.004, 0, 0.18);
   collectionFactor = clamp(collectionFactor, 0.42, 1.08);
 
-  const collectableKgPerRai = Math.round(estimatedYieldKgPerRai * baseCollectableRatio * collectionFactor);
+  const collectableKgPerRai = Math.round(surplusKgPerRai * collectionFactor);
   const pricePerKg = clamp(Number(context.strawPricePerKg) || 0, 0, 10);
   const revenuePerRai = Math.round((collectableKgPerRai * pricePerKg) / 10) * 10;
 
   return {
     totalResidueKgPerRai,
+    surplusKgPerRai,
     collectableKgPerRai,
     collectionFactor,
-    collectionPercent: totalResidueKgPerRai > 0 ? Math.round((collectableKgPerRai / totalResidueKgPerRai) * 100) : 0,
+    collectionPercent: surplusKgPerRai > 0 ? Math.round((collectableKgPerRai / surplusKgPerRai) * 100) : 0,
+    surplusPercent: Math.round(surplusAvailabilityFactor * 1000) / 10,
+    residueToPaddyRatio,
+    surplusAvailabilityFactor,
     pricePerKg,
     revenuePerRai,
     reference: {
       collectableRangeKgPerRai: [400, 500],
-      totalResidueKgPerRai: 650,
+      residueToPaddyRatio,
+      surplusAvailabilityFactor,
     },
   };
 }
