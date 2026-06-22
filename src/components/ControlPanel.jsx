@@ -84,6 +84,10 @@ export default function ControlPanel({ simulation }) {
 
 function WhiteRiceSurvivalPanel({ simulation }) {
   const { language, liveModel } = simulation;
+  const activePreset =
+    WHITE_RICE_SURVIVAL_PRESETS.find((preset) => preset.key === simulation.activeSurvivalPresetKey) ??
+    WHITE_RICE_SURVIVAL_PRESETS.find((preset) => preset.key === "breakEven");
+  const target = activePreset.target;
   const current = {
     yield: liveModel.estimatedYieldKgPerRai,
     cost: liveModel.costPerRai,
@@ -104,7 +108,11 @@ function WhiteRiceSurvivalPanel({ simulation }) {
             key={preset.key}
             type="button"
             onClick={() => simulation.applyWhiteRiceSurvivalPreset(preset.key)}
-            className="rounded-lg border border-[#dedbd0] bg-white px-2 py-2 text-left transition hover:border-rice-green hover:bg-[#f2f7ef]"
+            className={`rounded-lg border px-2 py-2 text-left transition hover:border-rice-green hover:bg-[#f2f7ef] ${
+              simulation.activeSurvivalPresetKey === preset.key
+                ? "border-rice-green bg-[#f2f7ef] shadow-soft"
+                : "border-[#dedbd0] bg-white"
+            }`}
           >
             <div className="flex items-center gap-1 text-[10.5px] font-bold text-[#3c473a]">
               <span>{preset.icon}</span>
@@ -120,11 +128,13 @@ function WhiteRiceSurvivalPanel({ simulation }) {
         ))}
       </div>
       <div className="mt-2.5 rounded-md border border-[#e5e1d4] bg-white/70 px-2.5 py-2">
-        <div className="mb-1 text-[9.5px] font-bold text-[#5f755c]">{t(language, "survivalLiveCheck")}</div>
-        <SurvivalCheck language={language} label={t(language, "estimatedYield")} current={`${current.yield} kg/rai`} ok={current.yield >= 650} target="≥650 kg/rai" />
-        <SurvivalCheck language={language} label={t(language, "productionCost")} current={`฿${current.cost.toLocaleString("en-US")}`} ok={current.cost <= 5500} target="≤฿5,500" />
-        <SurvivalCheck language={language} label={t(language, "salePrice")} current={`฿${current.price.toLocaleString("en-US")}`} ok={current.price >= 8800} target="≥฿8,800/t" />
-        <SurvivalCheck language={language} label={t(language, "strawPrice")} current={`฿${current.straw.toFixed(2)}/kg`} ok={current.straw >= 0.85} target="≥฿0.85/kg" />
+        <div className="mb-1 text-[9.5px] font-bold text-[#5f755c]">
+          {t(language, "survivalLiveCheck")} · {pickLang(language, activePreset.name, activePreset.th)}
+        </div>
+        <SurvivalCheck language={language} label={t(language, "estimatedYield")} current={`${current.yield} kg/rai`} ok={current.yield >= target.yield} target={`≥${target.yield} kg/rai`} />
+        <SurvivalCheck language={language} label={t(language, "productionCost")} current={`฿${current.cost.toLocaleString("en-US")}`} ok={current.cost <= target.cost} target={`≤฿${target.cost.toLocaleString("en-US")}`} />
+        <SurvivalCheck language={language} label={t(language, "salePrice")} current={`฿${current.price.toLocaleString("en-US")}`} ok={current.price >= target.price} target={`≥฿${target.price.toLocaleString("en-US")}/t`} />
+        <SurvivalCheck language={language} label={t(language, "strawPrice")} current={`฿${current.straw.toFixed(2)}/kg`} ok={current.straw >= target.straw} target={`≥฿${target.straw.toFixed(2)}/kg`} />
         <SurvivalCheck language={language} label={t(language, "profit")} current={`฿${current.profit.toLocaleString("en-US")}`} ok={current.profit >= 0} target="≥฿0" />
       </div>
       <div className="mt-1.5 text-[8.5px] leading-snug text-[#9a8a5d]">

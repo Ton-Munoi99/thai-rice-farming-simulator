@@ -55,6 +55,35 @@ export default function ScorePanel({ simulation }) {
             </div>
           </div>
           <div className="mt-1 text-[13px] font-bold" style={{ color: model.color }}>{pickLang(language, model.label, model.labelTh)}</div>
+          <div className="mt-0.5 text-[9px] text-rice-faint">{t(language, "cropHealth")}</div>
+        </section>
+
+        <section className={`mt-[9px] rounded-lg border px-[13px] py-2.5 ${
+          model.financialRisk.tone === "good"
+            ? "border-[#d7e8cf] bg-[#f4faf2]"
+            : model.financialRisk.tone === "warning"
+              ? "border-[#eadfbf] bg-[#fffaf0]"
+              : "border-[#ead5cd] bg-[#fff5f0]"
+        }`}>
+          <div className="flex items-start justify-between gap-2">
+            <div>
+              <div className="text-[10.5px] font-bold text-[#3c473a]">{t(language, "financialRisk")}</div>
+              <div className="mt-0.5 text-[9px] text-rice-faint">{t(language, "includingStraw")}</div>
+            </div>
+            <div className={`rounded-md px-2 py-1 text-[9.5px] font-bold ${
+              model.financialRisk.tone === "good"
+                ? "bg-[#dcefdc] text-[#2f6b48]"
+                : model.financialRisk.tone === "warning"
+                  ? "bg-[#fff0c7] text-[#8a641c]"
+                  : "bg-[#fde5dc] text-[#a24b2b]"
+            }`}>
+              {pickLang(language, model.financialRisk.level, model.financialRisk.levelTh)}
+            </div>
+          </div>
+          <div className="mt-2 grid grid-cols-2 gap-1.5 border-t border-black/5 pt-2">
+            <TotalMetric label={t(language, "breakEvenYield")} value={`${formatNumber(model.financialRisk.breakEvenYieldKgPerRai)} kg`} tone="muted" />
+            <TotalMetric label={t(language, "breakEvenPrice")} value={`฿${formatNumber(model.financialRisk.breakEvenPricePerTon)}`} tone="muted" />
+          </div>
         </section>
 
         <section className="mt-[11px] flex items-center justify-between rounded-lg border border-[#e6dcc8] bg-[#fffaf0] px-[15px] py-[13px]">

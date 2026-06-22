@@ -251,6 +251,15 @@ export function buildAutoRecommendation(inputs, varietyKey) {
 
 function buildCostBreakdown(variety, nutrients, inputs, overrides = {}, context = {}) {
   const chemicalProgram = estimateChemicalProgram(inputs, variety.costs.chemicals);
+  const profile = context.costProfile ?? {};
+  const fertilizerCost =
+    Number.isFinite(profile.fertilizer) && Number.isFinite(profile.fertilizerReferenceCost) && profile.fertilizerReferenceCost > 0
+      ? Math.round(nutrients.cost * (profile.fertilizer / profile.fertilizerReferenceCost))
+      : Math.round(nutrients.cost);
+  const chemicalCost =
+    Number.isFinite(profile.chemicals)
+      ? Math.max(0, chemicalProgram.cost + Math.round(profile.chemicals - variety.costs.chemicals))
+      : chemicalProgram.cost;
   const drivers = [];
   const addCost = (itemKey, amount, label, th, tone = "warning") => {
     if (amount <= 0) return;
@@ -305,13 +314,13 @@ function buildCostBreakdown(variety, nutrients, inputs, overrides = {}, context 
     return totals;
   }, {});
   const defaults = {
-    seed: variety.costs.seed,
-    fertilizer: Math.round(nutrients.cost),
-    chemicals: chemicalProgram.cost,
-    labor: variety.costs.labor + (driverTotals.labor ?? 0),
-    rent: variety.costs.rent,
-    fuel: variety.costs.fuel + (driverTotals.fuel ?? 0),
-    transport: variety.costs.transport + (driverTotals.transport ?? 0),
+    seed: Number.isFinite(profile.seed) ? profile.seed : variety.costs.seed,
+    fertilizer: fertilizerCost,
+    chemicals: chemicalCost,
+    labor: (Number.isFinite(profile.labor) ? profile.labor : variety.costs.labor) + (driverTotals.labor ?? 0),
+    rent: Number.isFinite(profile.rent) ? profile.rent : variety.costs.rent,
+    fuel: (Number.isFinite(profile.fuel) ? profile.fuel : variety.costs.fuel) + (driverTotals.fuel ?? 0),
+    transport: (Number.isFinite(profile.transport) ? profile.transport : variety.costs.transport) + (driverTotals.transport ?? 0),
   };
 
   const breakdown = COST_ITEMS.map((item) => {
@@ -328,6 +337,68 @@ function buildCostBreakdown(variety, nutrients, inputs, overrides = {}, context 
       total: drivers.reduce((sum, driver) => sum + driver.amount, 0),
       byItem: driverTotals,
     },
+  };
+}
+
+function buildFinancialRisk({
+  profitPerRai,
+  revenuePerRai,
+  costPerRai,
+  riceRevenuePerRai,
+  estimatedYieldKgPerRai,
+  pricePerTon,
+  quality,
+  strawRevenuePerRai,
+}) {
+  const netCostAfterStraw = Math.max(0, costPerRai - strawRevenuePerRai);
+  const ricePricePerKg = Math.max(0.1, (pricePerTon / 1000) * quality);
+  const breakEvenYieldKgPerRai = Math.ceil(netCostAfterStraw / ricePricePerKg);
+  const breakEvenPricePerTon =
+    estimatedYieldKgPerRai > 0 ? Math.ceil((netCostAfterStraw / estimatedYieldKgPerRai / Math.max(quality, 0.1)) * 10) * 100 : 0;
+  const margin = revenuePerRai > 0 ? profitPerRai / revenuePerRai : -1;
+  const riceOnlyGap = riceRevenuePerRai - costPerRai;
+
+  if (profitPerRai >= 800 && margin >= 0.12) {
+    return {
+      level: "Low",
+      levelTh: "การเงินเสี่ยงต่ำ",
+      tone: "good",
+      breakEvenYieldKgPerRai,
+      breakEvenPricePerTon,
+      margin,
+      riceOnlyGap,
+    };
+  }
+  if (profitPerRai >= 0) {
+    return {
+      level: "Watch",
+      levelTh: "พอรอด/ต้องเฝ้าระวัง",
+      tone: "warning",
+      breakEvenYieldKgPerRai,
+      breakEvenPricePerTon,
+      margin,
+      riceOnlyGap,
+    };
+  }
+  if (profitPerRai >= -1000) {
+    return {
+      level: "High",
+      levelTh: "การเงินเสี่ยงสูง",
+      tone: "danger",
+      breakEvenYieldKgPerRai,
+      breakEvenPricePerTon,
+      margin,
+      riceOnlyGap,
+    };
+  }
+  return {
+    level: "Severe",
+    levelTh: "เสี่ยงขาดทุนหนัก",
+    tone: "danger",
+    breakEvenYieldKgPerRai,
+    breakEvenPricePerTon,
+    margin,
+    riceOnlyGap,
   };
 }
 
@@ -351,6 +422,7 @@ function buildExplanations({
   timingScore,
   growthScore,
   estimatedYieldKgPerRai,
+  yieldPotential,
   revenuePerRai,
   riceRevenuePerRai,
   costPerRai,
@@ -419,7 +491,7 @@ function buildExplanations({
       label: "Yield driver",
       th: "ตัวขับผลผลิต",
       tone: growthScore >= 60 ? "good" : growthScore >= 45 ? "warning" : "danger",
-      text: `Growth ${growthScore}/100 แปลงเป็นผลผลิตประมาณ ${estimatedYieldKgPerRai} kg/rai จากศักยภาพพันธุ์ ${variety.potential} kg/rai`,
+      text: `Growth ${growthScore}/100 แปลงเป็นผลผลิตประมาณ ${estimatedYieldKgPerRai} kg/rai จากศักยภาพระบบผลิต ${yieldPotential} kg/rai`,
     },
     {
       key: "revenue",
@@ -628,19 +700,30 @@ export function computeSimulation(inputs, context) {
   if (timingScore < 55) quality -= 0.03;
   quality = clamp(quality, 0.88, 1);
 
-  const estimatedYieldKgPerRai = Math.round(variety.potential * Math.pow(growthScore / 100, 1.25));
+  const yieldPotential = Math.max(1, context.yieldPotentialOverride ?? variety.potential);
+  const estimatedYieldKgPerRai = Math.round(yieldPotential * Math.pow(growthScore / 100, 1.25));
   const straw = estimateStrawHarvest(inputs, estimatedYieldKgPerRai, context, flags);
   const { breakdown: costBreakdown, chemicalProgram, costDrivers } = buildCostBreakdown(
     variety,
     nutrients,
     inputs,
     context.costOverrides,
-    { flags, pumpActive, estimatedYieldKgPerRai },
+    { flags, pumpActive, estimatedYieldKgPerRai, costProfile: context.costProfile },
   );
   const costPerRai = costBreakdown.reduce((sum, item) => sum + item.value, 0);
   const riceRevenuePerRai = Math.round(((estimatedYieldKgPerRai * context.pricePerTon) / 1000) * quality / 10) * 10;
   const revenuePerRai = riceRevenuePerRai + straw.revenuePerRai;
   const profitPerRai = revenuePerRai - costPerRai;
+  const financialRisk = buildFinancialRisk({
+    profitPerRai,
+    revenuePerRai,
+    costPerRai,
+    riceRevenuePerRai,
+    estimatedYieldKgPerRai,
+    pricePerTon: context.pricePerTon,
+    quality,
+    strawRevenuePerRai: straw.revenuePerRai,
+  });
 
   const condition = {
     greenness: nDeficient ? -0.75 : nExcess ? 0.9 : clamp((Nt - variety.idealN) / 10, -0.3, 0.35),
@@ -735,6 +818,7 @@ export function computeSimulation(inputs, context) {
     soilHealth: Math.round(soilScore),
     pestDiseaseRisk: Math.round(100 - pestDiseaseScore),
     estimatedYieldKgPerRai,
+    yieldPotential,
     costBreakdown,
     chemicalProgram,
     costDrivers,
@@ -742,6 +826,7 @@ export function computeSimulation(inputs, context) {
     revenuePerRai,
     riceRevenuePerRai,
     profitPerRai,
+    financialRisk,
     straw,
     quality,
     nutrients,
@@ -762,6 +847,7 @@ export function computeSimulation(inputs, context) {
       timingScore,
       growthScore,
       estimatedYieldKgPerRai,
+      yieldPotential,
       revenuePerRai,
       riceRevenuePerRai,
       costPerRai,

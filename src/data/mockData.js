@@ -229,7 +229,8 @@ export const WHITE_RICE_SURVIVAL_PRESETS = [
     th: "ฐานเสี่ยงขาดทุน",
     pricePerTon: 8000,
     strawPricePerKg: 0.75,
-    costOverrides: { seed: 400, fertilizer: 1210, chemicals: 530, labor: 2200, rent: 1000, fuel: 520, transport: 560 },
+    yieldPotential: 600,
+    costProfile: { seed: 400, fertilizer: 1210, chemicals: 250, labor: 2200, rent: 1000, fuel: 500, transport: 540 },
     target: { yield: 650, cost: 6100, price: 8500, straw: 0.75 },
     inputs: {
       applications: whiteApps.map((app) => ({ ...app })),
@@ -252,7 +253,8 @@ export const WHITE_RICE_SURVIVAL_PRESETS = [
     th: "คุมต้นทุนให้คุ้มทุน",
     pricePerTon: 9000,
     strawPricePerKg: 0.85,
-    costOverrides: { seed: 360, fertilizer: 1100, chemicals: 330, labor: 1900, rent: 850, fuel: 450, transport: 420 },
+    yieldPotential: 760,
+    costProfile: { seed: 360, fertilizer: 1100, chemicals: 220, labor: 1900, rent: 850, fuel: 430, transport: 420 },
     target: { yield: 650, cost: 5400, price: 9000, straw: 0.85 },
     inputs: {
       applications: [
@@ -279,7 +281,8 @@ export const WHITE_RICE_SURVIVAL_PRESETS = [
     th: "สุพรรณฯ น้ำดี",
     pricePerTon: 9200,
     strawPricePerKg: 1.05,
-    costOverrides: { seed: 330, fertilizer: 1050, chemicals: 260, labor: 1700, rent: 750, fuel: 430, transport: 430 },
+    yieldPotential: 830,
+    costProfile: { seed: 330, fertilizer: 1050, chemicals: 180, labor: 1700, rent: 750, fuel: 390, transport: 420 },
     target: { yield: 736, cost: 5200, price: 9000, straw: 1 },
     inputs: {
       applications: [
@@ -306,7 +309,8 @@ export const WHITE_RICE_SURVIVAL_PRESETS = [
     th: "ฟาง+รับจ้างเสริม",
     pricePerTon: 8800,
     strawPricePerKg: 1.15,
-    costOverrides: { seed: 350, fertilizer: 1080, chemicals: 300, labor: 1650, rent: 850, fuel: 390, transport: 390 },
+    yieldPotential: 760,
+    costProfile: { seed: 350, fertilizer: 1080, chemicals: 210, labor: 1650, rent: 850, fuel: 360, transport: 390 },
     target: { yield: 650, cost: 5050, price: 8800, straw: 1.1 },
     inputs: {
       applications: [

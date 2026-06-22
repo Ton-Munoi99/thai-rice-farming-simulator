@@ -40,7 +40,7 @@ export default function CompareScenariosPanel({ simulation }) {
         <div className="overflow-hidden rounded-[10px] border border-[#edf1e8]">
           <div className="grid grid-cols-[42px_1fr_1fr] bg-[#f4f7ef] px-2 py-1.5 text-[9px] font-bold text-[#5a6b58]">
             <span>Slot</span>
-            <span>{t(language, "estimatedYield")} / {t(language, "risk")}</span>
+            <span>{t(language, "estimatedYield")} / {t(language, "financialRisk")}</span>
             <span className="text-right">{t(language, "profit")}</span>
           </div>
           {simulation.compareSlots.map((slot, index) =>
@@ -78,7 +78,7 @@ function CompareRow({ language, slot, isBest, onLoad, onClear }) {
             {pickLang(language, slot.varietyKey === "jasmine" ? "Hom Mali" : "White rice", slot.varietyName)} · {slot.savedAt}
           </div>
           <div className="mt-0.5 text-[9px] leading-snug text-rice-faint">
-            {formatNumber(model.estimatedYieldKgPerRai)} kg/rai · {t(language, "risk")} {pickLang(language, model.riskLevel, model.riskLevelTh)}
+            {formatNumber(model.estimatedYieldKgPerRai)} kg/rai · {pickLang(language, model.financialRisk.level, model.financialRisk.levelTh)}
           </div>
           <div className="mt-0.5 text-[8.5px] leading-snug text-[#9aa394]">
             {t(language, "cost")} ฿{formatNumber(model.costPerRai)} · {t(language, "revenue")} ฿{formatNumber(model.revenuePerRai)}

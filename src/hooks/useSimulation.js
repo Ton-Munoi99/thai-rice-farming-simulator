@@ -29,6 +29,9 @@ export function useSimulation() {
   const [pricePerTon, setPricePerTonState] = useState(VARIETIES[defaultVarietyKey].salePricePerTon);
   const [strawPricePerKg, setStrawPricePerKgState] = useState(0.75);
   const [costOverrides, setCostOverrides] = useState({});
+  const [costProfile, setCostProfile] = useState(null);
+  const [yieldPotentialOverride, setYieldPotentialOverride] = useState(null);
+  const [activeSurvivalPresetKey, setActiveSurvivalPresetKey] = useState(null);
   const [compareSlots, setCompareSlots] = useState([null, null, null]);
   const [runModel, setRunModel] = useState(null);
   const timers = useRef([]);
@@ -42,8 +45,8 @@ export function useSimulation() {
 
   const varietyInfo = VARIETIES[varietyKey];
   const liveModel = useMemo(
-    () => computeSimulation(inputs, { varietyKey, pricePerTon, strawPricePerKg, costOverrides }),
-    [costOverrides, inputs, pricePerTon, strawPricePerKg, varietyKey],
+    () => computeSimulation(inputs, { varietyKey, pricePerTon, strawPricePerKg, costOverrides, costProfile, yieldPotentialOverride }),
+    [costOverrides, costProfile, inputs, pricePerTon, strawPricePerKg, varietyKey, yieldPotentialOverride],
   );
   const activeModel = runModel ?? liveModel;
   const score = liveModel;
@@ -103,6 +106,9 @@ export function useSimulation() {
     (scenarioKey) => {
       resetToSetup();
       setCostOverrides({});
+      setCostProfile(null);
+      setYieldPotentialOverride(null);
+      setActiveSurvivalPresetKey(null);
       setInputs({
         applications: varietyInfo.presets[scenarioKey].map((app) => ({ ...app })),
         ...SCENARIO_ENVIRONMENTS[scenarioKey],
@@ -118,6 +124,9 @@ export function useSimulation() {
 
       resetToSetup();
       setCostOverrides({});
+      setCostProfile(null);
+      setYieldPotentialOverride(null);
+      setActiveSurvivalPresetKey(null);
       setVarietyKey(preset.variety);
       setPricePerTonState(VARIETIES[preset.variety].salePricePerTon);
       setInputs({
@@ -137,7 +146,13 @@ export function useSimulation() {
       setVarietyKey("white");
       setPricePerTonState(preset.pricePerTon);
       setStrawPricePerKgState(preset.strawPricePerKg);
-      setCostOverrides({ ...preset.costOverrides });
+      setCostOverrides({});
+      setCostProfile({
+        ...preset.costProfile,
+        fertilizerReferenceCost: fertilizerNutrients(preset.inputs.applications).cost,
+      });
+      setYieldPotentialOverride(preset.yieldPotential ?? null);
+      setActiveSurvivalPresetKey(preset.key);
       setInputs({
         ...preset.inputs,
         applications: preset.inputs.applications.map((app) => ({ ...app })),
@@ -154,6 +169,9 @@ export function useSimulation() {
       setVarietyKey(nextVariety);
       setPricePerTonState(next.salePricePerTon);
       setCostOverrides({});
+      setCostProfile(null);
+      setYieldPotentialOverride(null);
+      setActiveSurvivalPresetKey(null);
       setInputs((current) => ({
         ...current,
         applications: next.defaultApps.map((app) => ({ ...app })),
@@ -184,6 +202,7 @@ export function useSimulation() {
   const setCostItem = useCallback(
     (key, value) => {
       resetToSetup();
+      setCostProfile(null);
       const nextValue = clamp(Math.round(Number(value) || 0), 0, 999999);
       setCostOverrides((current) => ({ ...current, [key]: nextValue }));
     },
@@ -193,6 +212,7 @@ export function useSimulation() {
   const setTotalCostPerRai = useCallback(
     (value) => {
       resetToSetup();
+      setCostProfile(null);
       const target = clamp(Math.round(Number(value) || 0), 0, 999999);
       const currentTotal = Math.max(1, liveModel.costPerRai);
       const scale = target / currentTotal;
@@ -214,12 +234,15 @@ export function useSimulation() {
   const resetCosts = useCallback(() => {
     resetToSetup();
     setCostOverrides({});
+    setCostProfile(null);
+    setYieldPotentialOverride(null);
+    setActiveSurvivalPresetKey(null);
   }, [resetToSetup]);
 
   const buildCompareSnapshot = useCallback(
     (slotIndex) => {
       const slotName = ["A", "B", "C"][slotIndex];
-      const model = computeSimulation(inputs, { varietyKey, pricePerTon, strawPricePerKg, costOverrides });
+      const model = computeSimulation(inputs, { varietyKey, pricePerTon, strawPricePerKg, costOverrides, costProfile, yieldPotentialOverride });
       return {
         id: `${slotName}-${Date.now()}`,
         slot: slotName,
@@ -233,10 +256,13 @@ export function useSimulation() {
         pricePerTon,
         strawPricePerKg,
         costOverrides: { ...costOverrides },
+        costProfile: costProfile ? { ...costProfile } : null,
+        yieldPotentialOverride,
+        activeSurvivalPresetKey,
         model,
       };
     },
-    [costOverrides, inputs, pricePerTon, strawPricePerKg, varietyKey],
+    [activeSurvivalPresetKey, costOverrides, costProfile, inputs, pricePerTon, strawPricePerKg, varietyKey, yieldPotentialOverride],
   );
 
   const saveCompareSlot = useCallback(
@@ -261,6 +287,9 @@ export function useSimulation() {
       setPricePerTonState(snapshot.pricePerTon);
       setStrawPricePerKgState(snapshot.strawPricePerKg ?? 0.75);
       setCostOverrides({ ...snapshot.costOverrides });
+      setCostProfile(snapshot.costProfile ? { ...snapshot.costProfile } : null);
+      setYieldPotentialOverride(snapshot.yieldPotentialOverride ?? null);
+      setActiveSurvivalPresetKey(snapshot.activeSurvivalPresetKey ?? null);
       setInputs({
         ...snapshot.inputs,
         applications: snapshot.inputs.applications.map((app) => ({ ...app })),
@@ -272,6 +301,9 @@ export function useSimulation() {
   const applyAutoRecommendation = useCallback(() => {
     resetToSetup();
     setCostOverrides({});
+    setCostProfile(null);
+    setYieldPotentialOverride(null);
+    setActiveSurvivalPresetKey(null);
     setInputs((current) => ({
       ...current,
       applications: buildAutoRecommendation(current, varietyKey).applications.map((app) => ({ ...app })),
@@ -281,7 +313,7 @@ export function useSimulation() {
   const runSimulation = useCallback(() => {
     if (phase === "running") return;
     clearTimers();
-    const model = computeSimulation(inputs, { varietyKey, pricePerTon, strawPricePerKg, costOverrides });
+    const model = computeSimulation(inputs, { varietyKey, pricePerTon, strawPricePerKg, costOverrides, costProfile, yieldPotentialOverride });
     setRunModel(model);
     setShowSummary(false);
     setPhase("running");
@@ -297,7 +329,7 @@ export function useSimulation() {
         setShowSummary(true);
       }, 6 * stepMs + 1100),
     );
-  }, [clearTimers, costOverrides, inputs, phase, pricePerTon, strawPricePerKg, varietyKey]);
+  }, [clearTimers, costOverrides, costProfile, inputs, phase, pricePerTon, strawPricePerKg, varietyKey, yieldPotentialOverride]);
 
   const totals = useMemo(() => fertilizerNutrients(inputs.applications), [inputs.applications]);
   const formulaOptions = useMemo(
@@ -334,6 +366,9 @@ export function useSimulation() {
     pricePerTon,
     strawPricePerKg,
     costOverrides,
+    costProfile,
+    yieldPotentialOverride,
+    activeSurvivalPresetKey,
     compareSlots,
     liveModel,
     activeModel,
