@@ -67,7 +67,7 @@ function estimateStrawHarvest(inputs, estimatedYieldKgPerRai, context, flags) {
   collectionFactor -= clamp((inputs.pest - 45) * 0.0015, 0, 0.08);
   collectionFactor -= clamp((inputs.weed - 35) * 0.002, 0, 0.12);
   collectionFactor -= clamp((72 - inputs.managementTiming) * 0.004, 0, 0.18);
-  collectionFactor = clamp(collectionFactor, 0.42, 1.08);
+  collectionFactor = clamp(collectionFactor, 0.42, 1);
 
   const collectableKgPerRai = Math.round(surplusKgPerRai * collectionFactor);
   const pricePerKg = clamp(Number(context.strawPricePerKg) || 0, 0, 10);
