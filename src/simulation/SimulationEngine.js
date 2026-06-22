@@ -48,7 +48,7 @@ export const COST_ITEMS = [
   { key: "transport", label: "ขนส่ง/อื่นๆ Transport" },
 ];
 
-function estimateStrawHarvest(inputs, estimatedYieldKgPerRai, context, flags) {
+export function estimateStrawHarvest(inputs, estimatedYieldKgPerRai, context, flags) {
   // Rice-map method: total rice straw = paddy production x RPR, then surplus straw = total straw x SAF.
   const residueToPaddyRatio = 1.169;
   const surplusAvailabilityFactor = 0.583;
