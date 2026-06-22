@@ -107,7 +107,7 @@ export default function ScorePanel({ simulation }) {
             <div className="flex items-center gap-[5px]">
               <SmallButton onClick={() => simulation.setStrawPricePerKg(simulation.strawPricePerKg - 0.1)}>-</SmallButton>
               <input
-                aria-label="Straw price per kg"
+                aria-label="Net straw price received by farmer per kg"
                 value={simulation.strawPricePerKg}
                 type="number"
                 min="0"
@@ -118,6 +118,9 @@ export default function ScorePanel({ simulation }) {
               />
               <SmallButton onClick={() => simulation.setStrawPricePerKg(simulation.strawPricePerKg + 0.1)}>+</SmallButton>
             </div>
+          </div>
+          <div className="mt-1.5 rounded-md bg-white/70 px-2 py-1.5 text-[8px] leading-snug text-[#7a6c4a]">
+            {t(language, "strawPriceGuide")}
           </div>
           <div className="mt-2 grid grid-cols-3 gap-1.5 border-t border-[#d9e2d1] pt-2 text-[8.5px] text-rice-faint">
             <div>

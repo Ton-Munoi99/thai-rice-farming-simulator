@@ -26,7 +26,7 @@ export function useSimulation() {
   const [farmSize, setFarmSizeState] = useState(10);
   const [varietyKey, setVarietyKey] = useState(defaultVarietyKey);
   const [pricePerTon, setPricePerTonState] = useState(VARIETIES[defaultVarietyKey].salePricePerTon);
-  const [strawPricePerKg, setStrawPricePerKgState] = useState(1);
+  const [strawPricePerKg, setStrawPricePerKgState] = useState(0.75);
   const [costOverrides, setCostOverrides] = useState({});
   const [compareSlots, setCompareSlots] = useState([null, null, null]);
   const [runModel, setRunModel] = useState(null);
@@ -240,7 +240,7 @@ export function useSimulation() {
       resetToSetup();
       setVarietyKey(snapshot.varietyKey);
       setPricePerTonState(snapshot.pricePerTon);
-      setStrawPricePerKgState(snapshot.strawPricePerKg ?? 1);
+      setStrawPricePerKgState(snapshot.strawPricePerKg ?? 0.75);
       setCostOverrides({ ...snapshot.costOverrides });
       setInputs({
         ...snapshot.inputs,
