@@ -33,6 +33,13 @@ export const TEXT = {
   whiteRice: { en: "White rice (RD)", th: "ข้าวขาว" },
   homMali: { en: "Hom Mali", th: "หอมมะลิ" },
   presetScenarios: { en: "Preset scenarios", th: "สถานการณ์ตัวอย่าง" },
+  whiteRiceSurvival: { en: "White-rice survival cases", th: "ทางรอดข้าวขาว" },
+  whiteRiceSurvivalSub: { en: "Apply linked white-rice cases: price, cost, water, straw, and field risk.", th: "กดกรณีข้าวขาวที่ผูก ราคา ต้นทุน น้ำ ฟาง และความเสี่ยงแปลง" },
+  survivalLiveCheck: { en: "Live survival check", th: "เช็คเงื่อนไขรอดตอนนี้" },
+  regionalYieldNote: {
+    en: "Note: Suphan-style 736 kg/rai is a regional benchmark; this phase still uses the simulator white-rice potential layer.",
+    th: "หมายเหตุ: 736 กก./ไร่แบบสุพรรณฯ เป็น benchmark พื้นที่จริง; phase นี้ยังใช้ potential ข้าวขาวของ simulator",
+  },
   farmSystemPresets: { en: "Farm system presets", th: "ระบบนา / พื้นที่ตัวอย่าง" },
   autoRecommendation: { en: "Auto recommendation", th: "แนะนำอัตโนมัติ" },
   autoRecommendationSub: { en: "Suggested defaults from current conditions", th: "แนะนำสูตรจากเงื่อนไขปัจจุบัน" },

@@ -8,6 +8,7 @@ import {
   SCENARIO_ENVIRONMENTS,
   STAGES,
   VARIETIES,
+  WHITE_RICE_SURVIVAL_PRESETS,
 } from "../data/mockData.js";
 import { COST_ITEMS, buildAutoRecommendation, computeSimulation, fertilizerNutrients, neutralFieldCondition } from "../simulation/SimulationEngine.js";
 import { buildCells, buildChannels, buildPlantVisuals, buildWeatherFx, gridForFarmSize } from "../simulation/fieldModel.js";
@@ -119,6 +120,24 @@ export function useSimulation() {
       setCostOverrides({});
       setVarietyKey(preset.variety);
       setPricePerTonState(VARIETIES[preset.variety].salePricePerTon);
+      setInputs({
+        ...preset.inputs,
+        applications: preset.inputs.applications.map((app) => ({ ...app })),
+      });
+    },
+    [resetToSetup],
+  );
+
+  const applyWhiteRiceSurvivalPreset = useCallback(
+    (presetKey) => {
+      const preset = WHITE_RICE_SURVIVAL_PRESETS.find((item) => item.key === presetKey);
+      if (!preset) return;
+
+      resetToSetup();
+      setVarietyKey("white");
+      setPricePerTonState(preset.pricePerTon);
+      setStrawPricePerKgState(preset.strawPricePerKg);
+      setCostOverrides({ ...preset.costOverrides });
       setInputs({
         ...preset.inputs,
         applications: preset.inputs.applications.map((app) => ({ ...app })),
@@ -329,6 +348,7 @@ export function useSimulation() {
     setApplication: updateApplication,
     applyScenario,
     applyFarmSystemPreset,
+    applyWhiteRiceSurvivalPreset,
     switchVariety,
     setFarmSize,
     setFieldStyle,
