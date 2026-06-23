@@ -1,6 +1,7 @@
 import { formatNumber, riskColor, scoreColor, signedBaht } from "../utils/format.js";
 import { COST_LABELS, pickLang, t } from "../i18n.js";
 import CompareScenariosPanel from "./CompareScenariosPanel.jsx";
+import DebtPanel from "./DebtPanel.jsx";
 import ExplanationPanel from "./ExplanationPanel.jsx";
 import RecommendationPanel from "./RecommendationPanel.jsx";
 import SensitivityPanel from "./SensitivityPanel.jsx";
@@ -88,6 +89,7 @@ export default function ScorePanel({ simulation }) {
         </section>
 
         <SensitivityPanel simulation={simulation} />
+        <DebtPanel simulation={simulation} />
 
         <section className="mt-[11px] flex items-center justify-between rounded-lg border border-[#e6dcc8] bg-[#fffaf0] px-[15px] py-[13px]">
           <div>
