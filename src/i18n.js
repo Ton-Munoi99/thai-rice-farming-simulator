@@ -146,6 +146,11 @@ export const TEXT = {
   emissions: { en: "Emissions", th: "ปล่อย" },
   reduced: { en: "Reduced", th: "ลดได้" },
   carbonCredit: { en: "Carbon credit", th: "คาร์บอนเครดิต" },
+  assumptionsSources: { en: "Assumptions & sources", th: "สมมติฐาน / แหล่งอ้างอิง" },
+  tapToOpen: { en: "details", th: "รายละเอียด" },
+  mainFormulas: { en: "Main formulas", th: "สูตรหลัก" },
+  sourceReferences: { en: "Source references", th: "แหล่งอ้างอิง" },
+  modelLimitations: { en: "Model limitations", th: "ข้อจำกัดของ model" },
 };
 
 export const COST_LABELS = {

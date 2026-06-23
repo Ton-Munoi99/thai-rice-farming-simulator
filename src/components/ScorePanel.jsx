@@ -1,5 +1,6 @@
 import { formatNumber, riskColor, scoreColor, signedBaht } from "../utils/format.js";
 import { COST_LABELS, pickLang, t } from "../i18n.js";
+import AssumptionSourcePanel from "./AssumptionSourcePanel.jsx";
 import CompareScenariosPanel from "./CompareScenariosPanel.jsx";
 import DebtPanel from "./DebtPanel.jsx";
 import ExplanationPanel from "./ExplanationPanel.jsx";
@@ -251,6 +252,7 @@ export default function ScorePanel({ simulation }) {
         <CompareScenariosPanel simulation={simulation} />
 
         <CarbonCard simulation={simulation} />
+        <AssumptionSourcePanel simulation={simulation} />
 
         <section className="mt-3.5 rounded-[13px] border border-rice-card bg-white px-[13px] py-3">
           <RecommendationPanel language={language} risks={model.risks} actions={model.recommendedActions} />
