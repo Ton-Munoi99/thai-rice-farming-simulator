@@ -35,7 +35,8 @@ export function buildDebtAnalysis({
   const interestCost = Math.round(cashShortfall * annualInterestRate * (loanMonths / 12));
   const debtDue = cashShortfall + interestCost;
   const debtDuePerRai = farmSize > 0 ? Math.round(debtDue / farmSize) : 0;
-  const nextSeasonCashNeed = totalCost + debtDue;
+  const nextSeasonGrossNeed = totalCost + debtDue;
+  const nextSeasonCashNeed = Math.max(0, nextSeasonGrossNeed - cashSurplus);
   const targetProfitPerRai = debtDuePerRai;
   const targetRevenuePerRai = model.costPerRai + targetProfitPerRai;
 
@@ -73,6 +74,7 @@ export function buildDebtAnalysis({
     interestCost,
     debtDue,
     debtDuePerRai,
+    nextSeasonGrossNeed,
     nextSeasonCashNeed,
     targetProfitPerRai,
     targetRevenuePerRai,

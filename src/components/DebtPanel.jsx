@@ -55,7 +55,7 @@ export default function DebtPanel({ simulation }) {
           <DebtMetric
             label={t(language, "workingCapitalNeed")}
             value={`฿${formatNumber(debt.nextSeasonCashNeed)}`}
-            sub={`${farmSize} ${t(language, "rai")}`}
+            sub={`${t(language, "grossNextCost")} ฿${formatNumber(debt.nextSeasonGrossNeed)}`}
             compact
           />
         </div>
