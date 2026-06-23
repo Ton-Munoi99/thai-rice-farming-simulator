@@ -8,8 +8,8 @@ export default function ControlPanel({ simulation }) {
   const { language } = simulation;
 
   return (
-    <aside className="absolute bottom-24 left-0 top-0 z-30 flex w-[316px] flex-none flex-col border-r border-rice-border bg-rice-panel shadow-float md:relative md:bottom-auto md:top-auto md:z-auto md:shadow-none">
-      <div className="flex-none px-4 pb-2 pt-3.5">
+    <aside className="absolute bottom-24 left-0 top-0 z-30 w-[316px] flex-none overflow-y-auto border-r border-rice-border bg-rice-panel shadow-float md:relative md:bottom-auto md:top-auto md:z-auto md:shadow-none">
+      <div className="px-4 pb-4 pt-3.5">
         <section className="mb-3.5">
           <div className="control-heading">{t(language, "riceVariety")}</div>
           <div className="mt-2 flex gap-[7px]">
@@ -22,10 +22,8 @@ export default function ControlPanel({ simulation }) {
           </div>
         </section>
         <PresetLibrary simulation={simulation} />
-      </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pb-4 pt-1.5">
-        <div className="mb-2 mt-1 control-heading">{t(language, "manualControls")}</div>
+        <div className="mb-2 mt-4 control-heading">{t(language, "manualControls")}</div>
         <AutoRecommendationPanel
           active={simulation.activeAutoRecommendation}
           language={language}
