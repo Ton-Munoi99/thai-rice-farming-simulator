@@ -32,233 +32,353 @@ export default function ScorePanel({ simulation }) {
   return (
     <aside className="fixed bottom-24 right-3 top-[70px] z-40 flex w-[min(300px,calc(100vw-24px))] flex-none flex-col overflow-y-auto border border-rice-border bg-rice-panel shadow-float lg:static lg:z-auto lg:w-[296px] lg:border-y-0 lg:border-r-0 lg:shadow-none">
       <div className="px-[17px] py-4">
-        <div className="control-heading">{t(language, "liveHealthScore")}</div>
+        <div className="control-heading">{t(language, "snapshot")}</div>
         <div className="text-[10.5px] text-rice-faint">{t(language, "realTime")}</div>
 
-        <section className="mt-2.5 flex flex-col items-center rounded-lg border border-rice-card bg-white pb-2.5 pt-3.5">
-          <div className="relative h-[140px] w-[140px]">
-            <svg width="140" height="140" viewBox="0 0 140 140" className="-rotate-90">
-              <circle cx="70" cy="70" r="58" fill="none" stroke="#eef1e7" strokeWidth="13" />
-              <circle
-                cx="70"
-                cy="70"
-                r="58"
-                fill="none"
-                stroke={model.color}
-                strokeWidth="13"
-                strokeLinecap="round"
-                strokeDasharray={circumference}
-                strokeDashoffset={circumference * (1 - model.growthScore / 100)}
-                className="transition-all duration-500"
-              />
-            </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <div className="font-display text-[42px] font-bold leading-none" style={{ color: model.color }}>{model.growthScore}</div>
-              <div className="mt-px text-[10px] text-rice-faint">/ 100</div>
-            </div>
-          </div>
-          <div className="mt-1 text-[13px] font-bold" style={{ color: model.color }}>{pickLang(language, model.label, model.labelTh)}</div>
-          <div className="mt-0.5 text-[9px] text-rice-faint">{t(language, "cropHealth")}</div>
-        </section>
+        <SnapshotCard
+          circumference={circumference}
+          language={language}
+          model={model}
+          profitPositive={profitPositive}
+        />
 
-        <section className={`mt-[9px] rounded-lg border px-[13px] py-2.5 ${
-          model.financialRisk.tone === "good"
-            ? "border-[#d7e8cf] bg-[#f4faf2]"
-            : model.financialRisk.tone === "warning"
-              ? "border-[#eadfbf] bg-[#fffaf0]"
-              : "border-[#ead5cd] bg-[#fff5f0]"
-        }`}>
-          <div className="flex items-start justify-between gap-2">
-            <div>
-              <div className="text-[10.5px] font-bold text-[#3c473a]">{t(language, "financialRisk")}</div>
-              <div className="mt-0.5 text-[9px] text-rice-faint">{t(language, "includingStraw")}</div>
-            </div>
-            <div className={`rounded-md px-2 py-1 text-[9.5px] font-bold ${
-              model.financialRisk.tone === "good"
-                ? "bg-[#dcefdc] text-[#2f6b48]"
-                : model.financialRisk.tone === "warning"
-                  ? "bg-[#fff0c7] text-[#8a641c]"
-                  : "bg-[#fde5dc] text-[#a24b2b]"
-            }`}>
-              {pickLang(language, model.financialRisk.level, model.financialRisk.levelTh)}
-            </div>
-          </div>
-          <div className="mt-2 grid grid-cols-2 gap-1.5 border-t border-black/5 pt-2">
-            <TotalMetric label={t(language, "breakEvenYield")} value={`${formatNumber(model.financialRisk.breakEvenYieldKgPerRai)} kg`} tone="muted" />
-            <TotalMetric label={t(language, "breakEvenPrice")} value={`฿${formatNumber(model.financialRisk.breakEvenPricePerTon)}`} tone="muted" />
-          </div>
-        </section>
+        <GroupDetails title={t(language, "financeGroup")} defaultOpen>
+          <FinancialRiskCard language={language} model={model} />
+          <FarmTotalsCard language={language} farmSize={simulation.farmSize} totals={totals} />
+          <CompactDetails title={t(language, "sensitivityTitle")}>
+            <SensitivityPanel simulation={simulation} />
+          </CompactDetails>
+          <CompactDetails title={t(language, "cashflowDebt")}>
+            <DebtPanel simulation={simulation} />
+          </CompactDetails>
+        </GroupDetails>
 
-        <SensitivityPanel simulation={simulation} />
-        <DebtPanel simulation={simulation} />
+        <GroupDetails title={t(language, "yieldRiskGroup")}>
+          <YieldCard language={language} model={model} />
+          <IndicatorGrid indicators={indicators} />
+          <ExplanationPanel language={language} model={model} />
+          <section className="mt-3.5 rounded-[13px] border border-rice-card bg-white px-[13px] py-3">
+            <RecommendationPanel language={language} risks={model.risks} actions={model.recommendedActions} />
+          </section>
+        </GroupDetails>
 
-        <section className="mt-[11px] flex items-center justify-between rounded-lg border border-[#e6dcc8] bg-[#fffaf0] px-[15px] py-[13px]">
-          <div>
-            <div className="text-[11px] font-semibold text-[#9a8638]">{t(language, "estimatedYield")}</div>
-            <div className="text-[10px] text-[#b6ad8a]">kg / {t(language, "rai")}</div>
-          </div>
-          <div className="font-display text-[30px] font-bold text-rice-gold">{formatNumber(model.estimatedYieldKgPerRai)}</div>
-        </section>
+        <GroupDetails title={t(language, "editNumbersGroup")}>
+          <PriceCard simulation={simulation} />
+          <StrawCard simulation={simulation} />
+          <CostDriversCard language={language} model={model} />
+          <CostEditorCard language={language} model={model} simulation={simulation} variety={variety} />
+          <ProfitPair language={language} model={model} profitPositive={profitPositive} />
+        </GroupDetails>
 
-        <section className="mt-[9px] flex items-center justify-between gap-2 rounded-lg border border-rice-card bg-white px-[13px] py-2.5">
-          <div className="leading-tight">
-            <div className="text-[11px] font-semibold text-[#3c473a]">{t(language, "salePrice")}</div>
-            <div className="text-[9.5px] text-rice-faint">{t(language, "bahtPerTon")}</div>
-          </div>
-          <div className="flex items-center gap-[5px]">
-            <SmallButton onClick={() => simulation.setPricePerTon(simulation.pricePerTon - 100)}>-</SmallButton>
-            <input
-              aria-label="Average paddy price per ton"
-              value={simulation.pricePerTon}
-              type="number"
-              min="1000"
-              max="99000"
-              step="100"
-              onChange={(event) => simulation.setPricePerTon(event.target.value)}
-              className="w-[68px] rounded-lg border border-[#dde3d6] bg-white px-1 py-1 text-center font-display text-[13px] font-bold text-[#3c473a] outline-none"
-            />
-            <SmallButton onClick={() => simulation.setPricePerTon(simulation.pricePerTon + 100)}>+</SmallButton>
-          </div>
-        </section>
-
-        <section className="mt-[9px] rounded-lg border border-[#d9e2d1] bg-[#f7faf4] px-[13px] py-2.5">
-          <div className="mb-2 flex items-start justify-between gap-2">
-            <div className="leading-tight">
-              <div className="text-[11px] font-semibold text-[#3c473a]">{t(language, "strawIncome")}</div>
-              <div className="text-[9.5px] text-rice-faint">{t(language, "strawReference")}</div>
-            </div>
-            <div className="text-right">
-              <div className="font-display text-[17px] font-bold text-[#8a7040]">{formatNumber(model.straw.collectableKgPerRai)}</div>
-              <div className="text-[8.5px] text-rice-faint">kg/{t(language, "rai")}</div>
-            </div>
-          </div>
-          <div className="flex items-center justify-between gap-2">
-            <div className="leading-tight">
-              <div className="text-[10px] font-semibold text-[#5f755c]">{t(language, "strawPrice")}</div>
-              <div className="text-[8.5px] text-rice-faint">
-                RPR {model.straw.residueToPaddyRatio} · SAF {model.straw.surplusAvailabilityFactor} · {t(language, "collectionAdjusted")} {model.straw.collectionPercent}%
-              </div>
-            </div>
-            <div className="flex items-center gap-[5px]">
-              <SmallButton onClick={() => simulation.setStrawPricePerKg(simulation.strawPricePerKg - 0.1)}>-</SmallButton>
-              <input
-                aria-label="Net straw price received by farmer per kg"
-                value={simulation.strawPricePerKg}
-                type="number"
-                min="0"
-                max="10"
-                step="0.1"
-                onChange={(event) => simulation.setStrawPricePerKg(event.target.value)}
-                className="w-[58px] rounded-lg border border-[#dde3d6] bg-white px-1 py-1 text-center font-display text-[12px] font-bold text-[#3c473a] outline-none"
-              />
-              <SmallButton onClick={() => simulation.setStrawPricePerKg(simulation.strawPricePerKg + 0.1)}>+</SmallButton>
-            </div>
-          </div>
-          <div className="mt-1.5 rounded-md bg-white/70 px-2 py-1.5 text-[8px] leading-snug text-[#7a6c4a]">
-            {t(language, "strawPriceGuide")}
-          </div>
-          <div className="mt-2 grid grid-cols-3 gap-1.5 border-t border-[#d9e2d1] pt-2 text-[8.5px] text-rice-faint">
-            <div>
-              <span className="block font-semibold text-[#5f755c]">{t(language, "totalStraw")}</span>
-              {formatNumber(model.straw.totalResidueKgPerRai)} kg/{t(language, "rai")}
-            </div>
-            <div>
-              <span className="block font-semibold text-[#5f755c]">{t(language, "surplusStraw")}</span>
-              {formatNumber(model.straw.surplusKgPerRai)} kg/{t(language, "rai")}
-            </div>
-            <div>
-              <span className="block font-semibold text-[#5f755c]">{t(language, "strawRevenue")}</span>
-              ฿{formatNumber(model.straw.revenuePerRai)}
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-[9px] rounded-lg border border-[#d8ddd2] bg-[#fbfaf6] px-[13px] py-3">
-          <div className="mb-2 flex items-baseline justify-between">
-            <div className="text-[11px] font-bold text-[#2f3b34]">{t(language, "farmTotals")}</div>
-            <div className="text-[9px] text-rice-faint">{simulation.farmSize} {t(language, "rai")}</div>
-          </div>
-          <div className="grid grid-cols-2 gap-x-3 gap-y-2 border-t border-[#ebe7dd] pt-2">
-            <TotalMetric label={t(language, "totalRevenue")} value={`฿${formatNumber(totals.revenue)}`} tone="ink" />
-            <TotalMetric label={t(language, "totalCost")} value={`฿${formatNumber(totals.cost)}`} tone="muted" />
-            <TotalMetric label={t(language, "riceTotal")} value={`฿${formatNumber(totals.riceRevenue)}`} tone="muted" />
-            <TotalMetric label={t(language, "strawTotal")} value={`฿${formatNumber(totals.strawRevenue)}`} tone="straw" />
-          </div>
-          <div className={`mt-2 rounded-md px-2.5 py-2 ${totals.profit >= 0 ? "bg-[#eef6ed] text-[#2f6b48]" : "bg-[#fbefeb] text-[#a24b2b]"}`}>
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-[10px] font-semibold">{t(language, "totalProfit")}</span>
-              <span className="font-display text-[14px] font-bold">{signedBaht(totals.profit)}</span>
-            </div>
-          </div>
-        </section>
-
-        <CostDriversCard language={language} model={model} />
-
-        <section className="mt-[13px] flex flex-col gap-[11px]">
-          {indicators.map(([name, value, color, suffix]) => (
-            <div key={name}>
-              <div className="mb-1 flex items-baseline justify-between text-[11.5px]">
-                <span className="text-[#3c473a]">{name}</span>
-                <b className="font-display" style={{ color }}>{value}{suffix}</b>
-              </div>
-              <div className="h-[7px] overflow-hidden rounded-[7px] bg-[#eef1e7]">
-                <div className="h-full rounded-[7px] transition-[width] duration-500" style={{ width: `${Math.max(value, 2)}%`, background: color }} />
-              </div>
-            </div>
-          ))}
-        </section>
-
-        <ExplanationPanel language={language} model={model} />
-
-        <section className="mt-3.5 rounded-lg border border-rice-card bg-white px-[13px] py-3">
-          <div className="mb-2 flex items-center justify-between">
-            <div className="text-[11px] font-bold text-[#3c473a]">{t(language, "costBreakdown")}</div>
-            <button
-              type="button"
-              onClick={simulation.resetCosts}
-              className="rounded-md border border-[#dedbd0] bg-[#fbfaf6] px-2 py-1 text-[9.5px] font-semibold text-rice-muted transition hover:bg-white"
-            >
-              {t(language, "reset")}
-            </button>
-          </div>
-          <div className="mb-2 text-[10px] text-rice-faint">{variety.icon} {pickLang(language, variety.en, variety.name)} · {t(language, "editablePerRai")}</div>
-          {model.costBreakdown.map((item) => (
-            <CostRow
-              key={item.key}
-              language={language}
-              item={item}
-              onChange={(value) => simulation.setCostItem(item.key, value)}
-            />
-          ))}
-          <ChemicalProgramNote language={language} model={model} />
-          <TotalCostRow language={language} value={model.costPerRai} onChange={simulation.setTotalCostPerRai} />
-        </section>
-
-        <section className="mt-[9px] grid grid-cols-2 gap-2">
-          <div className="rounded-lg border border-rice-card bg-white px-[11px] py-2.5">
-            <div className="text-[9.5px] text-rice-faint">{t(language, "revenue")}</div>
-            <div className="font-display text-[15px] font-semibold text-[#3c473a]">฿{formatNumber(model.revenuePerRai)}</div>
-            <div className="text-[9px] text-[#b6ad8a]">
-              {t(language, "riceRevenue")} ฿{formatNumber(model.riceRevenuePerRai)} + {language === "th" ? "ฟาง" : "straw"} ฿{formatNumber(model.straw.revenuePerRai)}
-            </div>
-          </div>
-          <div className={`rounded-lg px-[11px] py-2.5 ${profitPositive ? "bg-[#2f6b48] text-white" : "bg-[#a24b2b] text-white"}`}>
-            <div className="text-[9.5px] opacity-90">{profitPositive ? t(language, "profit") : t(language, "loss")}</div>
-            <div className="font-display text-[15px] font-bold">{signedBaht(model.profitPerRai)}</div>
-            <div className="text-[9px] opacity-80">{t(language, "perRai")}</div>
-          </div>
-        </section>
-
-        <CompareScenariosPanel simulation={simulation} />
-
-        <CarbonCard simulation={simulation} />
-        <AssumptionSourcePanel simulation={simulation} />
-
-        <section className="mt-3.5 rounded-[13px] border border-rice-card bg-white px-[13px] py-3">
-          <RecommendationPanel language={language} risks={model.risks} actions={model.recommendedActions} />
-        </section>
+        <GroupDetails title={t(language, "compareMoreGroup")}>
+          <CompareScenariosPanel simulation={simulation} />
+          <CarbonCard simulation={simulation} />
+          <AssumptionSourcePanel simulation={simulation} />
+        </GroupDetails>
       </div>
     </aside>
+  );
+}
+
+function GroupDetails({ children, defaultOpen = false, title }) {
+  return (
+    <details open={defaultOpen} className="mt-3 rounded-lg border border-[#d8ddd2] bg-[#fbfaf6] px-[13px] py-2.5">
+      <summary className="cursor-pointer list-none text-[11px] font-bold text-[#2f3b34]">
+        <span>{title}</span>
+        <span className="float-right text-[10px] text-rice-faint">▾</span>
+      </summary>
+      <div className="mt-2 border-t border-[#ebe7dd] pt-2">{children}</div>
+    </details>
+  );
+}
+
+function CompactDetails({ children, title }) {
+  return (
+    <details className="mt-[9px] rounded-lg border border-[#e5e1d4] bg-white/70 px-2.5 py-2">
+      <summary className="cursor-pointer list-none text-[10.5px] font-bold text-[#3c473a]">
+        <span>{title}</span>
+        <span className="float-right text-[9px] text-rice-faint">▾</span>
+      </summary>
+      <div className="mt-2 border-t border-[#ebe7dd] pt-2">{children}</div>
+    </details>
+  );
+}
+
+function SnapshotCard({ circumference, language, model, profitPositive }) {
+  return (
+    <section className="mt-2.5 rounded-lg border border-rice-card bg-white px-3 py-3">
+      <div className="grid grid-cols-[88px_1fr] gap-3">
+        <div className="relative h-[88px] w-[88px]">
+          <svg width="88" height="88" viewBox="0 0 140 140" className="-rotate-90">
+            <circle cx="70" cy="70" r="58" fill="none" stroke="#eef1e7" strokeWidth="13" />
+            <circle
+              cx="70"
+              cy="70"
+              r="58"
+              fill="none"
+              stroke={model.color}
+              strokeWidth="13"
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={circumference * (1 - model.growthScore / 100)}
+              className="transition-all duration-500"
+            />
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <div className="font-display text-[28px] font-bold leading-none" style={{ color: model.color }}>{model.growthScore}</div>
+            <div className="text-[8px] text-rice-faint">/100</div>
+          </div>
+        </div>
+        <div className="min-w-0">
+          <div className="text-[9px] font-semibold text-rice-faint">{t(language, "healthScoreShort")}</div>
+          <div className="text-[12px] font-bold" style={{ color: model.color }}>{pickLang(language, model.label, model.labelTh)}</div>
+          <div className="mt-2 grid grid-cols-2 gap-1.5">
+            <MiniSnapshotMetric label={t(language, "estimatedYield")} value={`${formatNumber(model.estimatedYieldKgPerRai)} kg`} />
+            <MiniSnapshotMetric
+              label={model.profitPerRai >= 0 ? t(language, "profit") : t(language, "loss")}
+              value={signedBaht(model.profitPerRai)}
+              danger={!profitPositive}
+            />
+          </div>
+          <div className={`mt-1.5 rounded-md px-2 py-1 text-[9px] font-bold ${
+            model.financialRisk.tone === "good"
+              ? "bg-[#e5f2e6] text-[#2f6b48]"
+              : model.financialRisk.tone === "warning"
+                ? "bg-[#fff0c7] text-[#8a641c]"
+                : "bg-[#fde5dc] text-[#a24b2b]"
+          }`}>
+            {t(language, "financialRisk")}: {pickLang(language, model.financialRisk.level, model.financialRisk.levelTh)}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MiniSnapshotMetric({ danger = false, label, value }) {
+  return (
+    <div className="rounded-md bg-[#fbfaf6] px-2 py-1.5">
+      <div className="truncate text-[8px] text-rice-faint">{label}</div>
+      <div className={`font-display text-[11px] font-bold ${danger ? "text-[#a24b2b]" : "text-[#3c473a]"}`}>{value}</div>
+    </div>
+  );
+}
+
+function FinancialRiskCard({ language, model }) {
+  return (
+    <section className={`rounded-lg border px-[13px] py-2.5 ${
+      model.financialRisk.tone === "good"
+        ? "border-[#d7e8cf] bg-[#f4faf2]"
+        : model.financialRisk.tone === "warning"
+          ? "border-[#eadfbf] bg-[#fffaf0]"
+          : "border-[#ead5cd] bg-[#fff5f0]"
+    }`}>
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <div className="text-[10.5px] font-bold text-[#3c473a]">{t(language, "financialRisk")}</div>
+          <div className="mt-0.5 text-[9px] text-rice-faint">{t(language, "includingStraw")}</div>
+        </div>
+        <div className={`rounded-md px-2 py-1 text-[9.5px] font-bold ${
+          model.financialRisk.tone === "good"
+            ? "bg-[#dcefdc] text-[#2f6b48]"
+            : model.financialRisk.tone === "warning"
+              ? "bg-[#fff0c7] text-[#8a641c]"
+              : "bg-[#fde5dc] text-[#a24b2b]"
+        }`}>
+          {pickLang(language, model.financialRisk.level, model.financialRisk.levelTh)}
+        </div>
+      </div>
+      <div className="mt-2 grid grid-cols-2 gap-1.5 border-t border-black/5 pt-2">
+        <TotalMetric label={t(language, "breakEvenYield")} value={`${formatNumber(model.financialRisk.breakEvenYieldKgPerRai)} kg`} tone="muted" />
+        <TotalMetric label={t(language, "breakEvenPrice")} value={`฿${formatNumber(model.financialRisk.breakEvenPricePerTon)}`} tone="muted" />
+      </div>
+    </section>
+  );
+}
+
+function FarmTotalsCard({ farmSize, language, totals }) {
+  return (
+    <section className="mt-[9px] rounded-lg border border-[#d8ddd2] bg-[#fbfaf6] px-[13px] py-3">
+      <div className="mb-2 flex items-baseline justify-between">
+        <div className="text-[11px] font-bold text-[#2f3b34]">{t(language, "farmTotals")}</div>
+        <div className="text-[9px] text-rice-faint">{farmSize} {t(language, "rai")}</div>
+      </div>
+      <div className="grid grid-cols-2 gap-x-3 gap-y-2 border-t border-[#ebe7dd] pt-2">
+        <TotalMetric label={t(language, "totalRevenue")} value={`฿${formatNumber(totals.revenue)}`} tone="ink" />
+        <TotalMetric label={t(language, "totalCost")} value={`฿${formatNumber(totals.cost)}`} tone="muted" />
+        <TotalMetric label={t(language, "riceTotal")} value={`฿${formatNumber(totals.riceRevenue)}`} tone="muted" />
+        <TotalMetric label={t(language, "strawTotal")} value={`฿${formatNumber(totals.strawRevenue)}`} tone="straw" />
+      </div>
+      <div className={`mt-2 rounded-md px-2.5 py-2 ${totals.profit >= 0 ? "bg-[#eef6ed] text-[#2f6b48]" : "bg-[#fbefeb] text-[#a24b2b]"}`}>
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-[10px] font-semibold">{t(language, "totalProfit")}</span>
+          <span className="font-display text-[14px] font-bold">{signedBaht(totals.profit)}</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function YieldCard({ language, model }) {
+  return (
+    <section className="flex items-center justify-between rounded-lg border border-[#e6dcc8] bg-[#fffaf0] px-[15px] py-[13px]">
+      <div>
+        <div className="text-[11px] font-semibold text-[#9a8638]">{t(language, "estimatedYield")}</div>
+        <div className="text-[10px] text-[#b6ad8a]">kg / {t(language, "rai")}</div>
+      </div>
+      <div className="font-display text-[30px] font-bold text-rice-gold">{formatNumber(model.estimatedYieldKgPerRai)}</div>
+    </section>
+  );
+}
+
+function IndicatorGrid({ indicators }) {
+  return (
+    <section className="mt-[9px] grid grid-cols-2 gap-1.5">
+      {indicators.map(([name, value, color, suffix]) => (
+        <div key={name} className="rounded-md border border-[#e5e9de] bg-white px-2 py-2">
+          <div className="flex items-baseline justify-between gap-1 text-[9px]">
+            <span className="min-w-0 truncate text-[#3c473a]">{name}</span>
+            <b className="font-display" style={{ color }}>{value}{suffix}</b>
+          </div>
+          <div className="mt-1.5 h-[6px] overflow-hidden rounded-[7px] bg-[#eef1e7]">
+            <div className="h-full rounded-[7px] transition-[width] duration-500" style={{ width: `${Math.max(value, 2)}%`, background: color }} />
+          </div>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+function PriceCard({ simulation }) {
+  const { language } = simulation;
+
+  return (
+    <section className="flex items-center justify-between gap-2 rounded-lg border border-rice-card bg-white px-[13px] py-2.5">
+      <div className="leading-tight">
+        <div className="text-[11px] font-semibold text-[#3c473a]">{t(language, "salePrice")}</div>
+        <div className="text-[9.5px] text-rice-faint">{t(language, "bahtPerTon")}</div>
+      </div>
+      <div className="flex items-center gap-[5px]">
+        <SmallButton onClick={() => simulation.setPricePerTon(simulation.pricePerTon - 100)}>-</SmallButton>
+        <input
+          aria-label="Average paddy price per ton"
+          value={simulation.pricePerTon}
+          type="number"
+          min="1000"
+          max="99000"
+          step="100"
+          onChange={(event) => simulation.setPricePerTon(event.target.value)}
+          className="w-[68px] rounded-lg border border-[#dde3d6] bg-white px-1 py-1 text-center font-display text-[13px] font-bold text-[#3c473a] outline-none"
+        />
+        <SmallButton onClick={() => simulation.setPricePerTon(simulation.pricePerTon + 100)}>+</SmallButton>
+      </div>
+    </section>
+  );
+}
+
+function StrawCard({ simulation }) {
+  const model = simulation.liveModel;
+  const { language } = simulation;
+
+  return (
+    <section className="mt-[9px] rounded-lg border border-[#d9e2d1] bg-[#f7faf4] px-[13px] py-2.5">
+      <div className="mb-2 flex items-start justify-between gap-2">
+        <div className="leading-tight">
+          <div className="text-[11px] font-semibold text-[#3c473a]">{t(language, "strawIncome")}</div>
+          <div className="text-[9.5px] text-rice-faint">{t(language, "strawReference")}</div>
+        </div>
+        <div className="text-right">
+          <div className="font-display text-[17px] font-bold text-[#8a7040]">{formatNumber(model.straw.collectableKgPerRai)}</div>
+          <div className="text-[8.5px] text-rice-faint">kg/{t(language, "rai")}</div>
+        </div>
+      </div>
+      <div className="flex items-center justify-between gap-2">
+        <div className="leading-tight">
+          <div className="text-[10px] font-semibold text-[#5f755c]">{t(language, "strawPrice")}</div>
+          <div className="text-[8.5px] text-rice-faint">
+            RPR {model.straw.residueToPaddyRatio} · SAF {model.straw.surplusAvailabilityFactor} · {t(language, "collectionAdjusted")} {model.straw.collectionPercent}%
+          </div>
+        </div>
+        <div className="flex items-center gap-[5px]">
+          <SmallButton onClick={() => simulation.setStrawPricePerKg(simulation.strawPricePerKg - 0.1)}>-</SmallButton>
+          <input
+            aria-label="Net straw price received by farmer per kg"
+            value={simulation.strawPricePerKg}
+            type="number"
+            min="0"
+            max="10"
+            step="0.1"
+            onChange={(event) => simulation.setStrawPricePerKg(event.target.value)}
+            className="w-[58px] rounded-lg border border-[#dde3d6] bg-white px-1 py-1 text-center font-display text-[12px] font-bold text-[#3c473a] outline-none"
+          />
+          <SmallButton onClick={() => simulation.setStrawPricePerKg(simulation.strawPricePerKg + 0.1)}>+</SmallButton>
+        </div>
+      </div>
+      <div className="mt-1.5 rounded-md bg-white/70 px-2 py-1.5 text-[8px] leading-snug text-[#7a6c4a]">
+        {t(language, "strawPriceGuide")}
+      </div>
+      <div className="mt-2 grid grid-cols-3 gap-1.5 border-t border-[#d9e2d1] pt-2 text-[8.5px] text-rice-faint">
+        <div>
+          <span className="block font-semibold text-[#5f755c]">{t(language, "totalStraw")}</span>
+          {formatNumber(model.straw.totalResidueKgPerRai)} kg/{t(language, "rai")}
+        </div>
+        <div>
+          <span className="block font-semibold text-[#5f755c]">{t(language, "surplusStraw")}</span>
+          {formatNumber(model.straw.surplusKgPerRai)} kg/{t(language, "rai")}
+        </div>
+        <div>
+          <span className="block font-semibold text-[#5f755c]">{t(language, "strawRevenue")}</span>
+          ฿{formatNumber(model.straw.revenuePerRai)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CostEditorCard({ language, model, simulation, variety }) {
+  return (
+    <section className="mt-3.5 rounded-lg border border-rice-card bg-white px-[13px] py-3">
+      <div className="mb-2 flex items-center justify-between">
+        <div className="text-[11px] font-bold text-[#3c473a]">{t(language, "costBreakdown")}</div>
+        <button
+          type="button"
+          onClick={simulation.resetCosts}
+          className="rounded-md border border-[#dedbd0] bg-[#fbfaf6] px-2 py-1 text-[9.5px] font-semibold text-rice-muted transition hover:bg-white"
+        >
+          {t(language, "reset")}
+        </button>
+      </div>
+      <div className="mb-2 text-[10px] text-rice-faint">{variety.icon} {pickLang(language, variety.en, variety.name)} · {t(language, "editablePerRai")}</div>
+      {model.costBreakdown.map((item) => (
+        <CostRow
+          key={item.key}
+          language={language}
+          item={item}
+          onChange={(value) => simulation.setCostItem(item.key, value)}
+        />
+      ))}
+      <ChemicalProgramNote language={language} model={model} />
+      <TotalCostRow language={language} value={model.costPerRai} onChange={simulation.setTotalCostPerRai} />
+    </section>
+  );
+}
+
+function ProfitPair({ language, model, profitPositive }) {
+  return (
+    <section className="mt-[9px] grid grid-cols-2 gap-2">
+      <div className="rounded-lg border border-rice-card bg-white px-[11px] py-2.5">
+        <div className="text-[9.5px] text-rice-faint">{t(language, "revenue")}</div>
+        <div className="font-display text-[15px] font-semibold text-[#3c473a]">฿{formatNumber(model.revenuePerRai)}</div>
+        <div className="text-[9px] text-[#b6ad8a]">
+          {t(language, "riceRevenue")} ฿{formatNumber(model.riceRevenuePerRai)} + {language === "th" ? "ฟาง" : "straw"} ฿{formatNumber(model.straw.revenuePerRai)}
+        </div>
+      </div>
+      <div className={`rounded-lg px-[11px] py-2.5 ${profitPositive ? "bg-[#2f6b48] text-white" : "bg-[#a24b2b] text-white"}`}>
+        <div className="text-[9.5px] opacity-90">{profitPositive ? t(language, "profit") : t(language, "loss")}</div>
+        <div className="font-display text-[15px] font-bold">{signedBaht(model.profitPerRai)}</div>
+        <div className="text-[9px] opacity-80">{t(language, "perRai")}</div>
+      </div>
+    </section>
   );
 }
 
