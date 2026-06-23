@@ -44,6 +44,8 @@ export const TEXT = {
   autoRecommendation: { en: "Auto recommendation", th: "แนะนำอัตโนมัติ" },
   autoRecommendationSub: { en: "Suggested defaults from current conditions", th: "แนะนำสูตรจากเงื่อนไขปัจจุบัน" },
   apply: { en: "Apply", th: "ใช้สูตรนี้" },
+  applied: { en: "Applied", th: "ใช้แล้ว" },
+  clearConditions: { en: "Clear conditions", th: "ล้างเงื่อนไข" },
   fertilizerProgram: { en: "Fertilizer program", th: "แผนใส่ปุ๋ย" },
   fertilizerHint: { en: "Split applications by rice growth stage", th: "แบ่งใส่ตามระยะข้าว" },
   rate: { en: "Rate", th: "ปริมาณ" },

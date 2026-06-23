@@ -22,13 +22,27 @@ export default function ControlPanel({ simulation }) {
             </VarietyButton>
           </div>
         </section>
-        <ScenarioSelector language={language} onSelect={simulation.applyScenario} />
+        <ScenarioSelector
+          activeKey={simulation.activeScenarioKey}
+          language={language}
+          onClear={simulation.resetConditions}
+          onSelect={simulation.applyScenario}
+        />
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 pb-4 pt-1.5">
         <WhiteRiceSurvivalPanel simulation={simulation} />
-        <FarmSystemSelector language={language} onSelect={simulation.applyFarmSystemPreset} />
-        <AutoRecommendationPanel language={language} recommendation={simulation.autoRecommendation} onApply={simulation.applyAutoRecommendation} />
+        <FarmSystemSelector
+          activeKey={simulation.activeFarmSystemPresetKey}
+          language={language}
+          onSelect={simulation.applyFarmSystemPreset}
+        />
+        <AutoRecommendationPanel
+          active={simulation.activeAutoRecommendation}
+          language={language}
+          recommendation={simulation.autoRecommendation}
+          onApply={simulation.applyAutoRecommendation}
+        />
 
         <FertilizerProgram
           language={language}
@@ -107,16 +121,18 @@ function WhiteRiceSurvivalPanel({ simulation }) {
           <button
             key={preset.key}
             type="button"
+            aria-pressed={simulation.activeSurvivalPresetKey === preset.key}
             onClick={() => simulation.applyWhiteRiceSurvivalPreset(preset.key)}
             className={`rounded-lg border px-2 py-2 text-left transition hover:border-rice-green hover:bg-[#f2f7ef] ${
               simulation.activeSurvivalPresetKey === preset.key
-                ? "border-rice-green bg-[#f2f7ef] shadow-soft"
+                ? "border-rice-green bg-[#edf6e9] shadow-soft ring-1 ring-rice-green/20"
                 : "border-[#dedbd0] bg-white"
             }`}
           >
             <div className="flex items-center gap-1 text-[10.5px] font-bold text-[#3c473a]">
               <span>{preset.icon}</span>
-              <span>{pickLang(language, preset.name, preset.th)}</span>
+              <span className="min-w-0 flex-1">{pickLang(language, preset.name, preset.th)}</span>
+              {simulation.activeSurvivalPresetKey === preset.key ? <span className="text-[9px] text-rice-green">●</span> : null}
             </div>
             <div className="mt-1 text-[8.5px] leading-snug text-rice-faint">
               {pickLang(language, preset.noteEn, preset.note)}
@@ -158,9 +174,13 @@ function SurvivalCheck({ label, current, target, ok }) {
   );
 }
 
-function AutoRecommendationPanel({ language, recommendation, onApply }) {
+function AutoRecommendationPanel({ active, language, recommendation, onApply }) {
   return (
-    <section className="mt-[11px] rounded-lg border border-[#d9e2d1] bg-[#f7faf4] px-3.5 py-[13px]">
+    <section
+      className={`mt-[11px] rounded-lg border px-3.5 py-[13px] transition ${
+        active ? "border-rice-green bg-[#edf6e9] shadow-soft ring-1 ring-rice-green/20" : "border-[#d9e2d1] bg-[#f7faf4]"
+      }`}
+    >
       <div className="mb-2 flex items-start justify-between gap-2">
         <div>
           <div className="text-[12.5px] font-bold text-rice-dark">{t(language, "autoRecommendation")}</div>
@@ -171,7 +191,7 @@ function AutoRecommendationPanel({ language, recommendation, onApply }) {
           onClick={onApply}
           className="rounded-md bg-rice-green px-3 py-1.5 text-[10.5px] font-bold text-white shadow-soft transition hover:bg-rice-dark"
         >
-          {t(language, "apply")}
+          {active ? t(language, "applied") : t(language, "apply")}
         </button>
       </div>
 
