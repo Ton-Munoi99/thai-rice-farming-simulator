@@ -1,8 +1,7 @@
-import { FERTILIZER_FORMULAS, SELECT_OPTIONS, WHITE_RICE_SURVIVAL_PRESETS } from "../data/mockData.js";
+import { FERTILIZER_FORMULAS, SELECT_OPTIONS } from "../data/mockData.js";
 import { OPTION_LABELS, optionLabel, pickLang, t } from "../i18n.js";
 import { clamp } from "../utils/format.js";
-import FarmSystemSelector from "./FarmSystemSelector.jsx";
-import ScenarioSelector from "./ScenarioSelector.jsx";
+import PresetLibrary from "./PresetLibrary.jsx";
 
 export default function ControlPanel({ simulation }) {
   const { inputs, setInput, setApplication, switchVariety, varietyKey, nutrientTotals, formulaOptions } = simulation;
@@ -22,21 +21,11 @@ export default function ControlPanel({ simulation }) {
             </VarietyButton>
           </div>
         </section>
-        <ScenarioSelector
-          activeKey={simulation.activeScenarioKey}
-          language={language}
-          onClear={simulation.resetConditions}
-          onSelect={simulation.applyScenario}
-        />
+        <PresetLibrary simulation={simulation} />
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 pb-4 pt-1.5">
-        <WhiteRiceSurvivalPanel simulation={simulation} />
-        <FarmSystemSelector
-          activeKey={simulation.activeFarmSystemPresetKey}
-          language={language}
-          onSelect={simulation.applyFarmSystemPreset}
-        />
+        <div className="mb-2 mt-1 control-heading">{t(language, "manualControls")}</div>
         <AutoRecommendationPanel
           active={simulation.activeAutoRecommendation}
           language={language}
@@ -93,84 +82,6 @@ export default function ControlPanel({ simulation }) {
         </ControlCard>
       </div>
     </aside>
-  );
-}
-
-function WhiteRiceSurvivalPanel({ simulation }) {
-  const { language, liveModel } = simulation;
-  const activePreset =
-    WHITE_RICE_SURVIVAL_PRESETS.find((preset) => preset.key === simulation.activeSurvivalPresetKey) ??
-    WHITE_RICE_SURVIVAL_PRESETS.find((preset) => preset.key === "breakEven");
-  const target = activePreset.target;
-  const current = {
-    yield: liveModel.estimatedYieldKgPerRai,
-    cost: liveModel.costPerRai,
-    price: simulation.pricePerTon,
-    straw: simulation.strawPricePerKg,
-    profit: liveModel.profitPerRai,
-  };
-
-  return (
-    <section className="mt-3.5 rounded-lg border border-[#d8ddd2] bg-[#fbfaf6] px-3.5 py-[13px]">
-      <div className="mb-2">
-        <div className="text-[12.5px] font-bold text-rice-dark">{t(language, "whiteRiceSurvival")}</div>
-        <div className="text-[10px] leading-snug text-rice-faint">{t(language, "whiteRiceSurvivalSub")}</div>
-      </div>
-      <div className="grid grid-cols-2 gap-1.5">
-        {WHITE_RICE_SURVIVAL_PRESETS.map((preset) => (
-          <button
-            key={preset.key}
-            type="button"
-            aria-pressed={simulation.activeSurvivalPresetKey === preset.key}
-            onClick={() => simulation.applyWhiteRiceSurvivalPreset(preset.key)}
-            className={`rounded-lg border px-2 py-2 text-left transition hover:border-rice-green hover:bg-[#f2f7ef] ${
-              simulation.activeSurvivalPresetKey === preset.key
-                ? "border-rice-green bg-[#edf6e9] shadow-soft ring-1 ring-rice-green/20"
-                : "border-[#dedbd0] bg-white"
-            }`}
-          >
-            <div className="flex items-center gap-1 text-[10.5px] font-bold text-[#3c473a]">
-              <span>{preset.icon}</span>
-              <span className="min-w-0 flex-1">{pickLang(language, preset.name, preset.th)}</span>
-              {simulation.activeSurvivalPresetKey === preset.key ? <span className="text-[9px] text-rice-green">●</span> : null}
-            </div>
-            <div className="mt-1 text-[8.5px] leading-snug text-rice-faint">
-              {pickLang(language, preset.noteEn, preset.note)}
-            </div>
-            <div className="mt-1 border-t border-[#eee9dc] pt-1 text-[8px] leading-snug text-[#8b7d59]">
-              Y≥{preset.target.yield} · C≤฿{preset.target.cost.toLocaleString("en-US")} · P≥฿{preset.target.price.toLocaleString("en-US")}
-            </div>
-          </button>
-        ))}
-      </div>
-      <div className="mt-2.5 rounded-md border border-[#e5e1d4] bg-white/70 px-2.5 py-2">
-        <div className="mb-1 text-[9.5px] font-bold text-[#5f755c]">
-          {t(language, "survivalLiveCheck")} · {pickLang(language, activePreset.name, activePreset.th)}
-        </div>
-        <SurvivalCheck language={language} label={t(language, "estimatedYield")} current={`${current.yield} kg/rai`} ok={current.yield >= target.yield} target={`≥${target.yield} kg/rai`} />
-        <SurvivalCheck language={language} label={t(language, "productionCost")} current={`฿${current.cost.toLocaleString("en-US")}`} ok={current.cost <= target.cost} target={`≤฿${target.cost.toLocaleString("en-US")}`} />
-        <SurvivalCheck language={language} label={t(language, "salePrice")} current={`฿${current.price.toLocaleString("en-US")}`} ok={current.price >= target.price} target={`≥฿${target.price.toLocaleString("en-US")}/t`} />
-        <SurvivalCheck language={language} label={t(language, "strawPrice")} current={`฿${current.straw.toFixed(2)}/kg`} ok={current.straw >= target.straw} target={`≥฿${target.straw.toFixed(2)}/kg`} />
-        <SurvivalCheck language={language} label={t(language, "profit")} current={`฿${current.profit.toLocaleString("en-US")}`} ok={current.profit >= 0} target="≥฿0" />
-      </div>
-      <div className="mt-1.5 text-[8.5px] leading-snug text-[#9a8a5d]">
-        {t(language, "regionalYieldNote")}
-      </div>
-    </section>
-  );
-}
-
-function SurvivalCheck({ label, current, target, ok }) {
-  return (
-    <div className="flex items-center justify-between gap-2 border-t border-[#eee9dc] py-1 first:border-t-0">
-      <div className="min-w-0">
-        <div className="truncate text-[8.5px] font-semibold text-[#687461]">{label}</div>
-        <div className="text-[8px] text-rice-faint">{current} / {target}</div>
-      </div>
-      <div className={`rounded px-1.5 py-0.5 text-[8px] font-bold ${ok ? "bg-[#e5f2e6] text-[#2f6b48]" : "bg-[#fff1df] text-[#a25e22]"}`}>
-        {ok ? "OK" : "GAP"}
-      </div>
-    </div>
   );
 }
 
