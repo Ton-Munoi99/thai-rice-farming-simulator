@@ -18,14 +18,14 @@ export default function AppLayout({
 }) {
   return (
     <div className="flex h-screen w-full flex-col overflow-hidden bg-rice-bg text-rice-text">
-      <header className="flex h-[58px] flex-none items-center justify-between gap-3 border-b border-[#284d43] bg-rice-dark px-5 text-white">
+      <header className="flex h-[58px] flex-none items-center justify-between gap-2 border-b border-[#284d43] bg-rice-dark px-3 text-white sm:gap-3 sm:px-5">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="flex h-[34px] w-[34px] flex-none items-center justify-center rounded-lg bg-white/10 text-[19px]">
+          <div className="flex h-[32px] w-[32px] flex-none items-center justify-center rounded-lg bg-white/10 text-[18px] sm:h-[34px] sm:w-[34px] sm:text-[19px]">
             🌾
           </div>
           <div className="min-w-0 leading-tight">
-            <div className="truncate text-[16px] font-bold tracking-[.2px]">{t(language, "appTitle")}</div>
-            <div className="truncate text-[11px] opacity-85">
+            <div className="truncate text-[14px] font-bold tracking-[.2px] sm:text-[16px]">{t(language, "appTitle")}</div>
+            <div className="hidden truncate text-[11px] opacity-85 sm:block">
               {t(language, "farmSubtitle")} - {variety.icon} {pickLang(language, variety.en, variety.name)}
             </div>
           </div>

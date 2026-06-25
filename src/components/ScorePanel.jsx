@@ -2,10 +2,12 @@ import { formatNumber, riskColor, scoreColor, signedBaht } from "../utils/format
 import { COST_LABELS, pickLang, t } from "../i18n.js";
 import { METRIC_QUALITY } from "../data/methodologyData.js";
 import AssumptionSourcePanel from "./AssumptionSourcePanel.jsx";
+import AutoPlanPanel from "./AutoPlanPanel.jsx";
 import CompareScenariosPanel from "./CompareScenariosPanel.jsx";
 import DataQualityBadge from "./DataQualityBadge.jsx";
 import DebtPanel from "./DebtPanel.jsx";
 import ExplanationPanel from "./ExplanationPanel.jsx";
+import MarketContextPanel from "./MarketContextPanel.jsx";
 import RecommendationPanel from "./RecommendationPanel.jsx";
 import SensitivityPanel from "./SensitivityPanel.jsx";
 import SurvivalTargetPanel from "./SurvivalTargetPanel.jsx";
@@ -49,6 +51,7 @@ export default function ScorePanel({ simulation }) {
           <FinancialRiskCard language={language} model={model} />
           <FarmTotalsCard language={language} farmSize={simulation.farmSize} totals={totals} />
           <SurvivalTargetPanel simulation={simulation} />
+          <AutoPlanPanel simulation={simulation} />
           <CompactDetails title={t(language, "sensitivityTitle")}>
             <SensitivityPanel simulation={simulation} />
           </CompactDetails>
@@ -68,6 +71,7 @@ export default function ScorePanel({ simulation }) {
 
         <GroupDetails title={t(language, "editNumbersGroup")}>
           <PriceCard simulation={simulation} />
+          <MarketContextPanel simulation={simulation} />
           <StrawCard simulation={simulation} />
           <CostDriversCard language={language} model={model} />
           <CostEditorCard language={language} model={model} simulation={simulation} variety={variety} />
