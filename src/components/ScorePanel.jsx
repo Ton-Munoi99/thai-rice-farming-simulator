@@ -6,6 +6,7 @@ import DebtPanel from "./DebtPanel.jsx";
 import ExplanationPanel from "./ExplanationPanel.jsx";
 import RecommendationPanel from "./RecommendationPanel.jsx";
 import SensitivityPanel from "./SensitivityPanel.jsx";
+import SurvivalTargetPanel from "./SurvivalTargetPanel.jsx";
 
 export default function ScorePanel({ simulation }) {
   const model = simulation.liveModel;
@@ -45,6 +46,7 @@ export default function ScorePanel({ simulation }) {
         <GroupDetails title={t(language, "financeGroup")} defaultOpen>
           <FinancialRiskCard language={language} model={model} />
           <FarmTotalsCard language={language} farmSize={simulation.farmSize} totals={totals} />
+          <SurvivalTargetPanel simulation={simulation} />
           <CompactDetails title={t(language, "sensitivityTitle")}>
             <SensitivityPanel simulation={simulation} />
           </CompactDetails>
