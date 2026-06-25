@@ -30,6 +30,7 @@ export const TEXT = {
   hidePanel: { en: "Hide panel", th: "ซ่อนแผง" },
   showPanel: { en: "Show panel", th: "ดูแผง" },
   openPanel: { en: "Open data panel", th: "เปิดแผงข้อมูล" },
+  close: { en: "Close", th: "ปิด" },
   health: { en: "Health", th: "สุขภาพ" },
   riceVariety: { en: "Rice variety", th: "พันธุ์ข้าว" },
   whiteRice: { en: "White rice (RD)", th: "ข้าวขาว" },
@@ -191,6 +192,59 @@ export const TEXT = {
   mainFormulas: { en: "Main formulas", th: "สูตรหลัก" },
   sourceReferences: { en: "Source references", th: "แหล่งอ้างอิง" },
   modelLimitations: { en: "Model limitations", th: "ข้อจำกัดของ model" },
+  methodologyShort: { en: "Method", th: "วิธีคิด" },
+  exportShort: { en: "Export", th: "Export" },
+  guideShort: { en: "Guide", th: "คู่มือ" },
+  methodologyEyebrow: { en: "Methodology", th: "วิธีการประเมิน" },
+  methodologyTitle: { en: "How this simulator calculates results", th: "ระบบนี้คำนวณผลอย่างไร" },
+  methodologyIntro: {
+    en: "A plain-language map of the planning formulas, source-backed layers, and limitations behind the current scenario.",
+    th: "สรุปสูตร แหล่งอ้างอิง และข้อจำกัดของ scenario ปัจจุบันแบบอ่านง่าย",
+  },
+  dataQualityTitle: { en: "Data quality", th: "ความมั่นใจของข้อมูล" },
+  dataQualityIntro: {
+    en: "Badges mark whether each number is source-backed, simulator-estimated, or still a rough placeholder.",
+    th: "Badge ใช้บอกว่าตัวเลขมาจากแหล่ง/สูตรชัด เป็น estimate ของ simulator หรือยังเป็น placeholder คร่าว ๆ",
+  },
+  exportReport: { en: "Export report", th: "ส่งออกรายงาน" },
+  scenarioReport: { en: "Scenario report", th: "รายงานสถานการณ์" },
+  exportReportSub: {
+    en: "Use this page to save as PDF or copy key numbers for discussion.",
+    th: "ใช้หน้านี้บันทึกเป็น PDF หรือคัดลอกตัวเลขหลักเพื่อคุยต่อ",
+  },
+  copySummary: { en: "Copy summary", th: "คัดลอกสรุป" },
+  savePdf: { en: "Save PDF", th: "บันทึก PDF" },
+  keyNumbers: { en: "Key numbers", th: "ตัวเลขหลัก" },
+  exportReportNote: {
+    en: "Per-rai values are multiplied by farm size. Carbon value is shown separately and is not included in profit.",
+    th: "ค่าต่อไร่ถูกคูณด้วยพื้นที่นา คาร์บอนแสดงแยกและยังไม่รวมในกำไร",
+  },
+  quickStart: { en: "Quick start", th: "เริ่มใช้งานเร็ว" },
+  onboardingTitle: { en: "Start with three choices", th: "เริ่มจาก 3 อย่างนี้ก่อน" },
+  onboardingIntro: {
+    en: "The simulator works best when you choose a variety, pick a starter case, then adjust real costs and prices.",
+    th: "แอปจะใช้ง่ายที่สุดเมื่อเลือกพันธุ์ เลือกชุดตั้งต้น แล้วค่อยปรับต้นทุนและราคาจริงของตัวเอง",
+  },
+  onboardingStepVariety: { en: "Choose rice variety", th: "เลือกพันธุ์ข้าว" },
+  onboardingStepVarietyBody: {
+    en: "White rice and Hom Mali use different default price, cost, nutrient target, and yield potential.",
+    th: "ข้าวขาวกับหอมมะลิใช้ราคา ต้นทุน เป้าธาตุอาหาร และศักยภาพผลผลิตไม่เหมือนกัน",
+  },
+  onboardingStepPreset: { en: "Pick a starter case", th: "เลือกชุดตั้งต้น" },
+  onboardingStepPresetBody: {
+    en: "Use Scenario, Farm system, or Survival presets to set linked field conditions quickly.",
+    th: "ใช้แท็บสถานการณ์ ระบบนา หรือทางรอด เพื่อ set เงื่อนไขแปลงที่เชื่อมกันอย่างรวดเร็ว",
+  },
+  onboardingStepAdjust: { en: "Adjust real numbers", th: "ปรับตัวเลขจริง" },
+  onboardingStepAdjustBody: {
+    en: "Fine-tune paddy price, straw price, cost items, water, soil, threats, weather, and timing.",
+    th: "ปรับราคาข้าว ราคาฟาง ต้นทุนย่อย น้ำ ดิน โรคแมลง อากาศ และ timing ให้ใกล้แปลงจริง",
+  },
+  onboardingNote: {
+    en: "This is a planning simulator, not a guaranteed agronomic forecast. Check data quality badges before sharing outputs.",
+    th: "นี่คือ simulator เพื่อวางแผน ไม่ใช่คำพยากรณ์ทางวิชาการที่การันตีผล ควรดู badge ความมั่นใจก่อนแชร์ผล",
+  },
+  startUsing: { en: "Start", th: "เริ่มใช้งาน" },
 };
 
 export const COST_LABELS = {

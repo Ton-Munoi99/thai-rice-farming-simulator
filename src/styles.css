@@ -306,3 +306,25 @@ input {
     transition-duration: 0.001ms !important;
   }
 }
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .printable-report,
+  .printable-report * {
+    visibility: visible;
+  }
+
+  .printable-report {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    background: #fffdf7;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}

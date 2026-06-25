@@ -1,5 +1,7 @@
 import { formatNumber, scoreColor, signedBaht } from "../utils/format.js";
 import { pickLang, t } from "../i18n.js";
+import { METRIC_QUALITY } from "../data/methodologyData.js";
+import DataQualityBadge from "./DataQualityBadge.jsx";
 import ExplanationPanel from "./ExplanationPanel.jsx";
 import RecommendationPanel from "./RecommendationPanel.jsx";
 
@@ -18,18 +20,18 @@ export default function SummaryDashboard({ simulation }) {
     strawKg: model.straw.collectableKgPerRai * simulation.farmSize,
   };
   const metrics = [
-    [t(language, "estimatedYield"), `${formatNumber(model.estimatedYieldKgPerRai)} kg/rai`, "#c8901c"],
-    [t(language, "growthScore"), `${model.growthScore} / 100`, "#2f8f4e"],
-    [t(language, "fertilizerEfficiency"), `${model.fertilizerEfficiency}%`, scoreColor(model.fertilizerEfficiency)],
-    [t(language, "waterAdequacy"), `${model.waterAdequacy}%`, scoreColor(model.waterAdequacy)],
-    [t(language, "pestDiseaseRisk"), `${model.pestDiseaseRisk}%`, model.pestDiseaseRisk <= 25 ? "#2f8f4e" : model.pestDiseaseRisk <= 50 ? "#e0a82e" : "#d2603a"],
-    [t(language, "soilHealth"), `${model.soilHealth}%`, scoreColor(model.soilHealth)],
-    [t(language, "productionCost"), `฿${formatNumber(model.costPerRai)}`, "#3c473a"],
-    [t(language, "revenue"), `฿${formatNumber(model.revenuePerRai)}`, "#3c473a"],
-    [t(language, "financialRisk"), pickLang(language, model.financialRisk.level, model.financialRisk.levelTh), model.financialRisk.tone === "good" ? "#2f8f4e" : model.financialRisk.tone === "warning" ? "#e0a82e" : "#d2603a"],
-    [t(language, "strawIncome"), `${formatNumber(model.straw.collectableKgPerRai)} kg/rai`, "#8a7040"],
-    [t(language, "surplusStraw"), `${formatNumber(model.straw.surplusKgPerRai)} kg/rai`, "#8a7040"],
-    [t(language, "strawRevenue"), `฿${formatNumber(model.straw.revenuePerRai)}`, "#8a7040"],
+    [t(language, "estimatedYield"), `${formatNumber(model.estimatedYieldKgPerRai)} kg/rai`, "#c8901c", METRIC_QUALITY.yield],
+    [t(language, "growthScore"), `${model.growthScore} / 100`, "#2f8f4e", METRIC_QUALITY.score],
+    [t(language, "fertilizerEfficiency"), `${model.fertilizerEfficiency}%`, scoreColor(model.fertilizerEfficiency), METRIC_QUALITY.score],
+    [t(language, "waterAdequacy"), `${model.waterAdequacy}%`, scoreColor(model.waterAdequacy), METRIC_QUALITY.score],
+    [t(language, "pestDiseaseRisk"), `${model.pestDiseaseRisk}%`, model.pestDiseaseRisk <= 25 ? "#2f8f4e" : model.pestDiseaseRisk <= 50 ? "#e0a82e" : "#d2603a", METRIC_QUALITY.score],
+    [t(language, "soilHealth"), `${model.soilHealth}%`, scoreColor(model.soilHealth), METRIC_QUALITY.score],
+    [t(language, "productionCost"), `฿${formatNumber(model.costPerRai)}`, "#3c473a", METRIC_QUALITY.cost],
+    [t(language, "revenue"), `฿${formatNumber(model.revenuePerRai)}`, "#3c473a", METRIC_QUALITY.revenue],
+    [t(language, "financialRisk"), pickLang(language, model.financialRisk.level, model.financialRisk.levelTh), model.financialRisk.tone === "good" ? "#2f8f4e" : model.financialRisk.tone === "warning" ? "#e0a82e" : "#d2603a", METRIC_QUALITY.revenue],
+    [t(language, "strawIncome"), `${formatNumber(model.straw.collectableKgPerRai)} kg/rai`, "#8a7040", METRIC_QUALITY.straw],
+    [t(language, "surplusStraw"), `${formatNumber(model.straw.surplusKgPerRai)} kg/rai`, "#8a7040", METRIC_QUALITY.straw],
+    [t(language, "strawRevenue"), `฿${formatNumber(model.straw.revenuePerRai)}`, "#8a7040", METRIC_QUALITY.straw],
   ];
 
   return (
@@ -50,9 +52,12 @@ export default function SummaryDashboard({ simulation }) {
 
         <div className="px-[26px] py-[22px]">
           <div className="grid grid-cols-2 gap-[11px] md:grid-cols-5">
-            {metrics.map(([name, value, color]) => (
+            {metrics.map(([name, value, color, quality]) => (
               <div key={name} className="rounded-lg border border-rice-card bg-white px-[13px] py-3">
-                <div className="text-[10px] leading-tight text-rice-faint">{name}</div>
+                <div className="flex items-center gap-1.5">
+                  <div className="min-w-0 truncate text-[10px] leading-tight text-rice-faint">{name}</div>
+                  <DataQualityBadge language={language} level={quality} compact />
+                </div>
                 <div className="mt-1 font-display text-[19px] font-bold" style={{ color }}>{value}</div>
               </div>
             ))}

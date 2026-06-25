@@ -1,7 +1,9 @@
 import { formatNumber, riskColor, scoreColor, signedBaht } from "../utils/format.js";
 import { COST_LABELS, pickLang, t } from "../i18n.js";
+import { METRIC_QUALITY } from "../data/methodologyData.js";
 import AssumptionSourcePanel from "./AssumptionSourcePanel.jsx";
 import CompareScenariosPanel from "./CompareScenariosPanel.jsx";
+import DataQualityBadge from "./DataQualityBadge.jsx";
 import DebtPanel from "./DebtPanel.jsx";
 import ExplanationPanel from "./ExplanationPanel.jsx";
 import RecommendationPanel from "./RecommendationPanel.jsx";
@@ -135,11 +137,13 @@ function SnapshotCard({ circumference, language, model, profitPositive }) {
           <div className="text-[9px] font-semibold text-rice-faint">{t(language, "healthScoreShort")}</div>
           <div className="text-[12px] font-bold" style={{ color: model.color }}>{pickLang(language, model.label, model.labelTh)}</div>
           <div className="mt-2 grid grid-cols-2 gap-1.5">
-            <MiniSnapshotMetric label={t(language, "estimatedYield")} value={`${formatNumber(model.estimatedYieldKgPerRai)} kg`} />
+            <MiniSnapshotMetric label={t(language, "estimatedYield")} value={`${formatNumber(model.estimatedYieldKgPerRai)} kg`} quality={METRIC_QUALITY.yield} language={language} />
             <MiniSnapshotMetric
               label={model.profitPerRai >= 0 ? t(language, "profit") : t(language, "loss")}
               value={signedBaht(model.profitPerRai)}
               danger={!profitPositive}
+              quality={METRIC_QUALITY.revenue}
+              language={language}
             />
           </div>
           <div className={`mt-1.5 rounded-md px-2 py-1 text-[9px] font-bold ${
@@ -157,10 +161,13 @@ function SnapshotCard({ circumference, language, model, profitPositive }) {
   );
 }
 
-function MiniSnapshotMetric({ danger = false, label, value }) {
+function MiniSnapshotMetric({ danger = false, label, language, quality, value }) {
   return (
     <div className="rounded-md bg-[#fbfaf6] px-2 py-1.5">
-      <div className="truncate text-[8px] text-rice-faint">{label}</div>
+      <div className="flex items-center justify-between gap-1">
+        <span className="truncate text-[8px] text-rice-faint">{label}</span>
+        {quality ? <DataQualityBadge language={language} level={quality} compact /> : null}
+      </div>
       <div className={`font-display text-[11px] font-bold ${danger ? "text-[#a24b2b]" : "text-[#3c473a]"}`}>{value}</div>
     </div>
   );
@@ -191,8 +198,8 @@ function FinancialRiskCard({ language, model }) {
         </div>
       </div>
       <div className="mt-2 grid grid-cols-2 gap-1.5 border-t border-black/5 pt-2">
-        <TotalMetric label={t(language, "breakEvenYield")} value={`${formatNumber(model.financialRisk.breakEvenYieldKgPerRai)} kg`} tone="muted" />
-        <TotalMetric label={t(language, "breakEvenPrice")} value={`฿${formatNumber(model.financialRisk.breakEvenPricePerTon)}`} tone="muted" />
+        <TotalMetric label={t(language, "breakEvenYield")} value={`${formatNumber(model.financialRisk.breakEvenYieldKgPerRai)} kg`} tone="muted" quality="medium" language={language} />
+        <TotalMetric label={t(language, "breakEvenPrice")} value={`฿${formatNumber(model.financialRisk.breakEvenPricePerTon)}`} tone="muted" quality="medium" language={language} />
       </div>
     </section>
   );
@@ -206,10 +213,10 @@ function FarmTotalsCard({ farmSize, language, totals }) {
         <div className="text-[9px] text-rice-faint">{farmSize} {t(language, "rai")}</div>
       </div>
       <div className="grid grid-cols-2 gap-x-3 gap-y-2 border-t border-[#ebe7dd] pt-2">
-        <TotalMetric label={t(language, "totalRevenue")} value={`฿${formatNumber(totals.revenue)}`} tone="ink" />
-        <TotalMetric label={t(language, "totalCost")} value={`฿${formatNumber(totals.cost)}`} tone="muted" />
-        <TotalMetric label={t(language, "riceTotal")} value={`฿${formatNumber(totals.riceRevenue)}`} tone="muted" />
-        <TotalMetric label={t(language, "strawTotal")} value={`฿${formatNumber(totals.strawRevenue)}`} tone="straw" />
+        <TotalMetric label={t(language, "totalRevenue")} value={`฿${formatNumber(totals.revenue)}`} tone="ink" quality={METRIC_QUALITY.revenue} language={language} />
+        <TotalMetric label={t(language, "totalCost")} value={`฿${formatNumber(totals.cost)}`} tone="muted" quality={METRIC_QUALITY.cost} language={language} />
+        <TotalMetric label={t(language, "riceTotal")} value={`฿${formatNumber(totals.riceRevenue)}`} tone="muted" quality={METRIC_QUALITY.revenue} language={language} />
+        <TotalMetric label={t(language, "strawTotal")} value={`฿${formatNumber(totals.strawRevenue)}`} tone="straw" quality={METRIC_QUALITY.straw} language={language} />
       </div>
       <div className={`mt-2 rounded-md px-2.5 py-2 ${totals.profit >= 0 ? "bg-[#eef6ed] text-[#2f6b48]" : "bg-[#fbefeb] text-[#a24b2b]"}`}>
         <div className="flex items-center justify-between gap-2">
@@ -225,7 +232,10 @@ function YieldCard({ language, model }) {
   return (
     <section className="flex items-center justify-between rounded-lg border border-[#e6dcc8] bg-[#fffaf0] px-[15px] py-[13px]">
       <div>
-        <div className="text-[11px] font-semibold text-[#9a8638]">{t(language, "estimatedYield")}</div>
+        <div className="flex items-center gap-1.5">
+          <div className="text-[11px] font-semibold text-[#9a8638]">{t(language, "estimatedYield")}</div>
+          <DataQualityBadge language={language} level={METRIC_QUALITY.yield} compact />
+        </div>
         <div className="text-[10px] text-[#b6ad8a]">kg / {t(language, "rai")}</div>
       </div>
       <div className="font-display text-[30px] font-bold text-rice-gold">{formatNumber(model.estimatedYieldKgPerRai)}</div>
@@ -257,7 +267,10 @@ function PriceCard({ simulation }) {
   return (
     <section className="flex items-center justify-between gap-2 rounded-lg border border-rice-card bg-white px-[13px] py-2.5">
       <div className="leading-tight">
-        <div className="text-[11px] font-semibold text-[#3c473a]">{t(language, "salePrice")}</div>
+        <div className="flex items-center gap-1.5">
+          <div className="text-[11px] font-semibold text-[#3c473a]">{t(language, "salePrice")}</div>
+          <DataQualityBadge language={language} level={METRIC_QUALITY.price} compact />
+        </div>
         <div className="text-[9.5px] text-rice-faint">{t(language, "bahtPerTon")}</div>
       </div>
       <div className="flex items-center gap-[5px]">
@@ -286,7 +299,10 @@ function StrawCard({ simulation }) {
     <section className="mt-[9px] rounded-lg border border-[#d9e2d1] bg-[#f7faf4] px-[13px] py-2.5">
       <div className="mb-2 flex items-start justify-between gap-2">
         <div className="leading-tight">
-          <div className="text-[11px] font-semibold text-[#3c473a]">{t(language, "strawIncome")}</div>
+          <div className="flex items-center gap-1.5">
+            <div className="text-[11px] font-semibold text-[#3c473a]">{t(language, "strawIncome")}</div>
+            <DataQualityBadge language={language} level={METRIC_QUALITY.straw} compact />
+          </div>
           <div className="text-[9.5px] text-rice-faint">{t(language, "strawReference")}</div>
         </div>
         <div className="text-right">
@@ -396,12 +412,15 @@ function SmallButton({ children, onClick }) {
   );
 }
 
-function TotalMetric({ label, value, tone }) {
+function TotalMetric({ label, language, quality, value, tone }) {
   const color = tone === "ink" ? "text-[#2f3b34]" : tone === "straw" ? "text-[#8a7040]" : "text-[#657066]";
 
   return (
     <div className="min-w-0">
-      <div className="text-[8.5px] leading-tight text-rice-faint">{label}</div>
+      <div className="flex items-center gap-1">
+        <span className="min-w-0 truncate text-[8.5px] leading-tight text-rice-faint">{label}</span>
+        {quality ? <DataQualityBadge language={language} level={quality} compact /> : null}
+      </div>
       <div className={`mt-0.5 font-display text-[13px] font-bold ${color}`}>{value}</div>
     </div>
   );

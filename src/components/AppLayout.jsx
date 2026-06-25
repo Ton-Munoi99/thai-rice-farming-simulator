@@ -10,6 +10,9 @@ export default function AppLayout({
   variety,
   onFarmSize,
   onFieldStyle,
+  onOpenExport,
+  onOpenGuide,
+  onOpenMethodology,
   onToggleLanguage,
   onTogglePanel,
 }) {
@@ -54,6 +57,10 @@ export default function AppLayout({
             </StyleButton>
           </div>
 
+          <HeaderActionButton onClick={onOpenMethodology}>{t(language, "methodologyShort")}</HeaderActionButton>
+          <HeaderActionButton onClick={onOpenExport}>{t(language, "exportShort")}</HeaderActionButton>
+          <HeaderActionButton onClick={onOpenGuide}>{t(language, "guideShort")}</HeaderActionButton>
+
           <button
             type="button"
             onClick={onToggleLanguage}
@@ -95,6 +102,18 @@ export default function AppLayout({
         ) : null}
       </div>
     </div>
+  );
+}
+
+function HeaderActionButton({ children, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="whitespace-nowrap rounded-lg bg-white/10 px-3 py-[7px] text-[12px] font-semibold text-white transition hover:bg-white/20"
+    >
+      {children}
+    </button>
   );
 }
 
