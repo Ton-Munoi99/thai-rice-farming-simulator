@@ -187,6 +187,15 @@ export const TEXT = {
   whyResult: { en: "Why this result", th: "เหตุผลของผลลัพธ์" },
   keyRisks: { en: "Key risk factors", th: "ปัจจัยเสี่ยง" },
   recommendedActions: { en: "Recommended actions", th: "คำแนะนำ" },
+  riskContributionTitle: { en: "What is dragging the result?", th: "อะไรฉุดผลลัพธ์มากสุด" },
+  riskContributionSub: {
+    en: "Approximate contribution ranking from current revenue, cost, yield, and field risks.",
+    th: "จัดอันดับผลกระทบโดยประมาณจากรายได้ ต้นทุน ผลผลิต และความเสี่ยงแปลงตอนนี้",
+  },
+  riskContributionNote: {
+    en: "Current loss gap shown for context:",
+    th: "ช่องว่างขาดทุนปัจจุบันเพื่อเทียบภาพรวม:",
+  },
   compareScenarios: { en: "Compare scenarios", th: "เปรียบเทียบสถานการณ์" },
   compareHint: { en: "Save A/B/C to compare yield, cost, profit, and risk", th: "บันทึก A/B/C เพื่อเทียบผลผลิต ต้นทุน กำไร และความเสี่ยง" },
   emptyCompare: { en: "Save the current setup to A/B/C to start comparing.", th: "ตั้งค่าปัจจุบัน แล้วกดบันทึก A/B/C เพื่อเริ่มเทียบ" },
@@ -208,6 +217,11 @@ export const TEXT = {
   methodologyShort: { en: "Method", th: "วิธีคิด" },
   exportShort: { en: "Export", th: "Export" },
   guideShort: { en: "Guide", th: "คู่มือ" },
+  mobileField: { en: "Field", th: "แปลงนา" },
+  mobileControls: { en: "Inputs", th: "เงื่อนไข" },
+  mobileResults: { en: "Results", th: "ผลลัพธ์" },
+  mobilePlans: { en: "Plans", th: "แผนรอด" },
+  mobileMethod: { en: "Method", th: "วิธีคิด" },
   methodologyEyebrow: { en: "Methodology", th: "วิธีการประเมิน" },
   methodologyTitle: { en: "How this simulator calculates results", th: "ระบบนี้คำนวณผลอย่างไร" },
   methodologyIntro: {

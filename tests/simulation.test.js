@@ -4,6 +4,7 @@ import { DEFAULT_INPUTS } from "../src/data/mockData.js";
 import { buildCalibrationCases } from "../src/simulation/CalibrationEngine.js";
 import { buildDebtAnalysis } from "../src/simulation/DebtEngine.js";
 import { buildSurvivalPlans } from "../src/simulation/PlanEngine.js";
+import { buildRiskContributions } from "../src/simulation/RiskContributionEngine.js";
 import { buildSensitivityAnalysis } from "../src/simulation/SensitivityEngine.js";
 import { computeSimulation, estimateStrawHarvest, fertilizerNutrients } from "../src/simulation/SimulationEngine.js";
 
@@ -162,4 +163,24 @@ test("calibration anchors produce model comparisons for yield, cost, and straw",
     assert.equal(typeof item.gaps.costPerRai, "number");
     assert.equal(typeof item.gaps.collectableStrawKgPerRai, "number");
   }
+});
+
+test("risk contributions rank current scenario pressures and normalize percentages", () => {
+  const stressed = modelFor({
+    ...cloneInputs(),
+    water: "Rainfed",
+    groundwater: 8,
+    pest: 80,
+    disease: 70,
+    weed: 72,
+    weather: "Heavy Rain / Flood",
+    managementTiming: 45,
+  });
+  const contributions = buildRiskContributions(stressed, "th");
+
+  assert.ok(contributions.length > 1);
+  assert.ok(contributions[0].percent >= contributions[1].percent);
+  assert.ok(contributions.some((item) => item.key === "threats"));
+  assert.ok(contributions.reduce((sum, item) => sum + item.percent, 0) >= 95);
+  assert.ok(contributions.reduce((sum, item) => sum + item.percent, 0) <= 105);
 });

@@ -11,11 +11,12 @@ import DebtPanel from "./DebtPanel.jsx";
 import ExplanationPanel from "./ExplanationPanel.jsx";
 import MarketContextPanel from "./MarketContextPanel.jsx";
 import RecommendationPanel from "./RecommendationPanel.jsx";
+import RiskContributionPanel from "./RiskContributionPanel.jsx";
 import ScenarioHistoryPanel from "./ScenarioHistoryPanel.jsx";
 import SensitivityPanel from "./SensitivityPanel.jsx";
 import SurvivalTargetPanel from "./SurvivalTargetPanel.jsx";
 
-export default function ScorePanel({ simulation }) {
+export default function ScorePanel({ mobileActive = true, mobileMode = null, simulation }) {
   const model = simulation.liveModel;
   const variety = simulation.varietyInfo;
   const { language } = simulation;
@@ -38,7 +39,9 @@ export default function ScorePanel({ simulation }) {
   ];
 
   return (
-    <aside className="fixed bottom-24 right-3 top-[70px] z-40 flex w-[min(300px,calc(100vw-24px))] flex-none flex-col overflow-y-auto border border-rice-border bg-rice-panel shadow-float lg:static lg:z-auto lg:w-[296px] lg:border-y-0 lg:border-r-0 lg:shadow-none">
+    <aside
+      className={`${mobileActive ? "flex" : "hidden"} fixed bottom-[66px] right-3 top-[70px] z-40 w-[min(300px,calc(100vw-24px))] flex-none flex-col overflow-y-auto border border-rice-border bg-rice-panel shadow-float lg:static lg:z-auto lg:flex lg:w-[296px] lg:border-y-0 lg:border-r-0 lg:shadow-none`}
+    >
       <div className="px-[17px] py-4">
         <div className="control-heading">{t(language, "snapshot")}</div>
         <div className="text-[10.5px] text-rice-faint">{t(language, "realTime")}</div>
@@ -50,7 +53,7 @@ export default function ScorePanel({ simulation }) {
           profitPositive={profitPositive}
         />
 
-        <GroupDetails title={t(language, "financeGroup")} defaultOpen>
+        <GroupDetails title={t(language, "financeGroup")} defaultOpen={mobileMode !== "results"}>
           <FinancialRiskCard language={language} model={model} />
           <FarmTotalsCard language={language} farmSize={simulation.farmSize} totals={totals} />
           <SurvivalTargetPanel simulation={simulation} />
@@ -63,9 +66,10 @@ export default function ScorePanel({ simulation }) {
           </CompactDetails>
         </GroupDetails>
 
-        <GroupDetails title={t(language, "yieldRiskGroup")}>
+        <GroupDetails title={t(language, "yieldRiskGroup")} defaultOpen={mobileMode === "results"}>
           <YieldCard language={language} model={model} />
           <IndicatorGrid indicators={indicators} />
+          <RiskContributionPanel language={language} model={model} />
           <ExplanationPanel language={language} model={model} />
           <section className="mt-3.5 rounded-[13px] border border-rice-card bg-white px-[13px] py-3">
             <RecommendationPanel language={language} risks={model.risks} actions={model.recommendedActions} />

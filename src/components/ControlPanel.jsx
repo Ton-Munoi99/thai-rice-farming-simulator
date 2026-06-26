@@ -3,12 +3,14 @@ import { OPTION_LABELS, optionLabel, pickLang, t } from "../i18n.js";
 import { clamp } from "../utils/format.js";
 import PresetLibrary from "./PresetLibrary.jsx";
 
-export default function ControlPanel({ simulation }) {
+export default function ControlPanel({ mobileActive = true, simulation }) {
   const { inputs, setInput, setApplication, switchVariety, varietyKey, nutrientTotals, formulaOptions } = simulation;
   const { language } = simulation;
 
   return (
-    <aside className="absolute bottom-24 left-0 top-0 z-30 w-[min(316px,calc(100vw-20px))] flex-none overflow-y-auto border-r border-rice-border bg-rice-panel shadow-float md:relative md:bottom-auto md:top-auto md:z-auto md:shadow-none">
+    <aside
+      className={`${mobileActive ? "block" : "hidden"} absolute bottom-[66px] left-0 top-0 z-30 w-[min(316px,calc(100vw-20px))] flex-none overflow-y-auto border-r border-rice-border bg-rice-panel shadow-float md:relative md:bottom-auto md:top-auto md:z-auto md:block md:shadow-none`}
+    >
       <div className="px-4 pb-4 pt-3.5">
         <section className="mb-3.5">
           <div className="control-heading">{t(language, "riceVariety")}</div>

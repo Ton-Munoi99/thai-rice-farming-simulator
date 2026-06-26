@@ -4,6 +4,7 @@ import { METRIC_QUALITY } from "../data/methodologyData.js";
 import DataQualityBadge from "./DataQualityBadge.jsx";
 import ExplanationPanel from "./ExplanationPanel.jsx";
 import RecommendationPanel from "./RecommendationPanel.jsx";
+import RiskContributionPanel from "./RiskContributionPanel.jsx";
 
 export default function SummaryDashboard({ simulation }) {
   if (!simulation.showSummary) return null;
@@ -111,6 +112,10 @@ export default function SummaryDashboard({ simulation }) {
 
           <div className="mt-4 rounded-lg border border-rice-card bg-white px-4 py-3">
             <ExplanationPanel language={language} model={model} compact />
+          </div>
+
+          <div className="mt-4 rounded-lg border border-rice-card bg-white px-4 py-3">
+            <RiskContributionPanel language={language} model={model} compact />
           </div>
 
           <div className="mt-4">

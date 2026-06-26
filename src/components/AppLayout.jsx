@@ -5,6 +5,7 @@ export default function AppLayout({
   farmSize,
   fieldStyle,
   language,
+  mobileTab,
   showPanel,
   score,
   variety,
@@ -14,9 +15,18 @@ export default function AppLayout({
   onOpenGuide,
   onOpenMethodology,
   onOpenWizard,
+  onSetMobileTab,
   onToggleLanguage,
   onTogglePanel,
 }) {
+  const mobileTabs = [
+    { key: "field", icon: "田", label: t(language, "mobileField") },
+    { key: "controls", icon: "⚙", label: t(language, "mobileControls") },
+    { key: "results", icon: "↗", label: t(language, "mobileResults") },
+    { key: "plans", icon: "✓", label: t(language, "mobilePlans") },
+    { key: "method", icon: "?", label: t(language, "mobileMethod"), action: onOpenMethodology },
+  ];
+
   return (
     <div className="flex h-screen w-full flex-col overflow-hidden bg-rice-bg text-rice-text">
       <header className="flex h-[58px] flex-none items-center justify-between gap-2 border-b border-[#284d43] bg-rice-dark px-3 text-white sm:gap-3 sm:px-5">
@@ -103,6 +113,30 @@ export default function AppLayout({
           </button>
         ) : null}
       </div>
+
+      <nav className="fixed bottom-0 left-0 right-0 z-[70] grid grid-cols-5 border-t border-[#d8ddd2] bg-[#fffdf7]/96 px-1.5 py-1.5 shadow-[0_-8px_20px_rgba(47,54,48,.12)] backdrop-blur md:hidden">
+        {mobileTabs.map((tab) => {
+          const active = mobileTab === tab.key;
+          const handleClick = () => {
+            if (tab.action) tab.action();
+            else onSetMobileTab(tab.key);
+          };
+
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={handleClick}
+              className={`flex min-w-0 flex-col items-center justify-center rounded-lg px-1 py-1.5 text-[9px] font-bold transition ${
+                active ? "bg-[#edf6e9] text-rice-dark ring-1 ring-rice-green/20" : "text-[#768171] hover:bg-[#f5f3ea]"
+              }`}
+            >
+              <span className="font-display text-[14px] leading-none">{tab.icon}</span>
+              <span className="mt-0.5 max-w-full truncate">{tab.label}</span>
+            </button>
+          );
+        })}
+      </nav>
     </div>
   );
 }

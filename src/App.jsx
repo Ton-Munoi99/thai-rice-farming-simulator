@@ -18,6 +18,7 @@ export default function App() {
   const [showMethodology, setShowMethodology] = useState(false);
   const [showExportReport, setShowExportReport] = useState(false);
   const [showGoalWizard, setShowGoalWizard] = useState(false);
+  const [mobileTab, setMobileTab] = useState("field");
   const [showOnboarding, setShowOnboarding] = useState(() => {
     if (typeof window === "undefined") return false;
     return window.localStorage.getItem(ONBOARDING_KEY) !== "done";
@@ -33,6 +34,7 @@ export default function App() {
       farmSize={simulation.farmSize}
       fieldStyle={simulation.fieldStyle}
       language={simulation.language}
+      mobileTab={mobileTab}
       showPanel={simulation.showPanel}
       score={simulation.score}
       variety={simulation.varietyInfo}
@@ -42,15 +44,22 @@ export default function App() {
       onOpenGuide={() => setShowOnboarding(true)}
       onOpenMethodology={() => setShowMethodology(true)}
       onOpenWizard={() => setShowGoalWizard(true)}
+      onSetMobileTab={setMobileTab}
       onToggleLanguage={simulation.toggleLanguage}
       onTogglePanel={simulation.togglePanel}
     >
-      <ControlPanel simulation={simulation} />
-      <main className="flex min-w-0 flex-1 flex-col bg-[#e8eadf]">
+      <ControlPanel simulation={simulation} mobileActive={mobileTab === "controls"} />
+      <main className={`${mobileTab === "field" ? "flex" : "hidden"} min-w-0 flex-1 flex-col bg-[#e8eadf] md:flex`}>
         <RiceFieldAnimation simulation={simulation} />
         <GrowthTimeline simulation={simulation} />
       </main>
-      {simulation.showPanel ? <ScorePanel simulation={simulation} /> : null}
+      {simulation.showPanel || mobileTab === "results" || mobileTab === "plans" ? (
+        <ScorePanel
+          simulation={simulation}
+          mobileActive={mobileTab === "results" || mobileTab === "plans"}
+          mobileMode={mobileTab}
+        />
+      ) : null}
       <SummaryDashboard simulation={simulation} />
       {showMethodology ? <MethodologyModal simulation={simulation} onClose={() => setShowMethodology(false)} /> : null}
       {showExportReport ? <ExportReportModal simulation={simulation} onClose={() => setShowExportReport(false)} /> : null}
