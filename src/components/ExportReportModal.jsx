@@ -1,11 +1,16 @@
 import { METRIC_QUALITY } from "../data/methodologyData.js";
 import { MARKET_PRICE_SCENARIOS } from "../data/planningData.js";
 import { pickLang, t } from "../i18n.js";
+import { buildRiskContributions } from "../simulation/RiskContributionEngine.js";
 import { formatNumber, signedBaht } from "../utils/format.js";
 import DataQualityBadge, { DataQualityLegend } from "./DataQualityBadge.jsx";
 
 export default function ExportReportModal({ onClose, simulation }) {
   const { farmSize, language, liveModel: model, pricePerTon, strawPricePerKg, varietyInfo } = simulation;
+  const riskContributions = buildRiskContributions(model, language);
+  const topPlan = simulation.survivalPlans[0];
+  const decisionTone = model.profitPerRai >= 800 ? "go" : model.profitPerRai >= 0 ? "watch" : "stop";
+  const generatedAt = new Date().toLocaleDateString(language === "th" ? "th-TH" : "en-US", { day: "numeric", month: "short", year: "numeric" });
   const totals = {
     riceRevenue: model.riceRevenuePerRai * farmSize,
     strawRevenue: model.straw.revenuePerRai * farmSize,
@@ -27,7 +32,7 @@ export default function ExportReportModal({ onClose, simulation }) {
   ];
 
   const copySummary = async () => {
-    const text = buildPlainTextSummary({ farmSize, language, model, pricePerTon, strawPricePerKg, totals, varietyInfo });
+    const text = buildPlainTextSummary({ farmSize, language, model, pricePerTon, riskContributions, strawPricePerKg, topPlan, totals, varietyInfo });
     await navigator.clipboard?.writeText(text);
   };
 
@@ -58,12 +63,53 @@ export default function ExportReportModal({ onClose, simulation }) {
               <div className="text-[11px] font-bold uppercase tracking-[.5px] text-rice-faint">{t(language, "appTitle")}</div>
               <h2 className="mt-1 text-[25px] font-bold leading-tight text-[#2f3b34]">{t(language, "scenarioReport")}</h2>
               <p className="mt-1 text-[11px] leading-snug text-rice-muted">{t(language, "exportReportSub")}</p>
+              <div className="mt-2 text-[9.5px] text-rice-faint">{generatedAt}</div>
             </div>
             <div className={`rounded-lg px-4 py-3 text-right ${totals.profit >= 0 ? "bg-[#edf6e9] text-[#2f6b48]" : "bg-[#fff0ea] text-[#a24b2b]"}`}>
               <div className="text-[10px] font-bold">{t(language, "totalProfit")}</div>
               <div className="font-display text-[25px] font-bold">{signedBaht(totals.profit)}</div>
               <div className="text-[9px]">{farmSize} {t(language, "rai")}</div>
             </div>
+          </div>
+
+          <section className="mt-4 grid gap-3 md:grid-cols-[1.25fr_.75fr]">
+            <div className={`rounded-xl border px-4 py-4 ${
+              decisionTone === "go"
+                ? "border-[#cfe4c9] bg-[#f2faf0]"
+                : decisionTone === "watch"
+                  ? "border-[#eadfbf] bg-[#fffaf0]"
+                  : "border-[#ead5cd] bg-[#fff5f0]"
+            }`}>
+              <div className="text-[11px] font-bold uppercase tracking-[.05em] text-rice-faint">{t(language, "decisionStatus")}</div>
+              <div className={`mt-1 font-display text-[28px] font-bold leading-none ${
+                decisionTone === "go" ? "text-[#2f6b48]" : decisionTone === "watch" ? "text-[#8a641c]" : "text-[#a24b2b]"
+              }`}>
+                {t(language, decisionTone === "go" ? "reportGo" : decisionTone === "watch" ? "reportWatch" : "reportStop")}
+              </div>
+              <div className="mt-2 text-[11px] leading-relaxed text-[#4f5c50]">
+                {model.profitPerRai >= 0
+                  ? `${t(language, "profit")} ${signedBaht(model.profitPerRai)}/${t(language, "rai")} · ${t(language, "financialRisk")} ${pickLang(language, model.financialRisk.level, model.financialRisk.levelTh)}`
+                  : `${t(language, "loss")} ${signedBaht(model.profitPerRai)}/${t(language, "rai")} · ${pickLang(language, riskContributions[0].action, riskContributions[0].actionTh)}`}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-[#d8ddd2] bg-[#fbfaf6] px-4 py-4">
+              <div className="text-[11px] font-bold text-[#2f3b34]">{t(language, "primaryPressure")}</div>
+              <div className="mt-2 flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="truncate font-bold text-[#3c473a]">{riskContributions[0].icon} {pickLang(language, riskContributions[0].label, riskContributions[0].labelTh)}</div>
+                  <div className="mt-1 text-[9.5px] leading-snug text-rice-faint">{pickLang(language, riskContributions[0].detail, riskContributions[0].detailTh)}</div>
+                </div>
+                <div className="font-display text-[28px] font-bold text-rice-red">{riskContributions[0].percent}%</div>
+              </div>
+            </div>
+          </section>
+
+          <div className="mt-4 grid grid-cols-2 gap-2 md:grid-cols-4">
+            <ReportMetric label={t(language, "estimatedYield")} value={`${formatNumber(model.estimatedYieldKgPerRai)} kg/rai`} />
+            <ReportMetric label={t(language, "breakEvenYield")} value={`${formatNumber(model.financialRisk.breakEvenYieldKgPerRai)} kg/rai`} />
+            <ReportMetric label={t(language, "productionCost")} value={`฿${formatNumber(model.costPerRai)}/rai`} />
+            <ReportMetric label={model.profitPerRai >= 0 ? t(language, "profit") : t(language, "loss")} value={`${signedBaht(model.profitPerRai)}/rai`} danger={model.profitPerRai < 0} />
           </div>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2">
@@ -126,6 +172,34 @@ export default function ExportReportModal({ onClose, simulation }) {
             </section>
           </div>
 
+          <div className="mt-3 grid gap-3 md:grid-cols-2">
+            <section className="rounded-lg border border-[#d8ddd2] bg-[#fbfaf6] px-4 py-3">
+              <h3 className="text-[13px] font-bold text-[#2f3b34]">{t(language, "riskContributionTitle")}</h3>
+              <div className="mt-2 space-y-2">
+                {riskContributions.slice(0, 4).map((item) => (
+                  <ReportPressure key={item.key} item={item} language={language} />
+                ))}
+              </div>
+            </section>
+
+            <section className="rounded-lg border border-[#d8ddd2] bg-[#fbfaf6] px-4 py-3">
+              <h3 className="text-[13px] font-bold text-[#2f3b34]">{t(language, "costStructure")}</h3>
+              <div className="mt-2 flex flex-col divide-y divide-[#ebe7dc]">
+                {[...model.costBreakdown].sort((a, b) => b.value - a.value).slice(0, 5).map((item) => (
+                  <div key={item.key} className="flex items-center justify-between gap-3 py-1.5 text-[10px]">
+                    <span className="min-w-0 truncate text-rice-muted">{item.label}</span>
+                    <span className="font-display font-bold text-[#2f3b34]">฿{formatNumber(item.value)}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-2 rounded-lg bg-white/75 px-3 py-2 text-[9.5px] leading-snug text-rice-faint">
+                {model.costDrivers.total > 0
+                  ? `${t(language, "linkedCostDrivers")}: +฿${formatNumber(model.costDrivers.total)}/${t(language, "rai")}`
+                  : t(language, "riskContributionSub")}
+              </div>
+            </section>
+          </div>
+
           <section className="mt-3 rounded-lg border border-[#d8ddd2] bg-[#fbfaf6] px-4 py-3">
             <h3 className="text-[13px] font-bold text-[#2f3b34]">{t(language, "dataQualityTitle")}</h3>
             <div className="mt-2">
@@ -155,13 +229,17 @@ export default function ExportReportModal({ onClose, simulation }) {
               ))}
             </div>
           </section>
+
+          <div className="mt-4 border-t border-[#ebe7dc] pt-3 text-[9.5px] leading-snug text-rice-faint">
+            {t(language, "reportFooterNote")}
+          </div>
         </article>
       </section>
     </div>
   );
 }
 
-function buildPlainTextSummary({ farmSize, language, model, pricePerTon, strawPricePerKg, totals, varietyInfo }) {
+function buildPlainTextSummary({ farmSize, language, model, pricePerTon, riskContributions, strawPricePerKg, topPlan, totals, varietyInfo }) {
   return [
     t(language, "scenarioReport"),
     `${t(language, "riceVariety")}: ${pickLang(language, varietyInfo.en, varietyInfo.name)}`,
@@ -172,14 +250,33 @@ function buildPlainTextSummary({ farmSize, language, model, pricePerTon, strawPr
     `${t(language, "totalRevenue")}: ฿${formatNumber(totals.revenue)}`,
     `${t(language, "totalCost")}: ฿${formatNumber(totals.cost)}`,
     `${t(language, "totalProfit")}: ${signedBaht(totals.profit)}`,
+    `${t(language, "primaryPressure")}: ${pickLang(language, riskContributions[0].label, riskContributions[0].labelTh)} (${riskContributions[0].percent}%)`,
+    `${t(language, "recommendedPath")}: ${topPlan ? `${pickLang(language, topPlan.label, topPlan.labelTh)} ${signedBaht(topPlan.model.profitPerRai)}/${t(language, "rai")}` : t(language, "notAvailable")}`,
   ].join("\n");
 }
 
-function ReportMetric({ label, value }) {
+function ReportMetric({ danger = false, label, value }) {
   return (
     <div className="rounded-lg bg-white/75 px-3 py-2">
       <div className="text-[9px] leading-tight text-rice-faint">{label}</div>
-      <div className="mt-0.5 font-display text-[15px] font-bold text-[#2f3b34]">{value}</div>
+      <div className={`mt-0.5 font-display text-[15px] font-bold ${danger ? "text-[#a24b2b]" : "text-[#2f3b34]"}`}>{value}</div>
+    </div>
+  );
+}
+
+function ReportPressure({ item, language }) {
+  const color = item.tone === "danger" ? "bg-[#a24b2b]" : item.tone === "good" ? "bg-[#2f6b48]" : "bg-[#c6a15b]";
+
+  return (
+    <div>
+      <div className="mb-1 flex items-center justify-between gap-2 text-[10px]">
+        <span className="min-w-0 truncate font-bold text-[#3c473a]">{item.icon} {pickLang(language, item.label, item.labelTh)}</span>
+        <span className="font-display font-bold text-[#2f3b34]">{item.percent}%</span>
+      </div>
+      <div className="h-2 overflow-hidden rounded-full bg-[#ebe7dc]">
+        <div className={`h-full rounded-full ${color}`} style={{ width: `${Math.max(4, item.percent)}%` }} />
+      </div>
+      <div className="mt-1 text-[8.5px] leading-snug text-rice-faint">{pickLang(language, item.action, item.actionTh)}</div>
     </div>
   );
 }
