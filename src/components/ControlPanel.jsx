@@ -24,8 +24,30 @@ export default function ControlPanel({ mobileActive = true, simulation }) {
           </div>
         </section>
         <PresetLibrary simulation={simulation} />
+        <FarmerProfilePanel simulation={simulation} />
 
-        <div className="mb-2 mt-4 control-heading">{t(language, "importantConditions")}</div>
+        <div className="mb-2 mt-4 control-heading">{t(language, "manualControls")}</div>
+        <AutoRecommendationPanel
+          active={simulation.activeAutoRecommendation}
+          language={language}
+          recommendation={simulation.autoRecommendation}
+          onApply={simulation.applyAutoRecommendation}
+        />
+
+        <FertilizerProgram
+          language={language}
+          applications={inputs.applications}
+          stages={simulation.fertilizerStages}
+          formulaOptions={formulaOptions}
+          nutrientTotals={nutrientTotals}
+          nutrientTargets={{
+            N: simulation.varietyInfo.idealN,
+            P: simulation.varietyInfo.idealP,
+            K: simulation.varietyInfo.idealK,
+          }}
+          onChange={setApplication}
+        />
+
         <ControlCard icon="💧" title={t(language, "waterManagement")}>
           <FieldLabel>{t(language, "irrigationMethod")}</FieldLabel>
           <Select language={language} value={inputs.water} onChange={(value) => setInput("water", value)} options={SELECT_OPTIONS.water} labels={OPTION_LABELS.water} />
@@ -59,44 +81,8 @@ export default function ControlPanel({ mobileActive = true, simulation }) {
             onChange={(value) => setInput("managementTiming", value)}
           />
         </ControlCard>
-
-        <AdvancedDetails title={t(language, "advancedControls")}>
-          <FarmerProfilePanel simulation={simulation} />
-          <AutoRecommendationPanel
-            active={simulation.activeAutoRecommendation}
-            language={language}
-            recommendation={simulation.autoRecommendation}
-            onApply={simulation.applyAutoRecommendation}
-          />
-
-          <FertilizerProgram
-            language={language}
-            applications={inputs.applications}
-            stages={simulation.fertilizerStages}
-            formulaOptions={formulaOptions}
-            nutrientTotals={nutrientTotals}
-            nutrientTargets={{
-              N: simulation.varietyInfo.idealN,
-              P: simulation.varietyInfo.idealP,
-              K: simulation.varietyInfo.idealK,
-            }}
-            onChange={setApplication}
-          />
-        </AdvancedDetails>
       </div>
     </aside>
-  );
-}
-
-function AdvancedDetails({ children, title }) {
-  return (
-    <details className="mt-[11px] rounded-lg border border-[#e5e1d4] bg-[#fbfaf6] px-3 py-2.5">
-      <summary className="cursor-pointer list-none text-[11px] font-bold text-[#3c473a]">
-        <span>{title}</span>
-        <span className="float-right text-[9px] text-rice-faint">▾</span>
-      </summary>
-      <div className="mt-2 border-t border-[#ebe7dd] pt-2">{children}</div>
-    </details>
   );
 }
 
