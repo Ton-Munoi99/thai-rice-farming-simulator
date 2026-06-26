@@ -1,6 +1,7 @@
 import { formatNumber, riskColor, scoreColor, signedBaht } from "../utils/format.js";
 import { COST_LABELS, pickLang, t } from "../i18n.js";
 import { METRIC_QUALITY } from "../data/methodologyData.js";
+import { buildRiskContributions } from "../simulation/RiskContributionEngine.js";
 import AssumptionSourcePanel from "./AssumptionSourcePanel.jsx";
 import AutoPlanPanel from "./AutoPlanPanel.jsx";
 import CalibrationPanel from "./CalibrationPanel.jsx";
@@ -22,6 +23,7 @@ export default function ScorePanel({ mobileActive = true, mobileMode = null, sim
   const { language } = simulation;
   const circumference = 2 * Math.PI * 58;
   const profitPositive = model.profitPerRai >= 0;
+  const topPressure = buildRiskContributions(model, language)[0];
   const totals = {
     riceRevenue: model.riceRevenuePerRai * simulation.farmSize,
     strawRevenue: model.straw.revenuePerRai * simulation.farmSize,
@@ -43,21 +45,24 @@ export default function ScorePanel({ mobileActive = true, mobileMode = null, sim
       className={`${mobileActive ? "flex" : "hidden"} fixed bottom-[66px] right-3 top-[70px] z-40 w-[min(300px,calc(100vw-24px))] flex-none flex-col overflow-y-auto border border-rice-border bg-rice-panel shadow-float lg:static lg:z-auto lg:flex lg:w-[296px] lg:border-y-0 lg:border-r-0 lg:shadow-none`}
     >
       <div className="px-[17px] py-4">
-        <div className="control-heading">{t(language, "snapshot")}</div>
-        <div className="text-[10.5px] text-rice-faint">{t(language, "realTime")}</div>
-
-        <SnapshotCard
-          circumference={circumference}
+        <div className="control-heading">{t(language, "simpleResult")}</div>
+        <SimpleDecisionCard
+          farmSize={simulation.farmSize}
           language={language}
           model={model}
-          profitPositive={profitPositive}
+          topPressure={topPressure}
+          totals={totals}
         />
 
-        <GroupDetails title={t(language, "financeGroup")} defaultOpen={mobileMode !== "results"}>
+        <GroupDetails title={t(language, "nextActions")} defaultOpen>
+          <RecommendationPanel language={language} risks={model.risks.slice(0, 2)} actions={model.recommendedActions.slice(0, 3)} />
+          <AutoPlanPanel simulation={simulation} />
+        </GroupDetails>
+
+        <GroupDetails title={t(language, "financeGroup")} defaultOpen={mobileMode === "plans"}>
           <FinancialRiskCard language={language} model={model} />
           <FarmTotalsCard language={language} farmSize={simulation.farmSize} totals={totals} />
           <SurvivalTargetPanel simulation={simulation} />
-          <AutoPlanPanel simulation={simulation} />
           <CompactDetails title={t(language, "sensitivityTitle")}>
             <SensitivityPanel simulation={simulation} />
           </CompactDetails>
@@ -67,6 +72,12 @@ export default function ScorePanel({ mobileActive = true, mobileMode = null, sim
         </GroupDetails>
 
         <GroupDetails title={t(language, "yieldRiskGroup")} defaultOpen={mobileMode === "results"}>
+          <SnapshotCard
+            circumference={circumference}
+            language={language}
+            model={model}
+            profitPositive={profitPositive}
+          />
           <YieldCard language={language} model={model} />
           <IndicatorGrid indicators={indicators} />
           <RiskContributionPanel language={language} model={model} />
@@ -95,6 +106,61 @@ export default function ScorePanel({ mobileActive = true, mobileMode = null, sim
         </GroupDetails>
       </div>
     </aside>
+  );
+}
+
+function SimpleDecisionCard({ farmSize, language, model, topPressure, totals }) {
+  const profitPositive = model.profitPerRai >= 0;
+  const statusKey = model.profitPerRai >= 800 ? "reportGo" : profitPositive ? "reportWatch" : "reportStop";
+
+  return (
+    <section className={`mt-2.5 rounded-lg border px-3 py-3 ${
+      profitPositive ? "border-[#d7e8cf] bg-[#f4faf2]" : "border-[#ead5cd] bg-[#fff5f0]"
+    }`}>
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <div className="text-[10px] font-bold uppercase tracking-[.04em] text-rice-faint">{t(language, "decisionStatus")}</div>
+          <div className={`mt-1 font-display text-[22px] font-bold leading-none ${profitPositive ? "text-[#2f6b48]" : "text-[#a24b2b]"}`}>
+            {t(language, statusKey)}
+          </div>
+          <div className="mt-1 text-[9.5px] leading-snug text-rice-faint">
+            {farmSize} {t(language, "rai")} · {t(language, "totalProfit")} {signedBaht(totals.profit)}
+          </div>
+        </div>
+        <div className={`rounded-lg px-2.5 py-2 text-right ${profitPositive ? "bg-white/80 text-[#2f6b48]" : "bg-white/80 text-[#a24b2b]"}`}>
+          <div className="text-[8.5px] font-bold">{profitPositive ? t(language, "profit") : t(language, "loss")}</div>
+          <div className="font-display text-[17px] font-bold">{signedBaht(model.profitPerRai)}</div>
+          <div className="text-[8px] text-rice-faint">/{t(language, "rai")}</div>
+        </div>
+      </div>
+
+      <div className="mt-3 grid grid-cols-2 gap-1.5">
+        <SimpleMetric label={t(language, "estimatedYield")} value={`${formatNumber(model.estimatedYieldKgPerRai)} kg`} />
+        <SimpleMetric label={t(language, "productionCost")} value={`฿${formatNumber(model.costPerRai)}`} />
+      </div>
+
+      <div className="mt-2 rounded-lg bg-white/80 px-2.5 py-2">
+        <div className="text-[9px] font-bold text-[#3c473a]">{t(language, "primaryPressure")}</div>
+        <div className="mt-0.5 flex items-center justify-between gap-2">
+          <div className="min-w-0 truncate text-[10.5px] font-bold text-[#3c473a]">
+            {topPressure.icon} {pickLang(language, topPressure.label, topPressure.labelTh)}
+          </div>
+          <div className="font-display text-[12px] font-bold text-rice-red">{topPressure.percent}%</div>
+        </div>
+        <div className="mt-1 text-[9px] leading-snug text-rice-faint">
+          {pickLang(language, topPressure.action, topPressure.actionTh)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SimpleMetric({ label, value }) {
+  return (
+    <div className="rounded-md bg-white/80 px-2 py-1.5">
+      <div className="truncate text-[8.5px] text-rice-faint">{label}</div>
+      <div className="font-display text-[12px] font-bold text-[#2f3b34]">{value}</div>
+    </div>
   );
 }
 
