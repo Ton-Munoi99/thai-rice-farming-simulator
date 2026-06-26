@@ -13,6 +13,7 @@ export default function AppLayout({
   onOpenExport,
   onOpenGuide,
   onOpenMethodology,
+  onOpenWizard,
   onToggleLanguage,
   onTogglePanel,
 }) {
@@ -58,6 +59,7 @@ export default function AppLayout({
           </div>
 
           <HeaderActionButton onClick={onOpenMethodology}>{t(language, "methodologyShort")}</HeaderActionButton>
+          <HeaderActionButton onClick={onOpenWizard}>{t(language, "goalWizardShort")}</HeaderActionButton>
           <HeaderActionButton onClick={onOpenExport}>{t(language, "exportShort")}</HeaderActionButton>
           <HeaderActionButton onClick={onOpenGuide}>{t(language, "guideShort")}</HeaderActionButton>
 

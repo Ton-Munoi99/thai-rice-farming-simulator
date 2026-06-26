@@ -3,12 +3,15 @@ import { COST_LABELS, pickLang, t } from "../i18n.js";
 import { METRIC_QUALITY } from "../data/methodologyData.js";
 import AssumptionSourcePanel from "./AssumptionSourcePanel.jsx";
 import AutoPlanPanel from "./AutoPlanPanel.jsx";
+import CalibrationPanel from "./CalibrationPanel.jsx";
 import CompareScenariosPanel from "./CompareScenariosPanel.jsx";
 import DataQualityBadge from "./DataQualityBadge.jsx";
+import DecisionGuardrailPanel from "./DecisionGuardrailPanel.jsx";
 import DebtPanel from "./DebtPanel.jsx";
 import ExplanationPanel from "./ExplanationPanel.jsx";
 import MarketContextPanel from "./MarketContextPanel.jsx";
 import RecommendationPanel from "./RecommendationPanel.jsx";
+import ScenarioHistoryPanel from "./ScenarioHistoryPanel.jsx";
 import SensitivityPanel from "./SensitivityPanel.jsx";
 import SurvivalTargetPanel from "./SurvivalTargetPanel.jsx";
 
@@ -80,6 +83,9 @@ export default function ScorePanel({ simulation }) {
 
         <GroupDetails title={t(language, "compareMoreGroup")}>
           <CompareScenariosPanel simulation={simulation} />
+          <ScenarioHistoryPanel simulation={simulation} />
+          <CalibrationPanel simulation={simulation} />
+          <DecisionGuardrailPanel simulation={simulation} />
           <CarbonCard simulation={simulation} />
           <AssumptionSourcePanel simulation={simulation} />
         </GroupDetails>

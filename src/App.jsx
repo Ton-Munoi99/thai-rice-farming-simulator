@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import AppLayout from "./components/AppLayout.jsx";
 import ControlPanel from "./components/ControlPanel.jsx";
 import ExportReportModal from "./components/ExportReportModal.jsx";
+import GoalWizardModal from "./components/GoalWizardModal.jsx";
 import GrowthTimeline from "./components/GrowthTimeline.jsx";
 import MethodologyModal from "./components/MethodologyModal.jsx";
 import OnboardingModal from "./components/OnboardingModal.jsx";
@@ -16,6 +17,7 @@ export default function App() {
   const simulation = useSimulation();
   const [showMethodology, setShowMethodology] = useState(false);
   const [showExportReport, setShowExportReport] = useState(false);
+  const [showGoalWizard, setShowGoalWizard] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(() => {
     if (typeof window === "undefined") return false;
     return window.localStorage.getItem(ONBOARDING_KEY) !== "done";
@@ -39,6 +41,7 @@ export default function App() {
       onOpenExport={() => setShowExportReport(true)}
       onOpenGuide={() => setShowOnboarding(true)}
       onOpenMethodology={() => setShowMethodology(true)}
+      onOpenWizard={() => setShowGoalWizard(true)}
       onToggleLanguage={simulation.toggleLanguage}
       onTogglePanel={simulation.togglePanel}
     >
@@ -51,6 +54,7 @@ export default function App() {
       <SummaryDashboard simulation={simulation} />
       {showMethodology ? <MethodologyModal simulation={simulation} onClose={() => setShowMethodology(false)} /> : null}
       {showExportReport ? <ExportReportModal simulation={simulation} onClose={() => setShowExportReport(false)} /> : null}
+      {showGoalWizard ? <GoalWizardModal simulation={simulation} onClose={() => setShowGoalWizard(false)} /> : null}
       {showOnboarding ? <OnboardingModal language={simulation.language} onClose={closeOnboarding} /> : null}
     </AppLayout>
   );

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { DEFAULT_INPUTS } from "../src/data/mockData.js";
+import { buildCalibrationCases } from "../src/simulation/CalibrationEngine.js";
 import { buildDebtAnalysis } from "../src/simulation/DebtEngine.js";
 import { buildSurvivalPlans } from "../src/simulation/PlanEngine.js";
 import { buildSensitivityAnalysis } from "../src/simulation/SensitivityEngine.js";
@@ -148,4 +149,17 @@ test("debt analysis stays cash-positive for profitable scenarios and computes de
   assert.ok(lossDebt.cashShortfall > 0);
   assert.ok(lossDebt.debtDue >= lossDebt.cashShortfall);
   assert.ok(lossDebt.requiredPricePerTon >= 8000);
+});
+
+test("calibration anchors produce model comparisons for yield, cost, and straw", () => {
+  const cases = buildCalibrationCases();
+
+  assert.ok(cases.length >= 4);
+  for (const item of cases) {
+    assert.ok(item.model.estimatedYieldKgPerRai > 0);
+    assert.ok(item.model.costPerRai > 0);
+    assert.equal(typeof item.gaps.yieldKgPerRai, "number");
+    assert.equal(typeof item.gaps.costPerRai, "number");
+    assert.equal(typeof item.gaps.collectableStrawKgPerRai, "number");
+  }
 });

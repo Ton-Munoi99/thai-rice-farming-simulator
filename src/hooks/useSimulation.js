@@ -16,11 +16,23 @@ import { COST_ITEMS, buildAutoRecommendation, computeSimulation, fertilizerNutri
 import { buildCells, buildChannels, buildPlantVisuals, buildWeatherFx, gridForFarmSize } from "../simulation/fieldModel.js";
 import { clamp } from "../utils/format.js";
 
+const HISTORY_KEY = "rice-simulator-scenario-history-v1";
+
 function cloneInputs(inputs) {
   return {
     ...inputs,
     applications: inputs.applications.map((app) => ({ ...app })),
   };
+}
+
+function readScenarioHistory() {
+  if (typeof window === "undefined") return [];
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(HISTORY_KEY) ?? "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
 }
 
 export function useSimulation() {
@@ -46,6 +58,7 @@ export function useSimulation() {
   const [activeAutoRecommendation, setActiveAutoRecommendation] = useState(false);
   const [activeFarmerProfileKey, setActiveFarmerProfileKey] = useState(null);
   const [compareSlots, setCompareSlots] = useState([null, null, null]);
+  const [scenarioHistory, setScenarioHistory] = useState(readScenarioHistory);
   const [runModel, setRunModel] = useState(null);
   const timers = useRef([]);
 
@@ -311,14 +324,16 @@ export function useSimulation() {
     setInputs(cloneInputs(DEFAULT_INPUTS));
   }, [resetToSetup]);
 
-  const buildCompareSnapshot = useCallback(
-    (slotIndex) => {
-      const slotName = ["A", "B", "C"][slotIndex];
+  const buildSnapshot = useCallback(
+    ({ label, slot = null, type = "history" }) => {
       const model = computeSimulation(inputs, { varietyKey, pricePerTon, strawPricePerKg, costOverrides, costProfile, yieldPotentialOverride });
       return {
-        id: `${slotName}-${Date.now()}`,
-        slot: slotName,
+        id: `${type}-${Date.now()}`,
+        label,
+        slot,
+        type,
         savedAt: new Date().toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" }),
+        savedDate: new Date().toISOString(),
         varietyKey,
         varietyName: VARIETIES[varietyKey].name,
         inputs: {
@@ -334,12 +349,14 @@ export function useSimulation() {
         activeFarmSystemPresetKey,
         activeSurvivalPresetKey,
         activeAutoRecommendation,
+        activeFarmerProfileKey,
         model,
       };
     },
     [
       activeAutoRecommendation,
       activeFarmSystemPresetKey,
+      activeFarmerProfileKey,
       activeScenarioKey,
       activeSurvivalPresetKey,
       costOverrides,
@@ -350,6 +367,42 @@ export function useSimulation() {
       varietyKey,
       yieldPotentialOverride,
     ],
+  );
+
+  const buildCompareSnapshot = useCallback(
+    (slotIndex) => {
+      const slotName = ["A", "B", "C"][slotIndex];
+      return buildSnapshot({ label: `Scenario ${slotName}`, slot: slotName, type: "compare" });
+    },
+    [buildSnapshot],
+  );
+
+  const persistScenarioHistory = useCallback((next) => {
+    setScenarioHistory(next);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+    }
+  }, []);
+
+  const applySnapshot = useCallback(
+    (snapshot) => {
+      if (!snapshot) return;
+
+      resetToSetup();
+      setVarietyKey(snapshot.varietyKey);
+      setPricePerTonState(snapshot.pricePerTon);
+      setStrawPricePerKgState(snapshot.strawPricePerKg ?? 0.75);
+      setCostOverrides({ ...(snapshot.costOverrides ?? {}) });
+      setCostProfile(snapshot.costProfile ? { ...snapshot.costProfile } : null);
+      setYieldPotentialOverride(snapshot.yieldPotentialOverride ?? null);
+      setActiveScenarioKey(snapshot.activeScenarioKey ?? null);
+      setActiveFarmSystemPresetKey(snapshot.activeFarmSystemPresetKey ?? null);
+      setActiveSurvivalPresetKey(snapshot.activeSurvivalPresetKey ?? null);
+      setActiveAutoRecommendation(Boolean(snapshot.activeAutoRecommendation));
+      setActiveFarmerProfileKey(snapshot.activeFarmerProfileKey ?? null);
+      setInputs(cloneInputs(snapshot.inputs));
+    },
+    [resetToSetup],
   );
 
   const saveCompareSlot = useCallback(
@@ -367,22 +420,35 @@ export function useSimulation() {
   const loadCompareSlot = useCallback(
     (slotIndex) => {
       const snapshot = compareSlots[slotIndex];
-      if (!snapshot) return;
-
-      resetToSetup();
-      setVarietyKey(snapshot.varietyKey);
-      setPricePerTonState(snapshot.pricePerTon);
-      setStrawPricePerKgState(snapshot.strawPricePerKg ?? 0.75);
-      setCostOverrides({ ...snapshot.costOverrides });
-      setCostProfile(snapshot.costProfile ? { ...snapshot.costProfile } : null);
-      setYieldPotentialOverride(snapshot.yieldPotentialOverride ?? null);
-      setActiveScenarioKey(snapshot.activeScenarioKey ?? null);
-      setActiveFarmSystemPresetKey(snapshot.activeFarmSystemPresetKey ?? null);
-      setActiveSurvivalPresetKey(snapshot.activeSurvivalPresetKey ?? null);
-      setActiveAutoRecommendation(Boolean(snapshot.activeAutoRecommendation));
-      setInputs(cloneInputs(snapshot.inputs));
+      applySnapshot(snapshot);
     },
-    [compareSlots, resetToSetup],
+    [applySnapshot, compareSlots],
+  );
+
+  const saveScenarioHistory = useCallback(
+    (label) => {
+      const trimmed = String(label || "").trim();
+      const snapshot = buildSnapshot({
+        label: trimmed || `Scenario ${scenarioHistory.length + 1}`,
+        type: "history",
+      });
+      persistScenarioHistory([snapshot, ...scenarioHistory].slice(0, 12));
+    },
+    [buildSnapshot, persistScenarioHistory, scenarioHistory],
+  );
+
+  const loadScenarioHistory = useCallback(
+    (historyId) => {
+      applySnapshot(scenarioHistory.find((item) => item.id === historyId));
+    },
+    [applySnapshot, scenarioHistory],
+  );
+
+  const deleteScenarioHistory = useCallback(
+    (historyId) => {
+      persistScenarioHistory(scenarioHistory.filter((item) => item.id !== historyId));
+    },
+    [persistScenarioHistory, scenarioHistory],
   );
 
   const applyAutoRecommendation = useCallback(() => {
@@ -442,6 +508,72 @@ export function useSimulation() {
       }
     },
     [clearPresetSelection, inputs.applications, resetToSetup, varietyKey],
+  );
+
+  const applyGoalWizardRecommendation = useCallback(
+    ({ costBase, strawMarket, targetProfit, waterAccess }) => {
+      const costProfileKey =
+        costBase === "lowCost"
+          ? "ownerMachinery"
+          : costBase === "cashTight"
+            ? "cashTightRainfed"
+            : strawMarket === "strong"
+              ? "strawCoop"
+              : "standardTenant";
+      const profile = FARMER_PROFILES.find((item) => item.key === costProfileKey) ?? FARMER_PROFILES[0];
+      const presetKey = waterAccess === "limited" ? "rainfed" : "transplanted";
+      const preset = FARM_SYSTEM_PRESETS.find((item) => item.key === presetKey) ?? FARM_SYSTEM_PRESETS[0];
+      const nextInputs = cloneInputs(preset.inputs);
+      const profitGoal = Number(targetProfit) || 0;
+
+      if (waterAccess === "limited") {
+        nextInputs.water = "Rainfed";
+        nextInputs.groundwater = 22;
+        nextInputs.weather = "Drought";
+        nextInputs.managementTiming = Math.max(nextInputs.managementTiming - 8, 62);
+      } else if (waterAccess === "floodRisk") {
+        nextInputs.water = "Continuous Flooding";
+        nextInputs.groundwater = 48;
+        nextInputs.weather = "Heavy Rain / Flood";
+        nextInputs.managementTiming = 74;
+      } else {
+        nextInputs.water = "Alternate Wet-Dry (AWD)";
+        nextInputs.groundwater = Math.max(nextInputs.groundwater, 58);
+        nextInputs.managementTiming = Math.max(nextInputs.managementTiming, 84);
+      }
+
+      if (profitGoal >= 1000) {
+        const recommendation = buildAutoRecommendation(nextInputs, preset.variety);
+        nextInputs.applications = recommendation.applications.map((app) => ({ ...app }));
+        nextInputs.pest = Math.min(nextInputs.pest, 18);
+        nextInputs.disease = Math.min(nextInputs.disease, 16);
+        nextInputs.weed = Math.min(nextInputs.weed, 22);
+        nextInputs.managementTiming = Math.max(nextInputs.managementTiming, 86);
+      }
+
+      if (profile.inputPatch) Object.assign(nextInputs, profile.inputPatch);
+
+      const strawPrice = strawMarket === "strong" ? 1.05 : strawMarket === "weak" ? 0.45 : profile.strawPricePerKg;
+      const yieldBoost = profile.yieldPotentialBoost + (profitGoal >= 1500 ? 45 : profitGoal >= 1000 ? 25 : 0);
+
+      resetToSetup();
+      setVarietyKey(preset.variety);
+      setPricePerTonState(VARIETIES[preset.variety].salePricePerTon);
+      setStrawPricePerKgState(strawPrice);
+      setCostOverrides({});
+      setCostProfile({
+        ...profile.costProfile,
+        fertilizerReferenceCost: fertilizerNutrients(nextInputs.applications).cost,
+      });
+      setYieldPotentialOverride(Math.max(1, VARIETIES[preset.variety].potential + yieldBoost));
+      setActiveScenarioKey(null);
+      setActiveFarmSystemPresetKey(preset.key);
+      setActiveSurvivalPresetKey(null);
+      setActiveAutoRecommendation(profitGoal >= 1000);
+      setActiveFarmerProfileKey(profile.key);
+      setInputs(nextInputs);
+    },
+    [resetToSetup],
   );
 
   const runSimulation = useCallback(() => {
@@ -508,6 +640,7 @@ export function useSimulation() {
     activeAutoRecommendation,
     activeFarmerProfileKey,
     compareSlots,
+    scenarioHistory,
     liveModel,
     activeModel,
     score,
@@ -539,9 +672,13 @@ export function useSimulation() {
     saveCompareSlot,
     clearCompareSlot,
     loadCompareSlot,
+    saveScenarioHistory,
+    loadScenarioHistory,
+    deleteScenarioHistory,
     applyAutoRecommendation,
     applySurvivalPlan,
     applyFarmerProfile,
+    applyGoalWizardRecommendation,
     runSimulation,
   };
 }

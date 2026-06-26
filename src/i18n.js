@@ -236,6 +236,76 @@ export const TEXT = {
   reportChart: { en: "Revenue vs cost", th: "รายได้เทียบต้นทุน" },
   marketSensitivity: { en: "Market sensitivity", th: "Sensitivity ราคาตลาด" },
   suggestedPlans: { en: "Suggested plans", th: "แผนที่ระบบเสนอ" },
+  scenario: { en: "Scenario", th: "สถานการณ์" },
+  scenarioHistory: { en: "Scenario history", th: "ประวัติสถานการณ์" },
+  scenarioHistorySub: {
+    en: "Save reusable setups beyond A/B/C. Stored locally in this browser.",
+    th: "บันทึกชุดตั้งค่าไว้ใช้ซ้ำมากกว่า A/B/C เก็บในเครื่อง/เบราว์เซอร์นี้",
+  },
+  scenarioHistoryEmpty: { en: "No saved scenarios yet.", th: "ยังไม่มีสถานการณ์ที่บันทึกไว้" },
+  delete: { en: "Delete", th: "ลบ" },
+  calibrationTitle: { en: "Data calibration", th: "ปรับเทียบข้อมูล" },
+  calibrationSub: {
+    en: "Starter anchors compare model output against practical reference cases.",
+    th: "เทียบผล model กับกรณีอ้างอิงเบื้องต้นเพื่อดูว่าค่าเริ่มต้นเพี้ยนมากไหม",
+  },
+  calibrationNote: {
+    en: "These are low-confidence calibration anchors until replaced by farm records, official survey tables, or field trial data.",
+    th: "ชุดนี้ยังเป็น anchor ความมั่นใจต่ำ ควรแทนด้วยบัญชีฟาร์ม ตารางสำรวจราชการ หรือผลทดลองแปลงจริงต่อไป",
+  },
+  decisionGuardrails: { en: "Decision guardrails", th: "คำเตือนก่อนตัดสินใจ" },
+  decisionGuardrailsSub: {
+    en: "Confidence notes for recommendations, chemicals, finance, and carbon.",
+    th: "บอกระดับความมั่นใจของคำแนะนำ ยา การเงิน และคาร์บอน",
+  },
+  goalWizardShort: { en: "Goal", th: "เป้ารอด" },
+  goalWizardTitle: { en: "Goal wizard", th: "ตัวช่วยตั้งเป้ารอด" },
+  goalWizardSub: {
+    en: "Answer four practical questions and the app will set linked defaults for cost base, water risk, straw market, and production discipline.",
+    th: "ตอบ 4 คำถาม แล้วระบบจะตั้งค่า default ที่เชื่อมกันเรื่องฐานต้นทุน ความเสี่ยงน้ำ ตลาดฟาง และวินัยการผลิต",
+  },
+  wizardTargetProfit: { en: "Minimum profit target", th: "กำไรขั้นต่ำที่อยากได้" },
+  wizardWaterAccess: { en: "Water access", th: "น้ำในแปลง" },
+  wizardStrawMarket: { en: "Straw market", th: "ตลาดฟาง" },
+  wizardCostBase: { en: "Cost base", th: "ฐานต้นทุน" },
+  wizardRecommendedSetup: { en: "Recommended setup", th: "ชุดตั้งค่าที่แนะนำ" },
+  wizardApply: { en: "Apply linked setup", th: "ใช้ชุดตั้งค่านี้" },
+  wizardNote: {
+    en: "The wizard changes linked assumptions only. Paddy price remains a market input and can still be edited manually.",
+    th: "Wizard ปรับเฉพาะสมมติฐานที่เชื่อมกัน ราคาข้าวยังเป็นราคาตลาดและแก้เองได้เหมือนเดิม",
+  },
+  wizardRecYield: {
+    en: "Use balanced fertilizer, tighter pest scouting, and stronger timing because the profit goal needs yield discipline.",
+    th: "ใช้ปุ๋ยสมดุล สำรวจโรคแมลงเข้มขึ้น และเพิ่มวินัย timing เพราะเป้ากำไรต้องพึ่งผลผลิต",
+  },
+  wizardRecCost: {
+    en: "Prioritize cost discipline and break-even protection before pushing extra inputs.",
+    th: "เน้นคุมต้นทุนและป้องกันขาดทุนก่อนเพิ่ม input หนัก ๆ",
+  },
+  wizardRecWaterLimited: {
+    en: "Set water as a limiting factor, lower pump certainty, and avoid over-spending on nitrogen.",
+    th: "ตั้งน้ำเป็นข้อจำกัด ลดความมั่นใจน้ำบาดาล และหลีกเลี่ยงการลง N หนักเกินไป",
+  },
+  wizardRecWaterStable: {
+    en: "Use AWD/stable-water assumptions so timing and nutrient efficiency can improve.",
+    th: "ใช้สมมติฐานน้ำเสถียร/AWD เพื่อให้ timing และประสิทธิภาพปุ๋ยดีขึ้น",
+  },
+  wizardRecStrawStrong: {
+    en: "Use a stronger straw market assumption, closer to group/direct-sale value.",
+    th: "ใช้ราคาฟางแบบตลาดดี ใกล้เคียงกรณีรวมกลุ่ม/ขายตรง",
+  },
+  wizardRecStrawNormal: {
+    en: "Keep straw as side income, not the main rescue lever.",
+    th: "ให้ฟางเป็นรายได้เสริม ไม่ใช่คันโยกหลักในการรอด",
+  },
+  wizardRecLowCost: {
+    en: "Apply the lower-cost farmer profile to reduce rent/labor pressure.",
+    th: "ใช้โปรไฟล์ต้นทุนต่ำเพื่อลดแรงกดดันค่าเช่า/แรงงาน",
+  },
+  wizardRecStandardCost: {
+    en: "Keep a normal tenant-farmer cost base and use manual edits for real bills.",
+    th: "คงฐานต้นทุนชาวนาเช่านาทั่วไป แล้วให้ปรับบิลจริงเองต่อ",
+  },
   quickStart: { en: "Quick start", th: "เริ่มใช้งานเร็ว" },
   onboardingTitle: { en: "Start with three choices", th: "เริ่มจาก 3 อย่างนี้ก่อน" },
   onboardingIntro: {
