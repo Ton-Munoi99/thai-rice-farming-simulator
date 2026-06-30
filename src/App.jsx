@@ -12,7 +12,6 @@ import SummaryDashboard from "./components/SummaryDashboard.jsx";
 import { useSimulation } from "./hooks/useSimulation.js";
 
 const ONBOARDING_KEY = "rice-simulator-onboarding-v1";
-const VIEW_MODE_KEY = "rice-simulator-view-mode-v1";
 
 export default function App() {
   const simulation = useSimulation();
@@ -20,11 +19,6 @@ export default function App() {
   const [showExportReport, setShowExportReport] = useState(false);
   const [showGoalWizard, setShowGoalWizard] = useState(false);
   const [mobileTab, setMobileTab] = useState("field");
-  const [viewMode, setViewMode] = useState(() => {
-    if (typeof window === "undefined") return "simple";
-    const stored = window.localStorage.getItem(VIEW_MODE_KEY);
-    return stored === "advanced" ? "advanced" : "simple";
-  });
   const [showOnboarding, setShowOnboarding] = useState(() => {
     if (typeof window === "undefined") return false;
     return window.localStorage.getItem(ONBOARDING_KEY) !== "done";
@@ -33,14 +27,6 @@ export default function App() {
   const closeOnboarding = useCallback(() => {
     window.localStorage.setItem(ONBOARDING_KEY, "done");
     setShowOnboarding(false);
-  }, []);
-
-  const changeViewMode = useCallback((mode) => {
-    const nextMode = mode === "advanced" ? "advanced" : "simple";
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(VIEW_MODE_KEY, nextMode);
-    }
-    setViewMode(nextMode);
   }, []);
 
   return (
@@ -52,7 +38,6 @@ export default function App() {
       showPanel={simulation.showPanel}
       score={simulation.score}
       variety={simulation.varietyInfo}
-      viewMode={viewMode}
       onFarmSize={simulation.setFarmSize}
       onFieldStyle={simulation.setFieldStyle}
       onOpenExport={() => setShowExportReport(true)}
@@ -62,9 +47,8 @@ export default function App() {
       onSetMobileTab={setMobileTab}
       onToggleLanguage={simulation.toggleLanguage}
       onTogglePanel={simulation.togglePanel}
-      onViewMode={changeViewMode}
     >
-      <ControlPanel simulation={simulation} mobileActive={mobileTab === "controls"} viewMode={viewMode} />
+      <ControlPanel simulation={simulation} mobileActive={mobileTab === "controls"} />
       <main className={`${mobileTab === "field" ? "flex" : "hidden"} min-w-0 flex-1 flex-col bg-[#e8eadf] md:flex`}>
         <RiceFieldAnimation simulation={simulation} />
         <GrowthTimeline simulation={simulation} />
@@ -74,7 +58,6 @@ export default function App() {
           simulation={simulation}
           mobileActive={mobileTab === "results" || mobileTab === "plans"}
           mobileMode={mobileTab}
-          viewMode={viewMode}
         />
       ) : null}
       <SummaryDashboard simulation={simulation} />

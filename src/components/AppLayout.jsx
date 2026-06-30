@@ -9,7 +9,6 @@ export default function AppLayout({
   showPanel,
   score,
   variety,
-  viewMode,
   onFarmSize,
   onFieldStyle,
   onOpenExport,
@@ -19,7 +18,6 @@ export default function AppLayout({
   onSetMobileTab,
   onToggleLanguage,
   onTogglePanel,
-  onViewMode,
 }) {
   const mobileTabs = [
     { key: "field", icon: "田", label: t(language, "mobileField") },
@@ -74,24 +72,6 @@ export default function AppLayout({
           <HeaderActionButton onClick={onOpenWizard}>{t(language, "goalWizardShort")}</HeaderActionButton>
           <HeaderActionButton onClick={onOpenExport}>{t(language, "exportShort")}</HeaderActionButton>
           <HeaderActionButton onClick={onOpenGuide}>{t(language, "guideShort")}</HeaderActionButton>
-
-          <div className="hidden rounded-lg bg-white/10 p-1 sm:flex" aria-label={t(language, "viewMode")}>
-            <ModeButton active={viewMode === "simple"} onClick={() => onViewMode("simple")}>
-              {t(language, "simpleMode")}
-            </ModeButton>
-            <ModeButton active={viewMode === "advanced"} onClick={() => onViewMode("advanced")}>
-              {t(language, "advancedMode")}
-            </ModeButton>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => onViewMode(viewMode === "simple" ? "advanced" : "simple")}
-            className="whitespace-nowrap rounded-lg bg-white/10 px-3 py-[7px] text-[12px] font-semibold text-white transition hover:bg-white/20 sm:hidden"
-            aria-label={t(language, "viewMode")}
-          >
-            {viewMode === "simple" ? t(language, "simpleMode") : t(language, "advancedMode")}
-          </button>
 
           <button
             type="button"
@@ -167,20 +147,6 @@ function HeaderActionButton({ children, onClick }) {
       type="button"
       onClick={onClick}
       className="whitespace-nowrap rounded-lg bg-white/10 px-3 py-[7px] text-[12px] font-semibold text-white transition hover:bg-white/20"
-    >
-      {children}
-    </button>
-  );
-}
-
-function ModeButton({ active, children, onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`rounded-md px-[11px] py-[5px] text-[11.5px] font-semibold transition ${
-        active ? "bg-[#fffdf7] text-rice-dark" : "bg-transparent text-white/75 hover:text-white"
-      }`}
     >
       {children}
     </button>
