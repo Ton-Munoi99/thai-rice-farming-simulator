@@ -1,6 +1,7 @@
 import { formatNumber, riskColor, scoreColor, signedBaht } from "../utils/format.js";
 import { COST_LABELS, pickLang, t } from "../i18n.js";
 import { METRIC_QUALITY } from "../data/methodologyData.js";
+import { buildRiskContributions } from "../simulation/RiskContributionEngine.js";
 import AssumptionSourcePanel from "./AssumptionSourcePanel.jsx";
 import AutoPlanPanel from "./AutoPlanPanel.jsx";
 import CalibrationPanel from "./CalibrationPanel.jsx";
@@ -16,7 +17,7 @@ import ScenarioHistoryPanel from "./ScenarioHistoryPanel.jsx";
 import SensitivityPanel from "./SensitivityPanel.jsx";
 import SurvivalTargetPanel from "./SurvivalTargetPanel.jsx";
 
-export default function ScorePanel({ mobileActive = true, mobileMode = null, simulation }) {
+export default function ScorePanel({ mobileActive = true, mobileMode = null, simulation, viewMode = "advanced" }) {
   const model = simulation.liveModel;
   const variety = simulation.varietyInfo;
   const { language } = simulation;
@@ -30,6 +31,8 @@ export default function ScorePanel({ mobileActive = true, mobileMode = null, sim
     profit: model.profitPerRai * simulation.farmSize,
     strawKg: model.straw.collectableKgPerRai * simulation.farmSize,
   };
+  const riskContributions = buildRiskContributions(model, language);
+  const topPlan = simulation.survivalPlans[0];
 
   const indicators = [
     [t(language, "fertilizerEfficiency"), model.fertilizerEfficiency, scoreColor(model.fertilizerEfficiency), "%"],
@@ -37,6 +40,52 @@ export default function ScorePanel({ mobileActive = true, mobileMode = null, sim
     [t(language, "pestDiseaseRisk"), model.pestDiseaseRisk, riskColor(model.pestDiseaseRisk), "%"],
     [t(language, "soilHealth"), model.soilHealth, scoreColor(model.soilHealth), "%"],
   ];
+
+  if (viewMode === "simple") {
+    return (
+      <aside
+        className={`${mobileActive ? "flex" : "hidden"} fixed bottom-[66px] right-3 top-[70px] z-40 w-[min(300px,calc(100vw-24px))] flex-none flex-col overflow-y-auto border border-rice-border bg-rice-panel shadow-float lg:static lg:z-auto lg:flex lg:w-[296px] lg:border-y-0 lg:border-r-0 lg:shadow-none`}
+      >
+        <div className="px-[17px] py-4">
+          <SimpleResultCard farmSize={simulation.farmSize} language={language} model={model} totals={totals} />
+          <section className="mt-3 rounded-lg border border-rice-card bg-white px-3 py-3">
+            <div className="text-[11px] font-bold text-[#3c473a]">{t(language, "mainCauses")}</div>
+            <div className="mt-2 space-y-1.5">
+              {riskContributions.slice(0, 3).map((item) => (
+                <SimpleCause key={item.key} item={item} language={language} />
+              ))}
+            </div>
+          </section>
+          <section className="mt-3 rounded-lg border border-rice-card bg-white px-3 py-3">
+            <div className="text-[11px] font-bold text-[#3c473a]">{t(language, "recommendedActions")}</div>
+            <div className="mt-2 space-y-1.5">
+              {model.recommendedActions.slice(0, 3).map((action) => (
+                <div key={action.en} className="rounded-md bg-[#f4faf2] px-2.5 py-2 text-[9.5px] leading-snug text-[#3c473a]">
+                  {pickLang(language, action.en, action.th)}
+                </div>
+              ))}
+            </div>
+          </section>
+          {topPlan ? (
+            <section className="mt-3 rounded-lg border border-[#d7e8cf] bg-[#f4faf2] px-3 py-3">
+              <div className="text-[11px] font-bold text-[#2f6b48]">{t(language, "bestPath")}</div>
+              <div className="mt-1 text-[10px] font-bold text-[#3c473a]">
+                {topPlan.icon} {pickLang(language, topPlan.label, topPlan.labelTh)}
+              </div>
+              <div className="mt-1 text-[9px] leading-snug text-rice-faint">
+                {t(language, "profitPerRai")}: {signedBaht(topPlan.model.profitPerRai)}
+              </div>
+            </section>
+          ) : null}
+          <GroupDetails title={t(language, "details")}>
+            <FinancialRiskCard language={language} model={model} />
+            <RiskContributionPanel language={language} model={model} />
+            <FarmTotalsCard language={language} farmSize={simulation.farmSize} totals={totals} />
+          </GroupDetails>
+        </div>
+      </aside>
+    );
+  }
 
   return (
     <aside
@@ -95,6 +144,56 @@ export default function ScorePanel({ mobileActive = true, mobileMode = null, sim
         </GroupDetails>
       </div>
     </aside>
+  );
+}
+
+function SimpleResultCard({ farmSize, language, model, totals }) {
+  const profitPositive = model.profitPerRai >= 0;
+  const statusKey = model.profitPerRai >= 800 ? "reportGo" : profitPositive ? "reportWatch" : "reportStop";
+
+  return (
+    <section className={`rounded-lg border px-3 py-3 ${profitPositive ? "border-[#d7e8cf] bg-[#f4faf2]" : "border-[#ead5cd] bg-[#fff5f0]"}`}>
+      <div className="text-[10px] font-bold uppercase tracking-[.04em] text-rice-faint">{t(language, "simpleResult")}</div>
+      <div className={`mt-1 font-display text-[23px] font-bold leading-none ${profitPositive ? "text-[#2f6b48]" : "text-[#a24b2b]"}`}>
+        {t(language, statusKey)}
+      </div>
+      <div className="mt-2 grid grid-cols-2 gap-1.5">
+        <SimpleMetric label={profitPositive ? t(language, "profit") : t(language, "loss")} value={`${signedBaht(model.profitPerRai)}/${t(language, "rai")}`} danger={!profitPositive} />
+        <SimpleMetric label={t(language, "totalProfit")} value={signedBaht(totals.profit)} danger={totals.profit < 0} />
+        <SimpleMetric label={t(language, "estimatedYield")} value={`${formatNumber(model.estimatedYieldKgPerRai)} kg`} />
+        <SimpleMetric label={t(language, "productionCost")} value={`฿${formatNumber(model.costPerRai)}`} />
+      </div>
+      <div className="mt-2 text-[9px] leading-snug text-rice-faint">
+        {farmSize} {t(language, "rai")} · {t(language, "revenue")} ฿{formatNumber(model.revenuePerRai)}/{t(language, "rai")}
+      </div>
+    </section>
+  );
+}
+
+function SimpleMetric({ danger = false, label, value }) {
+  return (
+    <div className="rounded-md bg-white/80 px-2 py-1.5">
+      <div className="truncate text-[8.5px] text-rice-faint">{label}</div>
+      <div className={`font-display text-[12px] font-bold ${danger ? "text-[#a24b2b]" : "text-[#2f3b34]"}`}>{value}</div>
+    </div>
+  );
+}
+
+function SimpleCause({ item, language }) {
+  const tone = item.tone === "danger" ? "text-[#a24b2b]" : item.tone === "good" ? "text-[#2f6b48]" : "text-[#8a641c]";
+
+  return (
+    <div className="rounded-md bg-[#fbfaf6] px-2.5 py-2">
+      <div className="flex items-center justify-between gap-2">
+        <div className="min-w-0 truncate text-[9.5px] font-bold text-[#3c473a]">
+          {item.icon} {pickLang(language, item.label, item.labelTh)}
+        </div>
+        <div className={`font-display text-[10.5px] font-bold ${tone}`}>{item.percent}%</div>
+      </div>
+      <div className="mt-1 text-[8.5px] leading-snug text-rice-faint">
+        {pickLang(language, item.action, item.actionTh)}
+      </div>
+    </div>
   );
 }
 

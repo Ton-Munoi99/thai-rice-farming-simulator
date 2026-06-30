@@ -3,7 +3,7 @@ import { OPTION_LABELS, optionLabel, pickLang, t } from "../i18n.js";
 import { clamp } from "../utils/format.js";
 import PresetLibrary from "./PresetLibrary.jsx";
 
-export default function ControlPanel({ mobileActive = true, simulation }) {
+export default function ControlPanel({ mobileActive = true, simulation, viewMode = "advanced" }) {
   const { inputs, setInput, setApplication, switchVariety, varietyKey, nutrientTotals, formulaOptions } = simulation;
   const { language } = simulation;
 
@@ -23,30 +23,36 @@ export default function ControlPanel({ mobileActive = true, simulation }) {
             </VarietyButton>
           </div>
         </section>
-        <PresetLibrary simulation={simulation} />
-        <FarmerProfilePanel simulation={simulation} />
+        <PresetLibrary compact={viewMode === "simple"} simulation={simulation} />
+        {viewMode === "advanced" ? <FarmerProfilePanel simulation={simulation} /> : null}
 
-        <div className="mb-2 mt-4 control-heading">{t(language, "manualControls")}</div>
-        <AutoRecommendationPanel
-          active={simulation.activeAutoRecommendation}
-          language={language}
-          recommendation={simulation.autoRecommendation}
-          onApply={simulation.applyAutoRecommendation}
-        />
+        <div className="mb-2 mt-4 control-heading">
+          {viewMode === "simple" ? t(language, "importantConditions") : t(language, "manualControls")}
+        </div>
+        {viewMode === "advanced" ? (
+          <>
+            <AutoRecommendationPanel
+              active={simulation.activeAutoRecommendation}
+              language={language}
+              recommendation={simulation.autoRecommendation}
+              onApply={simulation.applyAutoRecommendation}
+            />
 
-        <FertilizerProgram
-          language={language}
-          applications={inputs.applications}
-          stages={simulation.fertilizerStages}
-          formulaOptions={formulaOptions}
-          nutrientTotals={nutrientTotals}
-          nutrientTargets={{
-            N: simulation.varietyInfo.idealN,
-            P: simulation.varietyInfo.idealP,
-            K: simulation.varietyInfo.idealK,
-          }}
-          onChange={setApplication}
-        />
+            <FertilizerProgram
+              language={language}
+              applications={inputs.applications}
+              stages={simulation.fertilizerStages}
+              formulaOptions={formulaOptions}
+              nutrientTotals={nutrientTotals}
+              nutrientTargets={{
+                N: simulation.varietyInfo.idealN,
+                P: simulation.varietyInfo.idealP,
+                K: simulation.varietyInfo.idealK,
+              }}
+              onChange={setApplication}
+            />
+          </>
+        ) : null}
 
         <ControlCard icon="💧" title={t(language, "waterManagement")}>
           <FieldLabel>{t(language, "irrigationMethod")}</FieldLabel>

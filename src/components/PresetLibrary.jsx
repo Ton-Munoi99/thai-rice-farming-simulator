@@ -8,7 +8,12 @@ const TABS = [
   { key: "survival", labelKey: "survivalTab" },
 ];
 
-export default function PresetLibrary({ simulation }) {
+const DETAIL_TABS = [
+  { key: "farm", labelKey: "farmSystemTab" },
+  { key: "survival", labelKey: "survivalTab" },
+];
+
+export default function PresetLibrary({ compact = false, simulation }) {
   const { language } = simulation;
   const activeSource = useMemo(() => getActiveSource(simulation), [simulation]);
   const [activeTab, setActiveTab] = useState(activeSource.tab);
@@ -18,6 +23,51 @@ export default function PresetLibrary({ simulation }) {
       setActiveTab(activeSource.tab);
     }
   }, [activeSource.tab]);
+
+  if (compact) {
+    return (
+      <section className="rounded-lg border border-[#d8ddd2] bg-[#fbfaf6] px-3.5 py-[13px]">
+        <div className="mb-2.5 flex items-start justify-between gap-2">
+          <div>
+            <div className="text-[12.5px] font-bold text-rice-dark">{t(language, "quickScenarios")}</div>
+            <div className="text-[10px] leading-snug text-rice-faint">{t(language, "quickScenariosSub")}</div>
+          </div>
+          <button
+            type="button"
+            onClick={simulation.resetConditions}
+            className="flex-none rounded-md border border-[#d8ddd2] bg-white px-2 py-1 text-[9.5px] font-bold text-rice-muted transition hover:border-[#b7c9b0] hover:bg-[#f7faf4] hover:text-rice-dark"
+          >
+            {t(language, "clearConditions")}
+          </button>
+        </div>
+        <ScenarioGrid simulation={simulation} />
+        <details className="mt-2 rounded-lg border border-[#e5e1d4] bg-white/70 px-2.5 py-2">
+          <summary className="cursor-pointer list-none text-[10.5px] font-bold text-[#3c473a]">
+            <span>{t(language, "advancedPresets")}</span>
+            <span className="float-right text-[9px] text-rice-faint">▾</span>
+          </summary>
+          <div className="mt-2 border-t border-[#ebe7dd] pt-2">
+            <div className="mb-2 grid grid-cols-2 rounded-lg bg-[#ece8dc] p-1">
+              {DETAIL_TABS.map((tab) => (
+                <button
+                  key={tab.key}
+                  type="button"
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`rounded-md px-1.5 py-1.5 text-[9.5px] font-bold transition ${
+                    activeTab === tab.key ? "bg-white text-rice-dark shadow-sm" : "text-[#7c8378] hover:text-rice-dark"
+                  }`}
+                >
+                  {t(language, tab.labelKey)}
+                </button>
+              ))}
+            </div>
+            {activeTab === "farm" ? <FarmGrid simulation={simulation} /> : null}
+            {activeTab === "survival" ? <SurvivalGrid simulation={simulation} /> : null}
+          </div>
+        </details>
+      </section>
+    );
+  }
 
   return (
     <section className="rounded-lg border border-[#d8ddd2] bg-[#fbfaf6] px-3.5 py-[13px]">
