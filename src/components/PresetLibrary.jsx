@@ -237,16 +237,6 @@ function getActiveSource(simulation) {
     }
   }
 
-  if (simulation.activeAutoRecommendation) {
-    return {
-      tab: "manual",
-      label: t(language, "autoRecommendation"),
-      note: t(language, "autoRecommendationStatus"),
-      badge: t(language, "applied"),
-      tone: "bg-[#e5f2e6] text-[#2f6b48]",
-    };
-  }
-
   return {
     tab: "manual",
     label: t(language, "editedManually"),

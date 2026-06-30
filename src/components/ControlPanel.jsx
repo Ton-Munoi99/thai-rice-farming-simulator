@@ -27,13 +27,6 @@ export default function ControlPanel({ mobileActive = true, simulation }) {
         <FarmerProfilePanel simulation={simulation} />
 
         <div className="mb-2 mt-4 control-heading">{t(language, "manualControls")}</div>
-        <AutoRecommendationPanel
-          active={simulation.activeAutoRecommendation}
-          language={language}
-          recommendation={simulation.autoRecommendation}
-          onApply={simulation.applyAutoRecommendation}
-        />
-
         <FertilizerProgram
           language={language}
           applications={inputs.applications}
@@ -116,59 +109,6 @@ function FarmerProfilePanel({ simulation }) {
             </button>
           );
         })}
-      </div>
-    </section>
-  );
-}
-
-function AutoRecommendationPanel({ active, language, recommendation, onApply }) {
-  return (
-    <section
-      className={`mt-[11px] rounded-lg border px-3.5 py-[13px] transition ${
-        active ? "border-rice-green bg-[#edf6e9] shadow-soft ring-1 ring-rice-green/20" : "border-[#d9e2d1] bg-[#f7faf4]"
-      }`}
-    >
-      <div className="mb-2 flex items-start justify-between gap-2">
-        <div>
-          <div className="text-[12.5px] font-bold text-rice-dark">{t(language, "autoRecommendation")}</div>
-          <div className="text-[10px] text-rice-faint">{t(language, "autoRecommendationSub")}</div>
-        </div>
-        <button
-          type="button"
-          onClick={onApply}
-          className="rounded-md bg-rice-green px-3 py-1.5 text-[10.5px] font-bold text-white shadow-soft transition hover:bg-rice-dark"
-        >
-          {active ? t(language, "applied") : t(language, "apply")}
-        </button>
-      </div>
-
-      <div className="border-t border-[#d9e2d1] pt-2">
-        <div className="text-[11px] font-bold text-[#2c5e36]">{pickLang(language, recommendation.headline, recommendation.headlineTh)}</div>
-
-        <div className="mt-2 grid grid-cols-3 gap-1.5">
-          {recommendation.applications.map((app) => (
-            <div key={app.stage} className="text-center">
-              <div className="text-[8.5px] font-semibold text-[#7a8576]">{app.stage}</div>
-              <div className="font-display text-[10.5px] font-bold text-[#3c473a]">{app.formula}</div>
-              <div className="text-[8.5px] text-rice-faint">{app.rate} kg/rai</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-2 flex justify-between border-t border-[#d9e2d1] pt-1.5 text-[9.5px] text-[#63715f]">
-          <span>N {recommendation.nutrients.N.toFixed(1)}</span>
-          <span>P₂O₅ {recommendation.nutrients.P.toFixed(1)}</span>
-          <span>K₂O {recommendation.nutrients.K.toFixed(1)}</span>
-        </div>
-
-        <div className="mt-2 text-[9.5px] leading-snug text-[#697763]">
-          {recommendation.reasons.slice(0, 2).map((reason) => (
-            <div key={reason.en}>• {pickLang(language, reason.en, reason.th)}</div>
-          ))}
-        </div>
-        <div className="mt-1 text-[9px] leading-snug text-[#9aa394]">
-          {language === "th" ? "งบยา/IPM อัตโนมัติ" : "Chemical/IPM auto budget"}: ฿{Math.round(recommendation.chemicalProgram.cost).toLocaleString("en-US")}/rai
-        </div>
       </div>
     </section>
   );

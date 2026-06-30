@@ -55,7 +55,6 @@ export function useSimulation() {
   const [activeScenarioKey, setActiveScenarioKey] = useState("best");
   const [activeFarmSystemPresetKey, setActiveFarmSystemPresetKey] = useState(null);
   const [activeSurvivalPresetKey, setActiveSurvivalPresetKey] = useState(null);
-  const [activeAutoRecommendation, setActiveAutoRecommendation] = useState(false);
   const [activeFarmerProfileKey, setActiveFarmerProfileKey] = useState(null);
   const [compareSlots, setCompareSlots] = useState([null, null, null]);
   const [scenarioHistory, setScenarioHistory] = useState(readScenarioHistory);
@@ -76,10 +75,6 @@ export function useSimulation() {
   );
   const activeModel = runModel ?? liveModel;
   const score = liveModel;
-  const autoRecommendation = useMemo(
-    () => buildAutoRecommendation(inputs, varietyKey),
-    [inputs, varietyKey],
-  );
   const survivalPlans = useMemo(
     () =>
       buildSurvivalPlans({
@@ -125,7 +120,6 @@ export function useSimulation() {
     setActiveScenarioKey(null);
     setActiveFarmSystemPresetKey(null);
     setActiveSurvivalPresetKey(null);
-    setActiveAutoRecommendation(false);
   }, []);
 
   const updateInput = useCallback(
@@ -158,7 +152,6 @@ export function useSimulation() {
       setActiveScenarioKey(scenarioKey);
       setActiveFarmSystemPresetKey(null);
       setActiveSurvivalPresetKey(null);
-      setActiveAutoRecommendation(false);
       setActiveFarmerProfileKey(null);
       setInputs({
         applications: varietyInfo.presets[scenarioKey].map((app) => ({ ...app })),
@@ -180,7 +173,6 @@ export function useSimulation() {
       setActiveScenarioKey(null);
       setActiveFarmSystemPresetKey(preset.key);
       setActiveSurvivalPresetKey(null);
-      setActiveAutoRecommendation(false);
       setActiveFarmerProfileKey(null);
       setVarietyKey(preset.variety);
       setPricePerTonState(VARIETIES[preset.variety].salePricePerTon);
@@ -207,7 +199,6 @@ export function useSimulation() {
       setActiveScenarioKey(null);
       setActiveFarmSystemPresetKey(null);
       setActiveSurvivalPresetKey(preset.key);
-      setActiveAutoRecommendation(false);
       setActiveFarmerProfileKey(null);
       setInputs(cloneInputs(preset.inputs));
     },
@@ -319,7 +310,6 @@ export function useSimulation() {
     setActiveScenarioKey("best");
     setActiveFarmSystemPresetKey(null);
     setActiveSurvivalPresetKey(null);
-    setActiveAutoRecommendation(false);
     setActiveFarmerProfileKey(null);
     setInputs(cloneInputs(DEFAULT_INPUTS));
   }, [resetToSetup]);
@@ -348,13 +338,11 @@ export function useSimulation() {
         activeScenarioKey,
         activeFarmSystemPresetKey,
         activeSurvivalPresetKey,
-        activeAutoRecommendation,
         activeFarmerProfileKey,
         model,
       };
     },
     [
-      activeAutoRecommendation,
       activeFarmSystemPresetKey,
       activeFarmerProfileKey,
       activeScenarioKey,
@@ -398,7 +386,6 @@ export function useSimulation() {
       setActiveScenarioKey(snapshot.activeScenarioKey ?? null);
       setActiveFarmSystemPresetKey(snapshot.activeFarmSystemPresetKey ?? null);
       setActiveSurvivalPresetKey(snapshot.activeSurvivalPresetKey ?? null);
-      setActiveAutoRecommendation(Boolean(snapshot.activeAutoRecommendation));
       setActiveFarmerProfileKey(snapshot.activeFarmerProfileKey ?? null);
       setInputs(cloneInputs(snapshot.inputs));
     },
@@ -451,21 +438,6 @@ export function useSimulation() {
     [persistScenarioHistory, scenarioHistory],
   );
 
-  const applyAutoRecommendation = useCallback(() => {
-    resetToSetup();
-    setCostOverrides({});
-    setCostProfile(null);
-    setYieldPotentialOverride(null);
-    setActiveScenarioKey(null);
-    setActiveFarmSystemPresetKey(null);
-    setActiveSurvivalPresetKey(null);
-    setActiveAutoRecommendation(true);
-    setInputs((current) => ({
-      ...current,
-      applications: buildAutoRecommendation(current, varietyKey).applications.map((app) => ({ ...app })),
-    }));
-  }, [resetToSetup, varietyKey]);
-
   const applySurvivalPlan = useCallback(
     (planKey) => {
       const plan = survivalPlans.find((item) => item.key === planKey);
@@ -482,7 +454,6 @@ export function useSimulation() {
       setActiveScenarioKey(null);
       setActiveFarmSystemPresetKey(null);
       setActiveSurvivalPresetKey(null);
-      setActiveAutoRecommendation(false);
       setInputs(cloneInputs(plan.payload.inputs));
     },
     [resetToSetup, survivalPlans],
@@ -569,7 +540,6 @@ export function useSimulation() {
       setActiveScenarioKey(null);
       setActiveFarmSystemPresetKey(preset.key);
       setActiveSurvivalPresetKey(null);
-      setActiveAutoRecommendation(profitGoal >= 1000);
       setActiveFarmerProfileKey(profile.key);
       setInputs(nextInputs);
     },
@@ -637,7 +607,6 @@ export function useSimulation() {
     activeScenarioKey,
     activeFarmSystemPresetKey,
     activeSurvivalPresetKey,
-    activeAutoRecommendation,
     activeFarmerProfileKey,
     compareSlots,
     scenarioHistory,
@@ -648,7 +617,6 @@ export function useSimulation() {
     nutrientTotals: totals,
     fertilizerStages: FERTILIZER_STAGES,
     formulaOptions,
-    autoRecommendation,
     farmerProfiles: FARMER_PROFILES,
     survivalPlans,
     isRunning: phase === "running",
@@ -675,7 +643,6 @@ export function useSimulation() {
     saveScenarioHistory,
     loadScenarioHistory,
     deleteScenarioHistory,
-    applyAutoRecommendation,
     applySurvivalPlan,
     applyFarmerProfile,
     applyGoalWizardRecommendation,
