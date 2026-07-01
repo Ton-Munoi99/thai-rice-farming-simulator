@@ -32,16 +32,13 @@ export default function App() {
   return (
     <AppLayout
       farmSize={simulation.farmSize}
-      fieldStyle={simulation.fieldStyle}
       language={simulation.language}
       mobileTab={mobileTab}
       showPanel={simulation.showPanel}
       score={simulation.score}
       variety={simulation.varietyInfo}
       onFarmSize={simulation.setFarmSize}
-      onFieldStyle={simulation.setFieldStyle}
       onOpenExport={() => setShowExportReport(true)}
-      onOpenGuide={() => setShowOnboarding(true)}
       onOpenMethodology={() => setShowMethodology(true)}
       onOpenWizard={() => setShowGoalWizard(true)}
       onSetMobileTab={setMobileTab}

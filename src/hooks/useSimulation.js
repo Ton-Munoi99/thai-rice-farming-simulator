@@ -225,7 +225,6 @@ export function useSimulation() {
     setFarmSizeState(next);
   }, []);
 
-  const setFieldStyle = useCallback((style) => setFieldStyleState(style), []);
   const toggleLanguage = useCallback(() => setLanguage((current) => (current === "th" ? "en" : "th")), []);
   const togglePanel = useCallback(() => setShowPanel((current) => !current), []);
   const closeSummary = useCallback(() => setShowSummary(false), []);
@@ -562,7 +561,6 @@ export function useSimulation() {
     stageFraction,
     showSummary,
     showPanel,
-    fieldStyle,
     farmSize,
     varietyKey,
     varietyInfo,
@@ -592,7 +590,6 @@ export function useSimulation() {
     applyWhiteRiceSurvivalPreset,
     switchVariety,
     setFarmSize,
-    setFieldStyle,
     toggleLanguage,
     togglePanel,
     closeSummary,

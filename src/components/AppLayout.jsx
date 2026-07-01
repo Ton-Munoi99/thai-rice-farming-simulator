@@ -3,16 +3,13 @@ import { LANGUAGES, pickLang, t } from "../i18n.js";
 export default function AppLayout({
   children,
   farmSize,
-  fieldStyle,
   language,
   mobileTab,
   showPanel,
   score,
   variety,
   onFarmSize,
-  onFieldStyle,
   onOpenExport,
-  onOpenGuide,
   onOpenMethodology,
   onOpenWizard,
   onSetMobileTab,
@@ -59,19 +56,9 @@ export default function AppLayout({
             <span className="hidden text-[11px] opacity-90 sm:inline">{t(language, "rai")}</span>
           </div>
 
-          <div className="hidden gap-1 rounded-lg bg-white/10 p-1 lg:flex">
-            <StyleButton active={fieldStyle === "clumps"} onClick={() => onFieldStyle("clumps")}>
-              {t(language, "lushClumps")}
-            </StyleButton>
-            <StyleButton active={fieldStyle === "blades"} onClick={() => onFieldStyle("blades")}>
-              {t(language, "fineBlades")}
-            </StyleButton>
-          </div>
-
           <HeaderActionButton onClick={onOpenMethodology}>{t(language, "methodologyShort")}</HeaderActionButton>
           <HeaderActionButton onClick={onOpenWizard}>{t(language, "goalWizardShort")}</HeaderActionButton>
           <HeaderActionButton onClick={onOpenExport}>{t(language, "exportShort")}</HeaderActionButton>
-          <HeaderActionButton onClick={onOpenGuide}>{t(language, "guideShort")}</HeaderActionButton>
 
           <button
             type="button"
@@ -159,20 +146,6 @@ function HeaderStepButton({ children, onClick }) {
       type="button"
       onClick={onClick}
       className="flex h-5 w-5 items-center justify-center rounded-md bg-[#fffdf7] p-0 text-[15px] font-bold leading-none text-rice-dark transition hover:bg-white"
-    >
-      {children}
-    </button>
-  );
-}
-
-function StyleButton({ active, children, onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`rounded-md px-[11px] py-[5px] text-[11.5px] font-semibold transition ${
-        active ? "bg-[#fffdf7] text-rice-dark" : "bg-transparent text-white/75 hover:text-white"
-      }`}
     >
       {children}
     </button>
