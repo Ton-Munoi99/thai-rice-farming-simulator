@@ -55,7 +55,6 @@ export function useSimulation() {
   const [activeScenarioKey, setActiveScenarioKey] = useState("best");
   const [activeFarmSystemPresetKey, setActiveFarmSystemPresetKey] = useState(null);
   const [activeSurvivalPresetKey, setActiveSurvivalPresetKey] = useState(null);
-  const [activeFarmerProfileKey, setActiveFarmerProfileKey] = useState(null);
   const [compareSlots, setCompareSlots] = useState([null, null, null]);
   const [scenarioHistory, setScenarioHistory] = useState(readScenarioHistory);
   const [runModel, setRunModel] = useState(null);
@@ -152,7 +151,6 @@ export function useSimulation() {
       setActiveScenarioKey(scenarioKey);
       setActiveFarmSystemPresetKey(null);
       setActiveSurvivalPresetKey(null);
-      setActiveFarmerProfileKey(null);
       setInputs({
         applications: varietyInfo.presets[scenarioKey].map((app) => ({ ...app })),
         ...SCENARIO_ENVIRONMENTS[scenarioKey],
@@ -173,7 +171,6 @@ export function useSimulation() {
       setActiveScenarioKey(null);
       setActiveFarmSystemPresetKey(preset.key);
       setActiveSurvivalPresetKey(null);
-      setActiveFarmerProfileKey(null);
       setVarietyKey(preset.variety);
       setPricePerTonState(VARIETIES[preset.variety].salePricePerTon);
       setInputs(cloneInputs(preset.inputs));
@@ -199,7 +196,6 @@ export function useSimulation() {
       setActiveScenarioKey(null);
       setActiveFarmSystemPresetKey(null);
       setActiveSurvivalPresetKey(preset.key);
-      setActiveFarmerProfileKey(null);
       setInputs(cloneInputs(preset.inputs));
     },
     [resetToSetup],
@@ -216,7 +212,6 @@ export function useSimulation() {
       setCostProfile(null);
       setYieldPotentialOverride(null);
       clearPresetSelection();
-      setActiveFarmerProfileKey(null);
       setInputs((current) => ({
         ...current,
         applications: next.defaultApps.map((app) => ({ ...app })),
@@ -293,7 +288,6 @@ export function useSimulation() {
     setCostOverrides({});
     setCostProfile(null);
     setYieldPotentialOverride(null);
-    setActiveFarmerProfileKey(null);
     clearPresetSelection();
   }, [clearPresetSelection, resetToSetup]);
 
@@ -310,7 +304,6 @@ export function useSimulation() {
     setActiveScenarioKey("best");
     setActiveFarmSystemPresetKey(null);
     setActiveSurvivalPresetKey(null);
-    setActiveFarmerProfileKey(null);
     setInputs(cloneInputs(DEFAULT_INPUTS));
   }, [resetToSetup]);
 
@@ -338,13 +331,11 @@ export function useSimulation() {
         activeScenarioKey,
         activeFarmSystemPresetKey,
         activeSurvivalPresetKey,
-        activeFarmerProfileKey,
         model,
       };
     },
     [
       activeFarmSystemPresetKey,
-      activeFarmerProfileKey,
       activeScenarioKey,
       activeSurvivalPresetKey,
       costOverrides,
@@ -386,7 +377,6 @@ export function useSimulation() {
       setActiveScenarioKey(snapshot.activeScenarioKey ?? null);
       setActiveFarmSystemPresetKey(snapshot.activeFarmSystemPresetKey ?? null);
       setActiveSurvivalPresetKey(snapshot.activeSurvivalPresetKey ?? null);
-      setActiveFarmerProfileKey(snapshot.activeFarmerProfileKey ?? null);
       setInputs(cloneInputs(snapshot.inputs));
     },
     [resetToSetup],
@@ -459,28 +449,6 @@ export function useSimulation() {
     [resetToSetup, survivalPlans],
   );
 
-  const applyFarmerProfile = useCallback(
-    (profileKey) => {
-      const profile = FARMER_PROFILES.find((item) => item.key === profileKey);
-      if (!profile) return;
-
-      resetToSetup();
-      setCostOverrides({});
-      setCostProfile({
-        ...profile.costProfile,
-        fertilizerReferenceCost: fertilizerNutrients(inputs.applications).cost,
-      });
-      setStrawPricePerKgState(profile.strawPricePerKg);
-      setYieldPotentialOverride(Math.max(1, VARIETIES[varietyKey].potential + profile.yieldPotentialBoost));
-      setActiveFarmerProfileKey(profile.key);
-      clearPresetSelection();
-      if (profile.inputPatch) {
-        setInputs((current) => ({ ...current, ...profile.inputPatch }));
-      }
-    },
-    [clearPresetSelection, inputs.applications, resetToSetup, varietyKey],
-  );
-
   const applyGoalWizardRecommendation = useCallback(
     ({ costBase, strawMarket, targetProfit, waterAccess }) => {
       const costProfileKey =
@@ -540,7 +508,6 @@ export function useSimulation() {
       setActiveScenarioKey(null);
       setActiveFarmSystemPresetKey(preset.key);
       setActiveSurvivalPresetKey(null);
-      setActiveFarmerProfileKey(profile.key);
       setInputs(nextInputs);
     },
     [resetToSetup],
@@ -607,7 +574,6 @@ export function useSimulation() {
     activeScenarioKey,
     activeFarmSystemPresetKey,
     activeSurvivalPresetKey,
-    activeFarmerProfileKey,
     compareSlots,
     scenarioHistory,
     liveModel,
@@ -617,7 +583,6 @@ export function useSimulation() {
     nutrientTotals: totals,
     fertilizerStages: FERTILIZER_STAGES,
     formulaOptions,
-    farmerProfiles: FARMER_PROFILES,
     survivalPlans,
     isRunning: phase === "running",
     setInput: updateInput,
@@ -644,7 +609,6 @@ export function useSimulation() {
     loadScenarioHistory,
     deleteScenarioHistory,
     applySurvivalPlan,
-    applyFarmerProfile,
     applyGoalWizardRecommendation,
     runSimulation,
   };

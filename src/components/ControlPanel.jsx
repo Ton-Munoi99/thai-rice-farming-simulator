@@ -24,7 +24,6 @@ export default function ControlPanel({ mobileActive = true, simulation }) {
           </div>
         </section>
         <PresetLibrary simulation={simulation} />
-        <FarmerProfilePanel simulation={simulation} />
 
         <div className="mb-2 mt-4 control-heading">{t(language, "manualControls")}</div>
         <FertilizerProgram
@@ -76,41 +75,6 @@ export default function ControlPanel({ mobileActive = true, simulation }) {
         </ControlCard>
       </div>
     </aside>
-  );
-}
-
-function FarmerProfilePanel({ simulation }) {
-  const { activeFarmerProfileKey, applyFarmerProfile, farmerProfiles, language } = simulation;
-
-  return (
-    <section className="mt-3.5 rounded-lg border border-[#d9e2d1] bg-[#f7faf4] px-3.5 py-[13px]">
-      <div className="mb-2">
-        <div className="text-[12.5px] font-bold text-rice-dark">{t(language, "farmerProfile")}</div>
-        <div className="text-[10px] leading-snug text-rice-faint">{t(language, "farmerProfileSub")}</div>
-      </div>
-      <div className="grid grid-cols-2 gap-1.5">
-        {farmerProfiles.map((profile) => {
-          const active = activeFarmerProfileKey === profile.key;
-          return (
-            <button
-              key={profile.key}
-              type="button"
-              onClick={() => applyFarmerProfile(profile.key)}
-              className={`rounded-lg border px-2 py-2 text-left transition ${
-                active ? "border-rice-green bg-[#edf6e9] text-rice-dark ring-1 ring-rice-green/20" : "border-[#d8ddd2] bg-white text-[#5f6b5e] hover:border-rice-green/70"
-              }`}
-            >
-              <div className="text-[10.5px] font-bold leading-tight">
-                {profile.icon} {pickLang(language, profile.name, profile.th)}
-              </div>
-              <div className="mt-0.5 text-[8.5px] leading-snug text-rice-faint">
-                {pickLang(language, profile.note, profile.noteTh)}
-              </div>
-            </button>
-          );
-        })}
-      </div>
-    </section>
   );
 }
 

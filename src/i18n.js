@@ -57,8 +57,6 @@ export const TEXT = {
     th: "หมายเหตุ: กรณีพื้นที่น้ำดี/ระบบผลิตสูงใช้ production potential สูงขึ้น ส่วนข้าวขาวทั่วไปยังใช้ชั้น 600 กก./ไร่",
   },
   farmSystemPresets: { en: "Farm system presets", th: "ระบบนา / พื้นที่ตัวอย่าง" },
-  farmerProfile: { en: "Farmer profile", th: "โปรไฟล์ชาวนา" },
-  farmerProfileSub: { en: "Set cost base, straw access, and production potential.", th: "ตั้งฐานต้นทุน ตลาดฟาง และศักยภาพระบบผลิต" },
   apply: { en: "Apply", th: "ใช้สูตรนี้" },
   clearConditions: { en: "Clear conditions", th: "ล้างเงื่อนไข" },
   fertilizerProgram: { en: "Fertilizer program", th: "แผนใส่ปุ๋ย" },
@@ -319,8 +317,8 @@ export const TEXT = {
     th: "ให้ฟางเป็นรายได้เสริม ไม่ใช่คันโยกหลักในการรอด",
   },
   wizardRecLowCost: {
-    en: "Apply the lower-cost farmer profile to reduce rent/labor pressure.",
-    th: "ใช้โปรไฟล์ต้นทุนต่ำเพื่อลดแรงกดดันค่าเช่า/แรงงาน",
+    en: "Apply a lower-cost base to reduce rent/labor pressure.",
+    th: "ใช้ฐานต้นทุนต่ำเพื่อลดแรงกดดันค่าเช่า/แรงงาน",
   },
   wizardRecStandardCost: {
     en: "Keep a normal tenant-farmer cost base and use manual edits for real bills.",
