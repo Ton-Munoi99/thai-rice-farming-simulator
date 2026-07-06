@@ -16,7 +16,11 @@ export default function MethodologyModal({ onClose, simulation }) {
             <h2 className="mt-0.5 text-[22px] font-bold leading-tight text-[#2f3b34]">{t(language, "methodologyTitle")}</h2>
             <p className="mt-1 max-w-[620px] text-[11px] leading-snug text-rice-muted">{t(language, "methodologyIntro")}</p>
           </div>
-          <button type="button" onClick={onClose} className="rounded-lg border border-[#dedbd0] bg-white px-3 py-2 text-[11px] font-bold text-rice-muted transition hover:bg-[#f8faf4]">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg border border-[#dedbd0] bg-white px-3 py-2 text-[11px] font-bold text-rice-muted transition hover:bg-[#f8faf4]"
+          >
             {t(language, "close")}
           </button>
         </header>
@@ -83,11 +87,7 @@ function buildFormulaRows({ language, liveModel, pricePerTon, strawPricePerKg, v
     {
       label: pickLang(language, "Yield estimate", "ผลผลิตคาดการณ์"),
       value: `${formatNumber(liveModel.estimatedYieldKgPerRai)} kg/rai`,
-      formula: pickLang(
-        language,
-        "production potential x (growth score / 100)^1.25",
-        "ศักยภาพผลผลิต x (คะแนนเติบโต / 100)^1.25",
-      ),
+      formula: pickLang(language, "production potential x (growth score / 100)^1.25", "ศักยภาพผลผลิต x (คะแนนเติบโต / 100)^1.25"),
       note: pickLang(
         language,
         `Current potential is ${formatNumber(liveModel.yieldPotential ?? varietyInfo.potential)} kg/rai. Growth score links fertilizer, water, soil, threats, weather, and timing.`,
@@ -107,7 +107,11 @@ function buildFormulaRows({ language, liveModel, pricePerTon, strawPricePerKg, v
     {
       label: pickLang(language, "Collectable straw", "ฟางเก็บขายได้"),
       value: `${formatNumber(liveModel.straw.collectableKgPerRai)} kg/rai`,
-      formula: pickLang(language, "yield x RPR 1.169 x SAF 0.583 x collection factor", "ผลผลิต x RPR 1.169 x SAF 0.583 x ตัวปรับการเก็บขาย"),
+      formula: pickLang(
+        language,
+        "yield x RPR 1.169 x SAF 0.583 x collection factor",
+        "ผลผลิต x RPR 1.169 x SAF 0.583 x ตัวปรับการเก็บขาย",
+      ),
       note: pickLang(
         language,
         `Straw revenue uses farmer net straw price at ฿${strawPricePerKg.toFixed(2)}/kg and is capped at surplus straw.`,
@@ -117,7 +121,11 @@ function buildFormulaRows({ language, liveModel, pricePerTon, strawPricePerKg, v
     {
       label: pickLang(language, "Linked cost", "ต้นทุนที่เชื่อมเงื่อนไข"),
       value: `฿${formatNumber(liveModel.costPerRai)}/rai`,
-      formula: pickLang(language, "baseline cost + condition-linked drivers + manual overrides", "ต้นทุนฐาน + ตัวขับต้นทุนตามเงื่อนไข + ค่าที่ผู้ใช้แก้เอง"),
+      formula: pickLang(
+        language,
+        "baseline cost + condition-linked drivers + manual overrides",
+        "ต้นทุนฐาน + ตัวขับต้นทุนตามเงื่อนไข + ค่าที่ผู้ใช้แก้เอง",
+      ),
       note: pickLang(
         language,
         "Pest, disease, weed, water shortage, flooding, fuel, and labor pressure can raise cost automatically.",

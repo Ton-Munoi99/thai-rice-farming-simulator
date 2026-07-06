@@ -82,16 +82,16 @@ export default function SurvivalTargetPanel({ simulation }) {
         />
       </div>
 
-      <div className={`mt-2 rounded-md px-2 py-2 text-[9.3px] leading-snug ${
-        analysis.gap > 0 ? "bg-[#fffaf0] text-[#755d2c]" : "bg-[#eef6ed] text-[#2f6b48]"
-      }`}>
+      <div
+        className={`mt-2 rounded-md px-2 py-2 text-[9.3px] leading-snug ${
+          analysis.gap > 0 ? "bg-[#fffaf0] text-[#755d2c]" : "bg-[#eef6ed] text-[#2f6b48]"
+        }`}
+      >
         <span className="font-bold">{t(language, "recommendedPath")}: </span>
         {pickLang(language, analysis.recommendation.en, analysis.recommendation.th)}
       </div>
 
-      <div className="mt-1.5 text-[8.4px] leading-snug text-[#8f978a]">
-        {t(language, "survivalTargetNote")}
-      </div>
+      <div className="mt-1.5 text-[8.4px] leading-snug text-[#8f978a]">{t(language, "survivalTargetNote")}</div>
     </section>
   );
 }
@@ -100,9 +100,7 @@ function buildSurvivalTargetAnalysis({ farmSize, model, pricePerTon, strawPriceP
   const currentYield = Math.max(0, model.estimatedYieldKgPerRai ?? 0);
   const currentProfit = model.profitPerRai ?? 0;
   const gap = Math.max(0, targetProfit - currentProfit);
-  const revenuePerKg = currentYield > 0
-    ? Math.max(0.1, (model.revenuePerRai ?? 0) / currentYield)
-    : Math.max(0.1, pricePerTon / 1000);
+  const revenuePerKg = currentYield > 0 ? Math.max(0.1, (model.revenuePerRai ?? 0) / currentYield) : Math.max(0.1, pricePerTon / 1000);
   const extraYieldKgPerRai = gap > 0 ? Math.ceil(gap / revenuePerKg) : 0;
   const targetYieldKgPerRai = currentYield + extraYieldKgPerRai;
 
@@ -112,9 +110,7 @@ function buildSurvivalTargetAnalysis({ farmSize, model, pricePerTon, strawPriceP
   const targetPricePerTon = pricePerTon + requiredPriceIncreasePerTon;
 
   const collectableStrawKg = Math.max(0, model.straw?.collectableKgPerRai ?? 0);
-  const targetStrawPricePerKg = collectableStrawKg > 0 && gap > 0
-    ? strawPricePerKg + gap / collectableStrawKg
-    : strawPricePerKg;
+  const targetStrawPricePerKg = collectableStrawKg > 0 && gap > 0 ? strawPricePerKg + gap / collectableStrawKg : strawPricePerKg;
   const extraStrawAtDirectMarket = collectableStrawKg * Math.max(0, DIRECT_MARKET_STRAW_PRICE - strawPricePerKg);
   const strawCoverPercent = gap > 0 ? clamp(Math.round((extraStrawAtDirectMarket / gap) * 100), 0, 100) : 100;
 

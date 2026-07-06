@@ -225,11 +225,28 @@ export function buildAutoRecommendation(inputs, varietyKey) {
     th: `ใช้เป้าหมายธาตุอาหารตามพันธุ์ ${variety.name}`,
   });
 
-  if (poorSoil) reasons.push({ en: "Poor sandy soil: slightly stronger basal fertilizer and K support", th: "ดินทราย/ดินเลว: เพิ่มรองพื้นและเสริม K เล็กน้อย" });
-  if (richSoil) reasons.push({ en: "Rich clay-loam: avoid over-applying basal fertilizer", th: "ดินดี: ลดรองพื้นเล็กน้อยไม่ให้เกินจำเป็น" });
-  if (droughtRisk) reasons.push({ en: "Drought/rainfed risk: reduce N intensity to avoid wasted input under water stress", th: "เสี่ยงแล้ง/น้ำฝน: ลด N เพื่อไม่ให้ต้นทุนสูญเปล่าเมื่อขาดน้ำ" });
-  if (diseasePressure) reasons.push({ en: "Disease/flood pressure: avoid late N and keep K support for stronger plants", th: "เสี่ยงโรค/น้ำท่วม: ลด N ช่วงหลังและเสริม K ให้ต้นแข็งแรง" });
-  if (pestPressure || weedPressure) reasons.push({ en: "Pest/weed pressure: IPM/weed-control budget is linked to chemical cost", th: "แมลง/วัชพืชสูง: งบ IPM/ยาเชื่อมกับต้นทุน Chemicals อัตโนมัติ" });
+  if (poorSoil)
+    reasons.push({
+      en: "Poor sandy soil: slightly stronger basal fertilizer and K support",
+      th: "ดินทราย/ดินเลว: เพิ่มรองพื้นและเสริม K เล็กน้อย",
+    });
+  if (richSoil)
+    reasons.push({ en: "Rich clay-loam: avoid over-applying basal fertilizer", th: "ดินดี: ลดรองพื้นเล็กน้อยไม่ให้เกินจำเป็น" });
+  if (droughtRisk)
+    reasons.push({
+      en: "Drought/rainfed risk: reduce N intensity to avoid wasted input under water stress",
+      th: "เสี่ยงแล้ง/น้ำฝน: ลด N เพื่อไม่ให้ต้นทุนสูญเปล่าเมื่อขาดน้ำ",
+    });
+  if (diseasePressure)
+    reasons.push({
+      en: "Disease/flood pressure: avoid late N and keep K support for stronger plants",
+      th: "เสี่ยงโรค/น้ำท่วม: ลด N ช่วงหลังและเสริม K ให้ต้นแข็งแรง",
+    });
+  if (pestPressure || weedPressure)
+    reasons.push({
+      en: "Pest/weed pressure: IPM/weed-control budget is linked to chemical cost",
+      th: "แมลง/วัชพืชสูง: งบ IPM/ยาเชื่อมกับต้นทุน Chemicals อัตโนมัติ",
+    });
 
   return {
     applications,
@@ -256,10 +273,9 @@ function buildCostBreakdown(variety, nutrients, inputs, overrides = {}, context 
     Number.isFinite(profile.fertilizer) && Number.isFinite(profile.fertilizerReferenceCost) && profile.fertilizerReferenceCost > 0
       ? Math.round(nutrients.cost * (profile.fertilizer / profile.fertilizerReferenceCost))
       : Math.round(nutrients.cost);
-  const chemicalCost =
-    Number.isFinite(profile.chemicals)
-      ? Math.max(0, chemicalProgram.cost + Math.round(profile.chemicals - variety.costs.chemicals))
-      : chemicalProgram.cost;
+  const chemicalCost = Number.isFinite(profile.chemicals)
+    ? Math.max(0, chemicalProgram.cost + Math.round(profile.chemicals - variety.costs.chemicals))
+    : chemicalProgram.cost;
   const drivers = [];
   const addCost = (itemKey, amount, label, th, tone = "warning") => {
     if (amount <= 0) return;
@@ -412,7 +428,6 @@ function scoreTone(value, inverse = false) {
 
 function buildExplanations({
   inputs,
-  variety,
   nutrients,
   fertilizerScore,
   waterScore,
@@ -620,10 +635,7 @@ export function computeSimulation(inputs, context) {
     return clamp(100 - ((amount - target) / target) * 65, 0, 100);
   };
 
-  const nutrientScore =
-    0.5 * adequacy(Nt, variety.idealN) +
-    0.22 * adequacy(Pt, variety.idealP) +
-    0.28 * adequacy(Kt, variety.idealK);
+  const nutrientScore = 0.5 * adequacy(Nt, variety.idealN) + 0.22 * adequacy(Pt, variety.idealP) + 0.28 * adequacy(Kt, variety.idealK);
 
   const basal = nutrients.byStage.Basal ?? {};
   const tillering = nutrients.byStage.Tillering ?? {};
@@ -648,8 +660,7 @@ export function computeSimulation(inputs, context) {
     Drought: 24,
     "Heavy Rain / Flood": 108,
   }[inputs.weather];
-  const irrigationAdjustment =
-    inputs.water === "Continuous Flooding" ? 20 : inputs.water === "Rainfed" ? -4 : 0;
+  const irrigationAdjustment = inputs.water === "Continuous Flooding" ? 20 : inputs.water === "Rainfed" ? -4 : 0;
   const groundwaterSupport = inputs.weather === "Drought" ? inputs.groundwater * 0.62 : inputs.groundwater * 0.2;
   const effectiveWater = baseWater + irrigationAdjustment + groundwaterSupport;
   const idealLow = inputs.water === "Alternate Wet-Dry (AWD)" ? 47 : 57;
@@ -686,12 +697,7 @@ export function computeSimulation(inputs, context) {
   timingScore = clamp(timingScore, 30, 96);
 
   const growthScore = Math.round(
-    0.22 * fertilizerScore +
-      0.22 * waterScore +
-      0.15 * soilScore +
-      0.18 * pestDiseaseScore +
-      0.13 * weatherScore +
-      0.1 * timingScore,
+    0.22 * fertilizerScore + 0.22 * waterScore + 0.15 * soilScore + 0.18 * pestDiseaseScore + 0.13 * weatherScore + 0.1 * timingScore,
   );
 
   const flags = { nDeficient, nExcess, shortage, flooded };
@@ -703,15 +709,18 @@ export function computeSimulation(inputs, context) {
   const yieldPotential = Math.max(1, context.yieldPotentialOverride ?? variety.potential);
   const estimatedYieldKgPerRai = Math.round(yieldPotential * Math.pow(growthScore / 100, 1.25));
   const straw = estimateStrawHarvest(inputs, estimatedYieldKgPerRai, context, flags);
-  const { breakdown: costBreakdown, chemicalProgram, costDrivers } = buildCostBreakdown(
-    variety,
-    nutrients,
-    inputs,
-    context.costOverrides,
-    { flags, pumpActive, estimatedYieldKgPerRai, costProfile: context.costProfile },
-  );
+  const {
+    breakdown: costBreakdown,
+    chemicalProgram,
+    costDrivers,
+  } = buildCostBreakdown(variety, nutrients, inputs, context.costOverrides, {
+    flags,
+    pumpActive,
+    estimatedYieldKgPerRai,
+    costProfile: context.costProfile,
+  });
   const costPerRai = costBreakdown.reduce((sum, item) => sum + item.value, 0);
-  const riceRevenuePerRai = Math.round(((estimatedYieldKgPerRai * context.pricePerTon) / 1000) * quality / 10) * 10;
+  const riceRevenuePerRai = Math.round((((estimatedYieldKgPerRai * context.pricePerTon) / 1000) * quality) / 10) * 10;
   const revenuePerRai = riceRevenuePerRai + straw.revenuePerRai;
   const profitPerRai = revenuePerRai - costPerRai;
   const financialRisk = buildFinancialRisk({
@@ -837,7 +846,6 @@ export function computeSimulation(inputs, context) {
     carbon: { co2PerRai, co2Baseline, co2Reduction, carbonPrice, creditPerRai, methodFactor },
     explanations: buildExplanations({
       inputs,
-      variety,
       nutrients,
       fertilizerScore,
       waterScore,

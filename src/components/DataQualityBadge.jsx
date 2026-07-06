@@ -29,9 +29,7 @@ export function DataQualityLegend({ language }) {
           <div className="mb-1">
             <DataQualityBadge language={language} level={level} />
           </div>
-          <div className="text-[9px] leading-snug text-rice-faint">
-            {pickLang(language, entry.description, entry.descriptionTh)}
-          </div>
+          <div className="text-[9px] leading-snug text-rice-faint">{pickLang(language, entry.description, entry.descriptionTh)}</div>
         </div>
       ))}
     </div>

@@ -270,7 +270,8 @@ export function buildWeatherFx(condition, sceneW, sceneH) {
       : {
           size: weather === "Drought" ? 76 : weather === "Good Monsoon" ? 62 : 54,
           left: sceneW - (weather === "Drought" ? 198 : 190),
-          disc: weather === "Drought" ? ["#ffd27a", "#ff9d3d"] : weather === "Good Monsoon" ? ["#ffe08a", "#ffc83d"] : ["#fff0b8", "#ffd969"],
+          disc:
+            weather === "Drought" ? ["#ffd27a", "#ff9d3d"] : weather === "Good Monsoon" ? ["#ffe08a", "#ffc83d"] : ["#fff0b8", "#ffd969"],
           glow: weather === "Drought" ? "#ffe6a8" : weather === "Good Monsoon" ? "#fff4cf" : "#fffadf",
         };
 

@@ -58,9 +58,7 @@ export default function DecisionGuardrailPanel({ simulation }) {
                   <span className="mr-1">{item.icon}</span>
                   {pickLang(language, item.title, item.titleTh)}
                 </div>
-                <div className="mt-0.5 text-[9px] leading-snug text-rice-faint">
-                  {pickLang(language, item.body, item.bodyTh)}
-                </div>
+                <div className="mt-0.5 text-[9px] leading-snug text-rice-faint">{pickLang(language, item.body, item.bodyTh)}</div>
               </div>
               <DataQualityBadge language={language} level={item.level} compact />
             </div>

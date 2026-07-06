@@ -49,12 +49,7 @@ export default function SensitivityPanel({ simulation }) {
             </div>
           ))}
           {analysis.matrix.map((row) => (
-            <MatrixRow
-              key={row.yieldKgPerRai}
-              row={row}
-              currentYield={analysis.currentYield}
-              currentPrice={analysis.currentPrice}
-            />
+            <MatrixRow key={row.yieldKgPerRai} row={row} currentYield={analysis.currentYield} currentPrice={analysis.currentPrice} />
           ))}
         </div>
       </div>
@@ -69,7 +64,9 @@ export default function SensitivityPanel({ simulation }) {
         <div className="grid grid-cols-3 gap-1.5">
           {analysis.costLevels.map((item) => (
             <div key={item.key} className={`rounded-md px-2 py-1.5 ${cellTone(item.profit)}`}>
-              <div className="truncate text-[8px] font-semibold">{pickLang(language, COST_LABELS[item.key].en, COST_LABELS[item.key].th)}</div>
+              <div className="truncate text-[8px] font-semibold">
+                {pickLang(language, COST_LABELS[item.key].en, COST_LABELS[item.key].th)}
+              </div>
               <div className="font-display text-[11px] font-bold">{signedBaht(item.profit)}</div>
               <div className="text-[7.5px] opacity-75">C ฿{formatNumber(item.costPerRai)}</div>
             </div>
@@ -83,7 +80,9 @@ export default function SensitivityPanel({ simulation }) {
 function MatrixRow({ row, currentYield, currentPrice }) {
   return (
     <>
-      <div className={`border-t border-[#f0eee6] px-1.5 py-1 text-[8px] font-bold ${isNear(row.yieldKgPerRai, currentYield, 12) ? "bg-[#eef6ed] text-[#2f6b48]" : "bg-white text-[#6b7468]"}`}>
+      <div
+        className={`border-t border-[#f0eee6] px-1.5 py-1 text-[8px] font-bold ${isNear(row.yieldKgPerRai, currentYield, 12) ? "bg-[#eef6ed] text-[#2f6b48]" : "bg-white text-[#6b7468]"}`}
+      >
         {formatNumber(row.yieldKgPerRai)}
       </div>
       {row.cells.map((cell) => {

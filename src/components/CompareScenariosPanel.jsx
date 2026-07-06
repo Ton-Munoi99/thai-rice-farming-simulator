@@ -6,9 +6,7 @@ const slotNames = ["A", "B", "C"];
 export default function CompareScenariosPanel({ simulation }) {
   const { language } = simulation;
   const savedSlots = simulation.compareSlots.filter(Boolean);
-  const bestProfit = savedSlots.length
-    ? Math.max(...savedSlots.map((slot) => slot.model.profitPerRai))
-    : null;
+  const bestProfit = savedSlots.length ? Math.max(...savedSlots.map((slot) => slot.model.profitPerRai)) : null;
 
   return (
     <section className="mt-3.5 rounded-[13px] border border-rice-card bg-white px-[13px] py-3">
@@ -40,7 +38,9 @@ export default function CompareScenariosPanel({ simulation }) {
         <div className="overflow-hidden rounded-[10px] border border-[#edf1e8]">
           <div className="grid grid-cols-[42px_1fr_1fr] bg-[#f4f7ef] px-2 py-1.5 text-[9px] font-bold text-[#5a6b58]">
             <span>Slot</span>
-            <span>{t(language, "estimatedYield")} / {t(language, "financialRisk")}</span>
+            <span>
+              {t(language, "estimatedYield")} / {t(language, "financialRisk")}
+            </span>
             <span className="text-right">{t(language, "profit")}</span>
           </div>
           {simulation.compareSlots.map((slot, index) =>
@@ -69,7 +69,9 @@ function CompareRow({ language, slot, isBest, onLoad, onClear }) {
     <div className={`border-t border-[#edf1e8] px-2 py-2 ${isBest ? "bg-[#f1f8ee]" : "bg-white"}`}>
       <div className="grid grid-cols-[42px_1fr_1fr] items-start gap-1.5">
         <div>
-          <div className={`flex h-7 w-7 items-center justify-center rounded-full font-display text-[13px] font-bold text-white ${isBest ? "bg-rice-green" : "bg-[#9aa394]"}`}>
+          <div
+            className={`flex h-7 w-7 items-center justify-center rounded-full font-display text-[13px] font-bold text-white ${isBest ? "bg-rice-green" : "bg-[#9aa394]"}`}
+          >
             {slot.slot}
           </div>
         </div>
@@ -78,7 +80,8 @@ function CompareRow({ language, slot, isBest, onLoad, onClear }) {
             {pickLang(language, slot.varietyKey === "jasmine" ? "Hom Mali" : "White rice", slot.varietyName)} · {slot.savedAt}
           </div>
           <div className="mt-0.5 text-[9px] leading-snug text-rice-faint">
-            {formatNumber(model.estimatedYieldKgPerRai)} kg/rai · {pickLang(language, model.financialRisk.level, model.financialRisk.levelTh)}
+            {formatNumber(model.estimatedYieldKgPerRai)} kg/rai ·{" "}
+            {pickLang(language, model.financialRisk.level, model.financialRisk.levelTh)}
           </div>
           <div className="mt-0.5 text-[8.5px] leading-snug text-[#9aa394]">
             {t(language, "cost")} ฿{formatNumber(model.costPerRai)} · {t(language, "revenue")} ฿{formatNumber(model.revenuePerRai)}

@@ -63,13 +63,9 @@ function ReasonCard({ language, factor, compact }) {
           <span className={`h-2 w-2 flex-none rounded-full ${style.dot}`} />
           <span className="truncate">{pickLang(language, factor.label, factor.th)}</span>
         </div>
-        {Number.isFinite(factor.value) ? (
-          <span className="font-display text-[10.5px] font-bold text-[#3c473a]">{factor.value}</span>
-        ) : null}
+        {Number.isFinite(factor.value) ? <span className="font-display text-[10.5px] font-bold text-[#3c473a]">{factor.value}</span> : null}
       </div>
-      <div className={`${compact ? "text-[10.5px]" : "text-[9.5px]"} leading-snug text-[#52614f]`}>
-        {factorText(language, factor)}
-      </div>
+      <div className={`${compact ? "text-[10.5px]" : "text-[9.5px]"} leading-snug text-[#52614f]`}>{factorText(language, factor)}</div>
     </div>
   );
 }

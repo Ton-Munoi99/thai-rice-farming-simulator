@@ -17,12 +17,19 @@ export default function MarketContextPanel({ simulation }) {
       <div className="grid grid-cols-5 gap-1">
         {MARKET_PRICE_SCENARIOS.map((scenario) => {
           const nextPrice = Math.max(1000, pricePerTon + scenario.change);
-          const riceRevenue = Math.round(((riceKg * nextPrice) / 1000) * quality / 10) * 10;
+          const riceRevenue = Math.round((((riceKg * nextPrice) / 1000) * quality) / 10) * 10;
           const profit = riceRevenue + model.straw.revenuePerRai - model.costPerRai;
           return (
-            <div key={scenario.key} className={`rounded-md px-1.5 py-1.5 text-center ${
-              scenario.change === 0 ? "bg-[#eef6ed] text-[#2f6b48]" : profit >= 0 ? "bg-white text-[#3c473a]" : "bg-[#fff3ea] text-[#a24b2b]"
-            }`}>
+            <div
+              key={scenario.key}
+              className={`rounded-md px-1.5 py-1.5 text-center ${
+                scenario.change === 0
+                  ? "bg-[#eef6ed] text-[#2f6b48]"
+                  : profit >= 0
+                    ? "bg-white text-[#3c473a]"
+                    : "bg-[#fff3ea] text-[#a24b2b]"
+              }`}
+            >
               <div className="text-[7.5px] font-bold">{scenario.label}</div>
               <div className="font-display text-[9px] font-bold">{signedBaht(profit)}</div>
             </div>

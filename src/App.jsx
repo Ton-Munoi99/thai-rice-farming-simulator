@@ -51,11 +51,7 @@ export default function App() {
         <GrowthTimeline simulation={simulation} />
       </main>
       {simulation.showPanel || mobileTab === "results" || mobileTab === "plans" ? (
-        <ScorePanel
-          simulation={simulation}
-          mobileActive={mobileTab === "results" || mobileTab === "plans"}
-          mobileMode={mobileTab}
-        />
+        <ScorePanel simulation={simulation} mobileActive={mobileTab === "results" || mobileTab === "plans"} mobileMode={mobileTab} />
       ) : null}
       <SummaryDashboard simulation={simulation} />
       {showMethodology ? <MethodologyModal simulation={simulation} onClose={() => setShowMethodology(false)} /> : null}

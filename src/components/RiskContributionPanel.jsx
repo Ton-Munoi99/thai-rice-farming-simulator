@@ -33,9 +33,7 @@ export default function RiskContributionPanel({ compact = false, language, model
       <div className="mb-2 flex items-start justify-between gap-2">
         <div>
           <div className="text-[11px] font-bold text-[#3c473a]">{t(language, "riskContributionTitle")}</div>
-          <div className="mt-0.5 text-[9.5px] leading-snug text-rice-faint">
-            {t(language, "riskContributionSub")}
-          </div>
+          <div className="mt-0.5 text-[9.5px] leading-snug text-rice-faint">{t(language, "riskContributionSub")}</div>
         </div>
         <DataQualityBadge language={language} level="medium" compact />
       </div>
@@ -46,9 +44,7 @@ export default function RiskContributionPanel({ compact = false, language, model
             <div className={`text-[11px] font-bold ${toneClasses[top.tone]?.text}`}>
               {top.icon} {pickLang(language, top.label, top.labelTh)}
             </div>
-            <div className="mt-0.5 text-[9.5px] leading-snug text-rice-faint">
-              {pickLang(language, top.action, top.actionTh)}
-            </div>
+            <div className="mt-0.5 text-[9.5px] leading-snug text-rice-faint">{pickLang(language, top.action, top.actionTh)}</div>
           </div>
           <div className={`font-display text-[22px] font-bold leading-none ${toneClasses[top.tone]?.text}`}>{top.percent}%</div>
         </div>
@@ -81,9 +77,7 @@ function ContributionRow({ item, language }) {
       <div className="h-[7px] overflow-hidden rounded-full bg-[#edf1e8]">
         <div className={`h-full rounded-full ${tone.bar}`} style={{ width: `${Math.max(4, item.percent)}%` }} />
       </div>
-      <div className="mt-1 text-[8.5px] leading-snug text-rice-faint">
-        {pickLang(language, item.detail, item.detailTh)}
-      </div>
+      <div className="mt-1 text-[8.5px] leading-snug text-rice-faint">{pickLang(language, item.detail, item.detailTh)}</div>
     </div>
   );
 }

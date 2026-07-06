@@ -42,9 +42,7 @@ function CalibrationRow({ item, language }) {
             {item.pricePerTon.toLocaleString("en-US")} ฿/t · {item.strawPricePerKg} ฿/kg
           </div>
         </div>
-        <div className="text-right text-[8.5px] text-rice-faint">
-          {pickLang(language, "model - anchor", "model - ค่าอ้างอิง")}
-        </div>
+        <div className="text-right text-[8.5px] text-rice-faint">{pickLang(language, "model - anchor", "model - ค่าอ้างอิง")}</div>
       </div>
       <div className="grid grid-cols-3 gap-1.5">
         <MetricGap

@@ -30,7 +30,9 @@ function normalize(items) {
 
 export function buildRiskContributions(model, language = "th") {
   const topCost = [...model.costBreakdown].sort((a, b) => b.value - a.value)[0];
-  const topCostName = topCost ? pickLang(language, COST_LABELS[topCost.key]?.en ?? topCost.label, COST_LABELS[topCost.key]?.th ?? topCost.th ?? topCost.label) : "";
+  const topCostName = topCost
+    ? pickLang(language, COST_LABELS[topCost.key]?.en ?? topCost.label, COST_LABELS[topCost.key]?.th ?? topCost.th ?? topCost.label)
+    : "";
   const riceRevenueGap = Math.max(0, model.costPerRai - model.riceRevenuePerRai);
   const totalProfitGap = Math.max(0, -model.profitPerRai);
   const costDriverPressure = model.costDrivers?.total ?? 0;

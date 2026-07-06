@@ -42,7 +42,11 @@ export default function OnboardingModal({ language, onClose }) {
 
         <footer className="flex items-center justify-between gap-3 border-t border-[#d8ddd2] px-5 py-4">
           <div className="text-[9.5px] leading-snug text-rice-faint">{t(language, "onboardingNote")}</div>
-          <button type="button" onClick={onClose} className="rounded-lg bg-rice-green px-4 py-2.5 text-[12px] font-bold text-white transition hover:bg-rice-dark">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg bg-rice-green px-4 py-2.5 text-[12px] font-bold text-white transition hover:bg-rice-dark"
+          >
             {t(language, "startUsing")}
           </button>
         </footer>

@@ -42,9 +42,7 @@ export default function PresetLibrary({ simulation }) {
             <div className="truncate text-[11px] font-bold text-[#3c473a]">{activeSource.label}</div>
             <div className="text-[8.5px] text-rice-faint">{activeSource.note}</div>
           </div>
-          <span className={`flex-none rounded px-1.5 py-0.5 text-[8px] font-bold ${activeSource.tone}`}>
-            {activeSource.badge}
-          </span>
+          <span className={`flex-none rounded px-1.5 py-0.5 text-[8px] font-bold ${activeSource.tone}`}>{activeSource.badge}</span>
         </div>
       </div>
 
@@ -103,8 +101,12 @@ function FarmGrid({ simulation }) {
           wide={preset.wide}
           onClick={() => simulation.applyFarmSystemPreset(preset.key)}
         >
-          <span>{preset.icon} {pickLang(language, preset.name, preset.th)}</span>
-          {language === "th" ? <span className="mt-1 block text-[8.5px] font-normal leading-snug text-[#7ba384]">{preset.note}</span> : null}
+          <span>
+            {preset.icon} {pickLang(language, preset.name, preset.th)}
+          </span>
+          {language === "th" ? (
+            <span className="mt-1 block text-[8.5px] font-normal leading-snug text-[#7ba384]">{preset.note}</span>
+          ) : null}
         </PresetButton>
       ))}
     </div>
@@ -134,12 +136,15 @@ function SurvivalGrid({ simulation }) {
             active={simulation.activeSurvivalPresetKey === preset.key}
             onClick={() => simulation.applyWhiteRiceSurvivalPreset(preset.key)}
           >
-            <span>{preset.icon} {pickLang(language, preset.name, preset.th)}</span>
+            <span>
+              {preset.icon} {pickLang(language, preset.name, preset.th)}
+            </span>
             <span className="mt-1 block text-[8.5px] font-normal leading-snug text-rice-faint">
               {pickLang(language, preset.noteEn, preset.note)}
             </span>
             <span className="mt-1 block border-t border-[#eee9dc] pt-1 text-[8px] font-normal leading-snug text-[#8b7d59]">
-              Y&gt;={preset.target.yield} · C&lt;=฿{preset.target.cost.toLocaleString("en-US")} · P&gt;=฿{preset.target.price.toLocaleString("en-US")}
+              Y&gt;={preset.target.yield} · C&lt;=฿{preset.target.cost.toLocaleString("en-US")} · P&gt;=฿
+              {preset.target.price.toLocaleString("en-US")}
             </span>
           </PresetButton>
         ))}
@@ -148,15 +153,38 @@ function SurvivalGrid({ simulation }) {
         <div className="mb-1 text-[9.5px] font-bold text-[#5f755c]">
           {t(language, "survivalLiveCheck")} · {pickLang(language, activePreset.name, activePreset.th)}
         </div>
-        <SurvivalCheck label={t(language, "estimatedYield")} current={`${current.yield} kg/rai`} ok={current.yield >= target.yield} target={`>=${target.yield} kg/rai`} />
-        <SurvivalCheck label={t(language, "productionCost")} current={`฿${current.cost.toLocaleString("en-US")}`} ok={current.cost <= target.cost} target={`<=฿${target.cost.toLocaleString("en-US")}`} />
-        <SurvivalCheck label={t(language, "salePrice")} current={`฿${current.price.toLocaleString("en-US")}`} ok={current.price >= target.price} target={`>=฿${target.price.toLocaleString("en-US")}/t`} />
-        <SurvivalCheck label={t(language, "strawPrice")} current={`฿${current.straw.toFixed(2)}/kg`} ok={current.straw >= target.straw} target={`>=฿${target.straw.toFixed(2)}/kg`} />
-        <SurvivalCheck label={t(language, "profit")} current={`฿${current.profit.toLocaleString("en-US")}`} ok={current.profit >= 0} target=">=฿0" />
+        <SurvivalCheck
+          label={t(language, "estimatedYield")}
+          current={`${current.yield} kg/rai`}
+          ok={current.yield >= target.yield}
+          target={`>=${target.yield} kg/rai`}
+        />
+        <SurvivalCheck
+          label={t(language, "productionCost")}
+          current={`฿${current.cost.toLocaleString("en-US")}`}
+          ok={current.cost <= target.cost}
+          target={`<=฿${target.cost.toLocaleString("en-US")}`}
+        />
+        <SurvivalCheck
+          label={t(language, "salePrice")}
+          current={`฿${current.price.toLocaleString("en-US")}`}
+          ok={current.price >= target.price}
+          target={`>=฿${target.price.toLocaleString("en-US")}/t`}
+        />
+        <SurvivalCheck
+          label={t(language, "strawPrice")}
+          current={`฿${current.straw.toFixed(2)}/kg`}
+          ok={current.straw >= target.straw}
+          target={`>=฿${target.straw.toFixed(2)}/kg`}
+        />
+        <SurvivalCheck
+          label={t(language, "profit")}
+          current={`฿${current.profit.toLocaleString("en-US")}`}
+          ok={current.profit >= 0}
+          target=">=฿0"
+        />
       </div>
-      <div className="mt-1.5 text-[8.5px] leading-snug text-[#9a8a5d]">
-        {t(language, "regionalYieldNote")}
-      </div>
+      <div className="mt-1.5 text-[8.5px] leading-snug text-[#9a8a5d]">{t(language, "regionalYieldNote")}</div>
     </>
   );
 }
@@ -186,7 +214,9 @@ function SurvivalCheck({ label, current, target, ok }) {
     <div className="flex items-center justify-between gap-2 border-t border-[#eee9dc] py-1 first:border-t-0">
       <div className="min-w-0">
         <div className="truncate text-[8.5px] font-semibold text-[#687461]">{label}</div>
-        <div className="text-[8px] text-rice-faint">{current} / {target}</div>
+        <div className="text-[8px] text-rice-faint">
+          {current} / {target}
+        </div>
       </div>
       <div className={`rounded px-1.5 py-0.5 text-[8px] font-bold ${ok ? "bg-[#e5f2e6] text-[#2f6b48]" : "bg-[#fff1df] text-[#a25e22]"}`}>
         {ok ? "OK" : "GAP"}

@@ -11,9 +11,7 @@ export default function AutoPlanPanel({ simulation }) {
           <div className="text-[11px] font-bold text-[#2f3b34]">{t(language, "autoPlanTitle")}</div>
           <div className="text-[9px] leading-snug text-rice-faint">{t(language, "autoPlanSub")}</div>
         </div>
-        <div className="rounded-md bg-white px-2 py-1 text-[8.5px] font-bold text-[#5f755c]">
-          {t(language, "actionable")}
-        </div>
+        <div className="rounded-md bg-white px-2 py-1 text-[8.5px] font-bold text-[#5f755c]">{t(language, "actionable")}</div>
       </div>
 
       <div className="flex flex-col gap-2">
@@ -27,17 +25,15 @@ export default function AutoPlanPanel({ simulation }) {
 
 function PlanCard({ language, onApply, plan }) {
   return (
-    <div className={`rounded-lg border px-2.5 py-2 ${
-      plan.reachesTarget ? "border-[#d7e8cf] bg-[#f4faf2]" : "border-[#eadfbf] bg-[#fffaf0]"
-    }`}>
+    <div
+      className={`rounded-lg border px-2.5 py-2 ${plan.reachesTarget ? "border-[#d7e8cf] bg-[#f4faf2]" : "border-[#eadfbf] bg-[#fffaf0]"}`}
+    >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <div className="text-[10.5px] font-bold text-[#2f3b34]">
             {plan.icon} {pickLang(language, plan.label, plan.labelTh)}
           </div>
-          <div className="mt-0.5 text-[8.5px] leading-snug text-rice-muted">
-            {pickLang(language, plan.note, plan.noteTh)}
-          </div>
+          <div className="mt-0.5 text-[8.5px] leading-snug text-rice-muted">{pickLang(language, plan.note, plan.noteTh)}</div>
         </div>
         <button
           type="button"
@@ -49,7 +45,11 @@ function PlanCard({ language, onApply, plan }) {
       </div>
 
       <div className="mt-2 grid grid-cols-3 gap-1.5">
-        <Mini label={t(language, "profitPerRai")} value={signedBaht(plan.model.profitPerRai)} tone={plan.model.profitPerRai >= 0 ? "good" : "danger"} />
+        <Mini
+          label={t(language, "profitPerRai")}
+          value={signedBaht(plan.model.profitPerRai)}
+          tone={plan.model.profitPerRai >= 0 ? "good" : "danger"}
+        />
         <Mini label={t(language, "estimatedYield")} value={`${formatNumber(plan.model.estimatedYieldKgPerRai)} kg`} />
         <Mini label={t(language, "totalCost")} value={`฿${formatNumber(plan.model.costPerRai)}`} />
       </div>

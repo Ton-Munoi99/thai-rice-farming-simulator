@@ -94,7 +94,9 @@ export default function AppLayout({
               {score.growthScore}
             </span>
             <span className="text-left leading-tight">
-              <b className="block text-[12px] text-rice-text">{t(language, "health")} {pickLang(language, score.label, score.labelTh)}</b>
+              <b className="block text-[12px] text-rice-text">
+                {t(language, "health")} {pickLang(language, score.label, score.labelTh)}
+              </b>
               <span className="block text-[10px] text-[#7a8576]">{t(language, "openPanel")}</span>
             </span>
           </button>

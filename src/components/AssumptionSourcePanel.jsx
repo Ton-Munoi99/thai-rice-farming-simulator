@@ -48,7 +48,10 @@ export default function AssumptionSourcePanel({ simulation }) {
           <MiniFact label={t(language, "salePrice")} value={`฿${formatNumber(pricePerTon)}/t`} />
           <MiniFact label={t(language, "strawPrice")} value={`฿${strawPricePerKg.toFixed(2)}/kg`} />
           <MiniFact label={t(language, "breakEvenYield")} value={`${formatNumber(liveModel.financialRisk.breakEvenYieldKgPerRai)} kg`} />
-          <MiniFact label={pickLang(language, "Yield potential", "ศักยภาพผลผลิต")} value={`${formatNumber(liveModel.yieldPotential ?? varietyInfo.potential)} kg`} />
+          <MiniFact
+            label={pickLang(language, "Yield potential", "ศักยภาพผลผลิต")}
+            value={`${formatNumber(liveModel.yieldPotential ?? varietyInfo.potential)} kg`}
+          />
         </div>
 
         <SectionTitle>{t(language, "mainFormulas")}</SectionTitle>

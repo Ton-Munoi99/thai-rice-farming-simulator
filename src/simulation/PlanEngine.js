@@ -128,7 +128,12 @@ export function buildSurvivalPlans(simulation) {
       noteTh: "เน้นน้ำที่เสถียร timing โรคแมลง และปุ๋ยสมดุลเพื่อดันผลผลิต",
       currentProfit,
       model: yieldModel,
-      payload: { inputs: yieldInputs, costProfile: yieldProfile, strawPricePerKg, yieldPotentialOverride: Math.max(yieldPotentialOverride ?? 0, yieldPotential) },
+      payload: {
+        inputs: yieldInputs,
+        costProfile: yieldProfile,
+        strawPricePerKg,
+        yieldPotentialOverride: Math.max(yieldPotentialOverride ?? 0, yieldPotential),
+      },
       targetProfit,
     }),
     makePlan({
@@ -140,7 +145,12 @@ export function buildSurvivalPlans(simulation) {
       noteTh: "ผสมลดต้นทุนระดับกลาง AWD/timing และตลาดฟางที่ดีขึ้น",
       currentProfit,
       model: mixedModel,
-      payload: { inputs: mixedInputs, costProfile: mixedProfile, strawPricePerKg: mixedStrawPrice, yieldPotentialOverride: Math.max(yieldPotentialOverride ?? 0, (liveModel.yieldPotential ?? variety.potential) + 35) },
+      payload: {
+        inputs: mixedInputs,
+        costProfile: mixedProfile,
+        strawPricePerKg: mixedStrawPrice,
+        yieldPotentialOverride: Math.max(yieldPotentialOverride ?? 0, (liveModel.yieldPotential ?? variety.potential) + 35),
+      },
       targetProfit,
     }),
   ].sort((a, b) => b.model.profitPerRai - a.model.profitPerRai);

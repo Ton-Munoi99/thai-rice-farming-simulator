@@ -4,13 +4,25 @@ import { t } from "../i18n.js";
 const targetOptions = [
   { key: 0, en: "Break even first", th: "คุ้มทุนก่อน", noteEn: "Focus on not losing cash.", noteTh: "เน้นไม่ให้ขาดทุนเงินสด" },
   { key: 1000, en: "+1,000 ฿/rai", th: "+1,000 บาท/ไร่", noteEn: "Balanced survival target.", noteTh: "เป้าหมายอยู่รอดแบบสมดุล" },
-  { key: 1500, en: "+1,500 ฿/rai", th: "+1,500 บาท/ไร่", noteEn: "Needs stronger yield/cost discipline.", noteTh: "ต้องดันผลผลิตและคุมต้นทุนมากขึ้น" },
+  {
+    key: 1500,
+    en: "+1,500 ฿/rai",
+    th: "+1,500 บาท/ไร่",
+    noteEn: "Needs stronger yield/cost discipline.",
+    noteTh: "ต้องดันผลผลิตและคุมต้นทุนมากขึ้น",
+  },
 ];
 
 const waterOptions = [
   { key: "stable", en: "Stable water", th: "น้ำค่อนข้างเสถียร", noteEn: "Use AWD and good timing.", noteTh: "ใช้ AWD และ timing ดี" },
   { key: "limited", en: "Limited water", th: "น้ำจำกัด", noteEn: "Rainfed/drought-safe settings.", noteTh: "ตั้งค่าแบบนาน้ำฝน/เสี่ยงแล้ง" },
-  { key: "floodRisk", en: "Flood risk", th: "เสี่ยงน้ำท่วม", noteEn: "Higher moisture and harvest risk.", noteTh: "เสี่ยงความชื้นและเก็บเกี่ยว" },
+  {
+    key: "floodRisk",
+    en: "Flood risk",
+    th: "เสี่ยงน้ำท่วม",
+    noteEn: "Higher moisture and harvest risk.",
+    noteTh: "เสี่ยงความชื้นและเก็บเกี่ยว",
+  },
 ];
 
 const strawOptions = [
@@ -20,8 +32,20 @@ const strawOptions = [
 ];
 
 const costOptions = [
-  { key: "standard", en: "Standard tenant", th: "เช่านาทั่วไป", noteEn: "Normal rent and hired machinery.", noteTh: "มีค่าเช่าและจ้างเครื่องจักร" },
-  { key: "lowCost", en: "Own land/machinery", th: "มีนา/เครื่องจักรเอง", noteEn: "Lower rent and labor pressure.", noteTh: "ลดค่าเช่าและแรงงาน" },
+  {
+    key: "standard",
+    en: "Standard tenant",
+    th: "เช่านาทั่วไป",
+    noteEn: "Normal rent and hired machinery.",
+    noteTh: "มีค่าเช่าและจ้างเครื่องจักร",
+  },
+  {
+    key: "lowCost",
+    en: "Own land/machinery",
+    th: "มีนา/เครื่องจักรเอง",
+    noteEn: "Lower rent and labor pressure.",
+    noteTh: "ลดค่าเช่าและแรงงาน",
+  },
   { key: "cashTight", en: "Cash-tight", th: "ทุนน้อย", noteEn: "Lower spend, higher field risk.", noteTh: "ลงทุนน้อยแต่เสี่ยงแปลงสูง" },
 ];
 
@@ -55,7 +79,11 @@ export default function GoalWizardModal({ simulation, onClose }) {
             <h2 className="font-display text-[24px] font-bold text-[#2f3b34]">{t(language, "goalWizardTitle")}</h2>
             <p className="mt-1 max-w-[560px] text-[12px] leading-relaxed text-rice-faint">{t(language, "goalWizardSub")}</p>
           </div>
-          <button type="button" onClick={onClose} className="rounded-lg border border-[#ded8cb] bg-white px-3 py-1.5 text-[11px] font-bold text-[#3c473a]">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg border border-[#ded8cb] bg-white px-3 py-1.5 text-[11px] font-bold text-[#3c473a]"
+          >
             {t(language, "close")}
           </button>
         </div>

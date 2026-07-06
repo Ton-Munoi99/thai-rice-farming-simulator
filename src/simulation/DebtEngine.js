@@ -6,7 +6,7 @@ function roundUp(value, step) {
 
 function revenueAtYield({ inputs, flags, quality, strawPricePerKg, pricePerTon, yieldKgPerRai }) {
   const straw = estimateStrawHarvest(inputs, yieldKgPerRai, { strawPricePerKg }, flags);
-  const riceRevenue = Math.round(((yieldKgPerRai * pricePerTon) / 1000) * quality / 10) * 10;
+  const riceRevenue = Math.round((((yieldKgPerRai * pricePerTon) / 1000) * quality) / 10) * 10;
   return riceRevenue + straw.revenuePerRai;
 }
 
@@ -19,15 +19,7 @@ function findRequiredYield(targetRevenuePerRai, context) {
   return null;
 }
 
-export function buildDebtAnalysis({
-  farmSize,
-  inputs,
-  model,
-  pricePerTon,
-  strawPricePerKg,
-  annualInterestRate = 0.06,
-  loanMonths = 6,
-}) {
+export function buildDebtAnalysis({ farmSize, inputs, model, pricePerTon, strawPricePerKg, annualInterestRate = 0.06, loanMonths = 6 }) {
   const totalProfit = model.profitPerRai * farmSize;
   const totalCost = model.costPerRai * farmSize;
   const cashShortfall = Math.max(0, -totalProfit);
@@ -52,7 +44,10 @@ export function buildDebtAnalysis({
   const requiredPricePerTon =
     cashShortfall > 0 && model.estimatedYieldKgPerRai > 0
       ? roundUp(
-          Math.max(0, ((targetRevenuePerRai - currentYieldStraw.revenuePerRai) / model.estimatedYieldKgPerRai / Math.max(model.quality, 0.1)) * 1000),
+          Math.max(
+            0,
+            ((targetRevenuePerRai - currentYieldStraw.revenuePerRai) / model.estimatedYieldKgPerRai / Math.max(model.quality, 0.1)) * 1000,
+          ),
           100,
         )
       : pricePerTon;

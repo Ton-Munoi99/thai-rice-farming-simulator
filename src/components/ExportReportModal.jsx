@@ -10,7 +10,11 @@ export default function ExportReportModal({ onClose, simulation }) {
   const riskContributions = buildRiskContributions(model, language);
   const topPlan = simulation.survivalPlans[0];
   const decisionTone = model.profitPerRai >= 800 ? "go" : model.profitPerRai >= 0 ? "watch" : "stop";
-  const generatedAt = new Date().toLocaleDateString(language === "th" ? "th-TH" : "en-US", { day: "numeric", month: "short", year: "numeric" });
+  const generatedAt = new Date().toLocaleDateString(language === "th" ? "th-TH" : "en-US", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
   const totals = {
     riceRevenue: model.riceRevenuePerRai * farmSize,
     strawRevenue: model.straw.revenuePerRai * farmSize,
@@ -25,14 +29,28 @@ export default function ExportReportModal({ onClose, simulation }) {
     [t(language, "salePrice"), `฿${formatNumber(pricePerTon)}/${t(language, "ton")}`, METRIC_QUALITY.price],
     [t(language, "productionCost"), `฿${formatNumber(model.costPerRai)}/${t(language, "rai")}`, METRIC_QUALITY.cost],
     [t(language, "revenue"), `฿${formatNumber(model.revenuePerRai)}/${t(language, "rai")}`, METRIC_QUALITY.revenue],
-    [model.profitPerRai >= 0 ? t(language, "profit") : t(language, "loss"), `${signedBaht(model.profitPerRai)}/${t(language, "rai")}`, METRIC_QUALITY.revenue],
+    [
+      model.profitPerRai >= 0 ? t(language, "profit") : t(language, "loss"),
+      `${signedBaht(model.profitPerRai)}/${t(language, "rai")}`,
+      METRIC_QUALITY.revenue,
+    ],
     [t(language, "strawIncome"), `${formatNumber(model.straw.collectableKgPerRai)} kg/${t(language, "rai")}`, METRIC_QUALITY.straw],
     [t(language, "strawPrice"), `฿${strawPricePerKg.toFixed(2)}/${t(language, "kg")}`, METRIC_QUALITY.price],
     [t(language, "financialRisk"), pickLang(language, model.financialRisk.level, model.financialRisk.levelTh), "medium"],
   ];
 
   const copySummary = async () => {
-    const text = buildPlainTextSummary({ farmSize, language, model, pricePerTon, riskContributions, strawPricePerKg, topPlan, totals, varietyInfo });
+    const text = buildPlainTextSummary({
+      farmSize,
+      language,
+      model,
+      pricePerTon,
+      riskContributions,
+      strawPricePerKg,
+      topPlan,
+      totals,
+      varietyInfo,
+    });
     await navigator.clipboard?.writeText(text);
   };
 
@@ -45,13 +63,25 @@ export default function ExportReportModal({ onClose, simulation }) {
             <div className="text-[21px] font-bold text-[#2f3b34]">{t(language, "scenarioReport")}</div>
           </div>
           <div className="flex items-center gap-2">
-            <button type="button" onClick={copySummary} className="rounded-lg border border-[#dedbd0] bg-white px-3 py-2 text-[11px] font-bold text-rice-muted transition hover:bg-[#f8faf4]">
+            <button
+              type="button"
+              onClick={copySummary}
+              className="rounded-lg border border-[#dedbd0] bg-white px-3 py-2 text-[11px] font-bold text-rice-muted transition hover:bg-[#f8faf4]"
+            >
               {t(language, "copySummary")}
             </button>
-            <button type="button" onClick={() => window.print()} className="rounded-lg bg-rice-green px-3 py-2 text-[11px] font-bold text-white transition hover:bg-rice-dark">
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="rounded-lg bg-rice-green px-3 py-2 text-[11px] font-bold text-white transition hover:bg-rice-dark"
+            >
               {t(language, "savePdf")}
             </button>
-            <button type="button" onClick={onClose} className="rounded-lg border border-[#dedbd0] bg-white px-3 py-2 text-[11px] font-bold text-rice-muted transition hover:bg-[#f8faf4]">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-lg border border-[#dedbd0] bg-white px-3 py-2 text-[11px] font-bold text-rice-muted transition hover:bg-[#f8faf4]"
+            >
               {t(language, "close")}
             </button>
           </div>
@@ -65,25 +95,33 @@ export default function ExportReportModal({ onClose, simulation }) {
               <p className="mt-1 text-[11px] leading-snug text-rice-muted">{t(language, "exportReportSub")}</p>
               <div className="mt-2 text-[9.5px] text-rice-faint">{generatedAt}</div>
             </div>
-            <div className={`rounded-lg px-4 py-3 text-right ${totals.profit >= 0 ? "bg-[#edf6e9] text-[#2f6b48]" : "bg-[#fff0ea] text-[#a24b2b]"}`}>
+            <div
+              className={`rounded-lg px-4 py-3 text-right ${totals.profit >= 0 ? "bg-[#edf6e9] text-[#2f6b48]" : "bg-[#fff0ea] text-[#a24b2b]"}`}
+            >
               <div className="text-[10px] font-bold">{t(language, "totalProfit")}</div>
               <div className="font-display text-[25px] font-bold">{signedBaht(totals.profit)}</div>
-              <div className="text-[9px]">{farmSize} {t(language, "rai")}</div>
+              <div className="text-[9px]">
+                {farmSize} {t(language, "rai")}
+              </div>
             </div>
           </div>
 
           <section className="mt-4 grid gap-3 md:grid-cols-[1.25fr_.75fr]">
-            <div className={`rounded-xl border px-4 py-4 ${
-              decisionTone === "go"
-                ? "border-[#cfe4c9] bg-[#f2faf0]"
-                : decisionTone === "watch"
-                  ? "border-[#eadfbf] bg-[#fffaf0]"
-                  : "border-[#ead5cd] bg-[#fff5f0]"
-            }`}>
+            <div
+              className={`rounded-xl border px-4 py-4 ${
+                decisionTone === "go"
+                  ? "border-[#cfe4c9] bg-[#f2faf0]"
+                  : decisionTone === "watch"
+                    ? "border-[#eadfbf] bg-[#fffaf0]"
+                    : "border-[#ead5cd] bg-[#fff5f0]"
+              }`}
+            >
               <div className="text-[11px] font-bold uppercase tracking-[.05em] text-rice-faint">{t(language, "decisionStatus")}</div>
-              <div className={`mt-1 font-display text-[28px] font-bold leading-none ${
-                decisionTone === "go" ? "text-[#2f6b48]" : decisionTone === "watch" ? "text-[#8a641c]" : "text-[#a24b2b]"
-              }`}>
+              <div
+                className={`mt-1 font-display text-[28px] font-bold leading-none ${
+                  decisionTone === "go" ? "text-[#2f6b48]" : decisionTone === "watch" ? "text-[#8a641c]" : "text-[#a24b2b]"
+                }`}
+              >
                 {t(language, decisionTone === "go" ? "reportGo" : decisionTone === "watch" ? "reportWatch" : "reportStop")}
               </div>
               <div className="mt-2 text-[11px] leading-relaxed text-[#4f5c50]">
@@ -97,8 +135,12 @@ export default function ExportReportModal({ onClose, simulation }) {
               <div className="text-[11px] font-bold text-[#2f3b34]">{t(language, "primaryPressure")}</div>
               <div className="mt-2 flex items-center justify-between gap-2">
                 <div className="min-w-0">
-                  <div className="truncate font-bold text-[#3c473a]">{riskContributions[0].icon} {pickLang(language, riskContributions[0].label, riskContributions[0].labelTh)}</div>
-                  <div className="mt-1 text-[9.5px] leading-snug text-rice-faint">{pickLang(language, riskContributions[0].detail, riskContributions[0].detailTh)}</div>
+                  <div className="truncate font-bold text-[#3c473a]">
+                    {riskContributions[0].icon} {pickLang(language, riskContributions[0].label, riskContributions[0].labelTh)}
+                  </div>
+                  <div className="mt-1 text-[9.5px] leading-snug text-rice-faint">
+                    {pickLang(language, riskContributions[0].detail, riskContributions[0].detailTh)}
+                  </div>
                 </div>
                 <div className="font-display text-[28px] font-bold text-rice-red">{riskContributions[0].percent}%</div>
               </div>
@@ -107,9 +149,16 @@ export default function ExportReportModal({ onClose, simulation }) {
 
           <div className="mt-4 grid grid-cols-2 gap-2 md:grid-cols-4">
             <ReportMetric label={t(language, "estimatedYield")} value={`${formatNumber(model.estimatedYieldKgPerRai)} kg/rai`} />
-            <ReportMetric label={t(language, "breakEvenYield")} value={`${formatNumber(model.financialRisk.breakEvenYieldKgPerRai)} kg/rai`} />
+            <ReportMetric
+              label={t(language, "breakEvenYield")}
+              value={`${formatNumber(model.financialRisk.breakEvenYieldKgPerRai)} kg/rai`}
+            />
             <ReportMetric label={t(language, "productionCost")} value={`฿${formatNumber(model.costPerRai)}/rai`} />
-            <ReportMetric label={model.profitPerRai >= 0 ? t(language, "profit") : t(language, "loss")} value={`${signedBaht(model.profitPerRai)}/rai`} danger={model.profitPerRai < 0} />
+            <ReportMetric
+              label={model.profitPerRai >= 0 ? t(language, "profit") : t(language, "loss")}
+              value={`${signedBaht(model.profitPerRai)}/rai`}
+              danger={model.profitPerRai < 0}
+            />
           </div>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2">
@@ -145,12 +194,20 @@ export default function ExportReportModal({ onClose, simulation }) {
           <div className="mt-3 grid gap-3 md:grid-cols-2">
             <section className="rounded-lg border border-[#d8ddd2] bg-[#fbfaf6] px-4 py-3">
               <h3 className="text-[13px] font-bold text-[#2f3b34]">{t(language, "reportChart")}</h3>
-              <ReportBar label={t(language, "totalRevenue")} value={totals.revenue} max={Math.max(totals.revenue, totals.cost, 1)} tone="green" />
+              <ReportBar
+                label={t(language, "totalRevenue")}
+                value={totals.revenue}
+                max={Math.max(totals.revenue, totals.cost, 1)}
+                tone="green"
+              />
               <ReportBar label={t(language, "totalCost")} value={totals.cost} max={Math.max(totals.revenue, totals.cost, 1)} tone="red" />
-              <div className={`mt-3 rounded-lg px-3 py-2 text-[11px] font-bold ${
-                totals.profit >= 0 ? "bg-[#edf6e9] text-[#2f6b48]" : "bg-[#fff0ea] text-[#a24b2b]"
-              }`}>
-                {t(language, "reportVerdict")}: {totals.profit >= 0 ? t(language, "profit") : t(language, "loss")} {signedBaht(totals.profit)}
+              <div
+                className={`mt-3 rounded-lg px-3 py-2 text-[11px] font-bold ${
+                  totals.profit >= 0 ? "bg-[#edf6e9] text-[#2f6b48]" : "bg-[#fff0ea] text-[#a24b2b]"
+                }`}
+              >
+                {t(language, "reportVerdict")}: {totals.profit >= 0 ? t(language, "profit") : t(language, "loss")}{" "}
+                {signedBaht(totals.profit)}
               </div>
             </section>
 
@@ -159,12 +216,14 @@ export default function ExportReportModal({ onClose, simulation }) {
               <div className="mt-2 grid grid-cols-5 gap-1">
                 {MARKET_PRICE_SCENARIOS.map((scenario) => {
                   const nextPrice = Math.max(1000, pricePerTon + scenario.change);
-                  const riceRevenue = Math.round(((model.estimatedYieldKgPerRai * nextPrice) / 1000) * model.quality / 10) * 10;
+                  const riceRevenue = Math.round((((model.estimatedYieldKgPerRai * nextPrice) / 1000) * model.quality) / 10) * 10;
                   const profit = riceRevenue + model.straw.revenuePerRai - model.costPerRai;
                   return (
                     <div key={scenario.key} className="rounded-md bg-white/75 px-1.5 py-2 text-center">
                       <div className="text-[8px] font-bold text-rice-faint">{scenario.label}</div>
-                      <div className={`font-display text-[10px] font-bold ${profit >= 0 ? "text-[#2f6b48]" : "text-[#a24b2b]"}`}>{signedBaht(profit)}</div>
+                      <div className={`font-display text-[10px] font-bold ${profit >= 0 ? "text-[#2f6b48]" : "text-[#a24b2b]"}`}>
+                        {signedBaht(profit)}
+                      </div>
                     </div>
                   );
                 })}
@@ -185,12 +244,15 @@ export default function ExportReportModal({ onClose, simulation }) {
             <section className="rounded-lg border border-[#d8ddd2] bg-[#fbfaf6] px-4 py-3">
               <h3 className="text-[13px] font-bold text-[#2f3b34]">{t(language, "costStructure")}</h3>
               <div className="mt-2 flex flex-col divide-y divide-[#ebe7dc]">
-                {[...model.costBreakdown].sort((a, b) => b.value - a.value).slice(0, 5).map((item) => (
-                  <div key={item.key} className="flex items-center justify-between gap-3 py-1.5 text-[10px]">
-                    <span className="min-w-0 truncate text-rice-muted">{item.label}</span>
-                    <span className="font-display font-bold text-[#2f3b34]">฿{formatNumber(item.value)}</span>
-                  </div>
-                ))}
+                {[...model.costBreakdown]
+                  .sort((a, b) => b.value - a.value)
+                  .slice(0, 5)
+                  .map((item) => (
+                    <div key={item.key} className="flex items-center justify-between gap-3 py-1.5 text-[10px]">
+                      <span className="min-w-0 truncate text-rice-muted">{item.label}</span>
+                      <span className="font-display font-bold text-[#2f3b34]">฿{formatNumber(item.value)}</span>
+                    </div>
+                  ))}
               </div>
               <div className="mt-2 rounded-lg bg-white/75 px-3 py-2 text-[9.5px] leading-snug text-rice-faint">
                 {model.costDrivers.total > 0
@@ -223,8 +285,12 @@ export default function ExportReportModal({ onClose, simulation }) {
             <div className="mt-2 grid gap-2 md:grid-cols-3">
               {simulation.survivalPlans.slice(0, 3).map((plan) => (
                 <div key={plan.key} className="rounded-md bg-white/75 px-3 py-2 text-[10px] leading-snug text-[#5e6b5b]">
-                  <div className="font-bold text-[#2f3b34]">{plan.icon} {pickLang(language, plan.label, plan.labelTh)}</div>
-                  <div className="mt-1">{t(language, "profitPerRai")}: {signedBaht(plan.model.profitPerRai)}</div>
+                  <div className="font-bold text-[#2f3b34]">
+                    {plan.icon} {pickLang(language, plan.label, plan.labelTh)}
+                  </div>
+                  <div className="mt-1">
+                    {t(language, "profitPerRai")}: {signedBaht(plan.model.profitPerRai)}
+                  </div>
                 </div>
               ))}
             </div>
@@ -239,7 +305,17 @@ export default function ExportReportModal({ onClose, simulation }) {
   );
 }
 
-function buildPlainTextSummary({ farmSize, language, model, pricePerTon, riskContributions, strawPricePerKg, topPlan, totals, varietyInfo }) {
+function buildPlainTextSummary({
+  farmSize,
+  language,
+  model,
+  pricePerTon,
+  riskContributions,
+  strawPricePerKg,
+  topPlan,
+  totals,
+  varietyInfo,
+}) {
   return [
     t(language, "scenarioReport"),
     `${t(language, "riceVariety")}: ${pickLang(language, varietyInfo.en, varietyInfo.name)}`,
@@ -270,7 +346,9 @@ function ReportPressure({ item, language }) {
   return (
     <div>
       <div className="mb-1 flex items-center justify-between gap-2 text-[10px]">
-        <span className="min-w-0 truncate font-bold text-[#3c473a]">{item.icon} {pickLang(language, item.label, item.labelTh)}</span>
+        <span className="min-w-0 truncate font-bold text-[#3c473a]">
+          {item.icon} {pickLang(language, item.label, item.labelTh)}
+        </span>
         <span className="font-display font-bold text-[#2f3b34]">{item.percent}%</span>
       </div>
       <div className="h-2 overflow-hidden rounded-full bg-[#ebe7dc]">

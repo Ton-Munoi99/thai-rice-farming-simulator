@@ -51,10 +51,7 @@ export default function GrowthTimeline({ simulation }) {
           })}
         </div>
         <div className="absolute left-3.5 right-3.5 top-[13px] z-[1] h-[2px] rounded-[3px] bg-[#e7e2d7]">
-          <div
-            className="h-full rounded-[3px] bg-rice-green transition-[width] duration-[1500ms]"
-            style={{ width: `${progress}%` }}
-          />
+          <div className="h-full rounded-[3px] bg-rice-green transition-[width] duration-[1500ms]" style={{ width: `${progress}%` }} />
         </div>
       </div>
     </footer>

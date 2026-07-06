@@ -5,10 +5,7 @@ import { pickLang, t } from "../i18n.js";
 export default function ScenarioHistoryPanel({ simulation }) {
   const { language, scenarioHistory } = simulation;
   const [name, setName] = useState("");
-  const placeholder = useMemo(
-    () => `${t(language, "scenario")} ${scenarioHistory.length + 1}`,
-    [language, scenarioHistory.length],
-  );
+  const placeholder = useMemo(() => `${t(language, "scenario")} ${scenarioHistory.length + 1}`, [language, scenarioHistory.length]);
 
   const saveCurrent = () => {
     simulation.saveScenarioHistory(name || placeholder);

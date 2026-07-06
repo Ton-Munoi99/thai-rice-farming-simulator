@@ -11,7 +11,7 @@ function uniqueSorted(values) {
 
 function profitAt({ inputs, flags, quality, strawPricePerKg, yieldKgPerRai, pricePerTon, costPerRai }) {
   const straw = estimateStrawHarvest(inputs, yieldKgPerRai, { strawPricePerKg }, flags);
-  const riceRevenue = Math.round(((yieldKgPerRai * pricePerTon) / 1000) * quality / 10) * 10;
+  const riceRevenue = Math.round((((yieldKgPerRai * pricePerTon) / 1000) * quality) / 10) * 10;
   const revenue = riceRevenue + straw.revenuePerRai;
   return {
     yieldKgPerRai,

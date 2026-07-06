@@ -42,7 +42,13 @@ export default function ControlPanel({ mobileActive = true, simulation }) {
 
         <ControlCard icon="💧" title={t(language, "waterManagement")}>
           <FieldLabel>{t(language, "irrigationMethod")}</FieldLabel>
-          <Select language={language} value={inputs.water} onChange={(value) => setInput("water", value)} options={SELECT_OPTIONS.water} labels={OPTION_LABELS.water} />
+          <Select
+            language={language}
+            value={inputs.water}
+            onChange={(value) => setInput("water", value)}
+            options={SELECT_OPTIONS.water}
+            labels={OPTION_LABELS.water}
+          />
           <Slider
             label={t(language, "groundwaterPump")}
             value={inputs.groundwater}
@@ -52,17 +58,34 @@ export default function ControlPanel({ mobileActive = true, simulation }) {
         </ControlCard>
 
         <ControlCard icon="🟤" title={t(language, "soilCondition")}>
-          <Select language={language} value={inputs.soil} onChange={(value) => setInput("soil", value)} options={SELECT_OPTIONS.soil} labels={OPTION_LABELS.soil} />
+          <Select
+            language={language}
+            value={inputs.soil}
+            onChange={(value) => setInput("soil", value)}
+            options={SELECT_OPTIONS.soil}
+            labels={OPTION_LABELS.soil}
+          />
         </ControlCard>
 
         <ControlCard icon="🐛" title={t(language, "threats")}>
           <Slider label={t(language, "pestOutbreak")} value={inputs.pest} accent="#c2562f" onChange={(value) => setInput("pest", value)} />
-          <Slider label={t(language, "diseaseOutbreak")} value={inputs.disease} accent="#a0682f" onChange={(value) => setInput("disease", value)} />
+          <Slider
+            label={t(language, "diseaseOutbreak")}
+            value={inputs.disease}
+            accent="#a0682f"
+            onChange={(value) => setInput("disease", value)}
+          />
           <Slider label={t(language, "weedPressure")} value={inputs.weed} accent="#7a8b3a" onChange={(value) => setInput("weed", value)} />
         </ControlCard>
 
         <ControlCard icon="⛅" title={t(language, "weatherScenario")}>
-          <Select language={language} value={inputs.weather} onChange={(value) => setInput("weather", value)} options={SELECT_OPTIONS.weather} labels={OPTION_LABELS.weather} />
+          <Select
+            language={language}
+            value={inputs.weather}
+            onChange={(value) => setInput("weather", value)}
+            options={SELECT_OPTIONS.weather}
+            labels={OPTION_LABELS.weather}
+          />
         </ControlCard>
 
         <ControlCard icon="⏱️" title={t(language, "managementTiming")}>
@@ -94,10 +117,12 @@ function FertilizerProgram({ language, applications, stages, formulaOptions, nut
             <div className="mb-[7px] flex items-center gap-1.5">
               <span className="text-[14px]">{stage.icon}</span>
               <div className="min-w-0 flex-1">
-                <div className="text-[11.5px] font-bold text-[#3c473a]">
-                  {pickLang(language, stage.en, stage.th)}
-                </div>
-                {language === "th" ? <div className="text-[9px] text-[#a4ad98]">{stage.when} · {stage.tip}</div> : null}
+                <div className="text-[11.5px] font-bold text-[#3c473a]">{pickLang(language, stage.en, stage.th)}</div>
+                {language === "th" ? (
+                  <div className="text-[9px] text-[#a4ad98]">
+                    {stage.when} · {stage.tip}
+                  </div>
+                ) : null}
               </div>
             </div>
             <select
@@ -106,7 +131,9 @@ function FertilizerProgram({ language, applications, stages, formulaOptions, nut
               className="control-select py-1.5 text-[11.5px]"
             >
               {formulaOptions.map((option) => (
-                <option key={option.value} value={option.value}>{option.label}</option>
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
               ))}
             </select>
             <Slider
@@ -198,7 +225,9 @@ function Select({ language, value, options, labels = {}, onChange }) {
   return (
     <select value={value} onChange={(event) => onChange(event.target.value)} className="control-select mt-[5px]">
       {options.map((option) => (
-        <option key={option} value={option}>{optionLabel(language, option, labels)}</option>
+        <option key={option} value={option}>
+          {optionLabel(language, option, labels)}
+        </option>
       ))}
     </select>
   );
@@ -211,7 +240,9 @@ function Slider({ label, value, onChange, accent, max = 100, suffix = "%", compa
     <div className={compact ? "mt-2" : "mt-2.5"}>
       <div className="mb-[3px] flex justify-between text-[11px] text-rice-muted">
         <span>{label}</span>
-        <b className="font-display" style={{ color: value > 45 && max === 100 ? accent : undefined }}>{displayValue}</b>
+        <b className="font-display" style={{ color: value > 45 && max === 100 ? accent : undefined }}>
+          {displayValue}
+        </b>
       </div>
       <input
         type="range"

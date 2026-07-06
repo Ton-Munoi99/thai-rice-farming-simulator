@@ -12,7 +12,13 @@ import {
 } from "../data/mockData.js";
 import { FARMER_PROFILES } from "../data/planningData.js";
 import { buildSurvivalPlans } from "../simulation/PlanEngine.js";
-import { COST_ITEMS, buildAutoRecommendation, computeSimulation, fertilizerNutrients, neutralFieldCondition } from "../simulation/SimulationEngine.js";
+import {
+  COST_ITEMS,
+  buildAutoRecommendation,
+  computeSimulation,
+  fertilizerNutrients,
+  neutralFieldCondition,
+} from "../simulation/SimulationEngine.js";
 import { buildCells, buildChannels, buildPlantVisuals, buildWeatherFx, gridForFarmSize } from "../simulation/fieldModel.js";
 import { clamp } from "../utils/format.js";
 
@@ -100,9 +106,7 @@ export function useSimulation() {
     const plants = buildPlantVisuals(fieldGeometry.cells, fieldCondition, stageFraction);
     const fx = buildWeatherFx(fieldCondition, fieldGeometry.sceneW, fieldGeometry.sceneH);
     const channels =
-      inputs.water === "Alternate Wet-Dry (AWD)"
-        ? buildChannels(fieldGeometry.cells, fieldGeometry.cols, fieldGeometry.rows)
-        : [];
+      inputs.water === "Alternate Wet-Dry (AWD)" ? buildChannels(fieldGeometry.cells, fieldGeometry.cols, fieldGeometry.rows) : [];
 
     return { ...fieldGeometry, plants, fx, channels, awd: inputs.water === "Alternate Wet-Dry (AWD)" };
   }, [fieldGeometry, fieldCondition, inputs.water, stageFraction]);
@@ -308,7 +312,14 @@ export function useSimulation() {
 
   const buildSnapshot = useCallback(
     ({ label, slot = null, type = "history" }) => {
-      const model = computeSimulation(inputs, { varietyKey, pricePerTon, strawPricePerKg, costOverrides, costProfile, yieldPotentialOverride });
+      const model = computeSimulation(inputs, {
+        varietyKey,
+        pricePerTon,
+        strawPricePerKg,
+        costOverrides,
+        costProfile,
+        yieldPotentialOverride,
+      });
       return {
         id: `${type}-${Date.now()}`,
         label,
@@ -515,7 +526,14 @@ export function useSimulation() {
   const runSimulation = useCallback(() => {
     if (phase === "running") return;
     clearTimers();
-    const model = computeSimulation(inputs, { varietyKey, pricePerTon, strawPricePerKg, costOverrides, costProfile, yieldPotentialOverride });
+    const model = computeSimulation(inputs, {
+      varietyKey,
+      pricePerTon,
+      strawPricePerKg,
+      costOverrides,
+      costProfile,
+      yieldPotentialOverride,
+    });
     setRunModel(model);
     setShowSummary(false);
     setPhase("running");
@@ -526,10 +544,13 @@ export function useSimulation() {
       timers.current.push(setTimeout(() => setStageIndex(index), index * stepMs));
     }
     timers.current.push(
-      setTimeout(() => {
-        setPhase("done");
-        setShowSummary(true);
-      }, 6 * stepMs + 1100),
+      setTimeout(
+        () => {
+          setPhase("done");
+          setShowSummary(true);
+        },
+        6 * stepMs + 1100,
+      ),
     );
   }, [clearTimers, costOverrides, costProfile, inputs, phase, pricePerTon, strawPricePerKg, varietyKey, yieldPotentialOverride]);
 

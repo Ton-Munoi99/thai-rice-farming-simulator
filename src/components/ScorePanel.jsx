@@ -46,12 +46,7 @@ export default function ScorePanel({ mobileActive = true, mobileMode = null, sim
         <div className="control-heading">{t(language, "snapshot")}</div>
         <div className="text-[10.5px] text-rice-faint">{t(language, "realTime")}</div>
 
-        <SnapshotCard
-          circumference={circumference}
-          language={language}
-          model={model}
-          profitPositive={profitPositive}
-        />
+        <SnapshotCard circumference={circumference} language={language} model={model} profitPositive={profitPositive} />
 
         <GroupDetails title={t(language, "financeGroup")} defaultOpen={mobileMode !== "results"}>
           <FinancialRiskCard language={language} model={model} />
@@ -143,15 +138,24 @@ function SnapshotCard({ circumference, language, model, profitPositive }) {
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className="font-display text-[28px] font-bold leading-none" style={{ color: model.color }}>{model.growthScore}</div>
+            <div className="font-display text-[28px] font-bold leading-none" style={{ color: model.color }}>
+              {model.growthScore}
+            </div>
             <div className="text-[8px] text-rice-faint">/100</div>
           </div>
         </div>
         <div className="min-w-0">
           <div className="text-[9px] font-semibold text-rice-faint">{t(language, "healthScoreShort")}</div>
-          <div className="text-[12px] font-bold" style={{ color: model.color }}>{pickLang(language, model.label, model.labelTh)}</div>
+          <div className="text-[12px] font-bold" style={{ color: model.color }}>
+            {pickLang(language, model.label, model.labelTh)}
+          </div>
           <div className="mt-2 grid grid-cols-2 gap-1.5">
-            <MiniSnapshotMetric label={t(language, "estimatedYield")} value={`${formatNumber(model.estimatedYieldKgPerRai)} kg`} quality={METRIC_QUALITY.yield} language={language} />
+            <MiniSnapshotMetric
+              label={t(language, "estimatedYield")}
+              value={`${formatNumber(model.estimatedYieldKgPerRai)} kg`}
+              quality={METRIC_QUALITY.yield}
+              language={language}
+            />
             <MiniSnapshotMetric
               label={model.profitPerRai >= 0 ? t(language, "profit") : t(language, "loss")}
               value={signedBaht(model.profitPerRai)}
@@ -160,13 +164,15 @@ function SnapshotCard({ circumference, language, model, profitPositive }) {
               language={language}
             />
           </div>
-          <div className={`mt-1.5 rounded-md px-2 py-1 text-[9px] font-bold ${
-            model.financialRisk.tone === "good"
-              ? "bg-[#e5f2e6] text-[#2f6b48]"
-              : model.financialRisk.tone === "warning"
-                ? "bg-[#fff0c7] text-[#8a641c]"
-                : "bg-[#fde5dc] text-[#a24b2b]"
-          }`}>
+          <div
+            className={`mt-1.5 rounded-md px-2 py-1 text-[9px] font-bold ${
+              model.financialRisk.tone === "good"
+                ? "bg-[#e5f2e6] text-[#2f6b48]"
+                : model.financialRisk.tone === "warning"
+                  ? "bg-[#fff0c7] text-[#8a641c]"
+                  : "bg-[#fde5dc] text-[#a24b2b]"
+            }`}
+          >
             {t(language, "financialRisk")}: {pickLang(language, model.financialRisk.level, model.financialRisk.levelTh)}
           </div>
         </div>
@@ -189,31 +195,47 @@ function MiniSnapshotMetric({ danger = false, label, language, quality, value })
 
 function FinancialRiskCard({ language, model }) {
   return (
-    <section className={`rounded-lg border px-[13px] py-2.5 ${
-      model.financialRisk.tone === "good"
-        ? "border-[#d7e8cf] bg-[#f4faf2]"
-        : model.financialRisk.tone === "warning"
-          ? "border-[#eadfbf] bg-[#fffaf0]"
-          : "border-[#ead5cd] bg-[#fff5f0]"
-    }`}>
+    <section
+      className={`rounded-lg border px-[13px] py-2.5 ${
+        model.financialRisk.tone === "good"
+          ? "border-[#d7e8cf] bg-[#f4faf2]"
+          : model.financialRisk.tone === "warning"
+            ? "border-[#eadfbf] bg-[#fffaf0]"
+            : "border-[#ead5cd] bg-[#fff5f0]"
+      }`}
+    >
       <div className="flex items-start justify-between gap-2">
         <div>
           <div className="text-[10.5px] font-bold text-[#3c473a]">{t(language, "financialRisk")}</div>
           <div className="mt-0.5 text-[9px] text-rice-faint">{t(language, "includingStraw")}</div>
         </div>
-        <div className={`rounded-md px-2 py-1 text-[9.5px] font-bold ${
-          model.financialRisk.tone === "good"
-            ? "bg-[#dcefdc] text-[#2f6b48]"
-            : model.financialRisk.tone === "warning"
-              ? "bg-[#fff0c7] text-[#8a641c]"
-              : "bg-[#fde5dc] text-[#a24b2b]"
-        }`}>
+        <div
+          className={`rounded-md px-2 py-1 text-[9.5px] font-bold ${
+            model.financialRisk.tone === "good"
+              ? "bg-[#dcefdc] text-[#2f6b48]"
+              : model.financialRisk.tone === "warning"
+                ? "bg-[#fff0c7] text-[#8a641c]"
+                : "bg-[#fde5dc] text-[#a24b2b]"
+          }`}
+        >
           {pickLang(language, model.financialRisk.level, model.financialRisk.levelTh)}
         </div>
       </div>
       <div className="mt-2 grid grid-cols-2 gap-1.5 border-t border-black/5 pt-2">
-        <TotalMetric label={t(language, "breakEvenYield")} value={`${formatNumber(model.financialRisk.breakEvenYieldKgPerRai)} kg`} tone="muted" quality="medium" language={language} />
-        <TotalMetric label={t(language, "breakEvenPrice")} value={`฿${formatNumber(model.financialRisk.breakEvenPricePerTon)}`} tone="muted" quality="medium" language={language} />
+        <TotalMetric
+          label={t(language, "breakEvenYield")}
+          value={`${formatNumber(model.financialRisk.breakEvenYieldKgPerRai)} kg`}
+          tone="muted"
+          quality="medium"
+          language={language}
+        />
+        <TotalMetric
+          label={t(language, "breakEvenPrice")}
+          value={`฿${formatNumber(model.financialRisk.breakEvenPricePerTon)}`}
+          tone="muted"
+          quality="medium"
+          language={language}
+        />
       </div>
     </section>
   );
@@ -224,13 +246,39 @@ function FarmTotalsCard({ farmSize, language, totals }) {
     <section className="mt-[9px] rounded-lg border border-[#d8ddd2] bg-[#fbfaf6] px-[13px] py-3">
       <div className="mb-2 flex items-baseline justify-between">
         <div className="text-[11px] font-bold text-[#2f3b34]">{t(language, "farmTotals")}</div>
-        <div className="text-[9px] text-rice-faint">{farmSize} {t(language, "rai")}</div>
+        <div className="text-[9px] text-rice-faint">
+          {farmSize} {t(language, "rai")}
+        </div>
       </div>
       <div className="grid grid-cols-2 gap-x-3 gap-y-2 border-t border-[#ebe7dd] pt-2">
-        <TotalMetric label={t(language, "totalRevenue")} value={`฿${formatNumber(totals.revenue)}`} tone="ink" quality={METRIC_QUALITY.revenue} language={language} />
-        <TotalMetric label={t(language, "totalCost")} value={`฿${formatNumber(totals.cost)}`} tone="muted" quality={METRIC_QUALITY.cost} language={language} />
-        <TotalMetric label={t(language, "riceTotal")} value={`฿${formatNumber(totals.riceRevenue)}`} tone="muted" quality={METRIC_QUALITY.revenue} language={language} />
-        <TotalMetric label={t(language, "strawTotal")} value={`฿${formatNumber(totals.strawRevenue)}`} tone="straw" quality={METRIC_QUALITY.straw} language={language} />
+        <TotalMetric
+          label={t(language, "totalRevenue")}
+          value={`฿${formatNumber(totals.revenue)}`}
+          tone="ink"
+          quality={METRIC_QUALITY.revenue}
+          language={language}
+        />
+        <TotalMetric
+          label={t(language, "totalCost")}
+          value={`฿${formatNumber(totals.cost)}`}
+          tone="muted"
+          quality={METRIC_QUALITY.cost}
+          language={language}
+        />
+        <TotalMetric
+          label={t(language, "riceTotal")}
+          value={`฿${formatNumber(totals.riceRevenue)}`}
+          tone="muted"
+          quality={METRIC_QUALITY.revenue}
+          language={language}
+        />
+        <TotalMetric
+          label={t(language, "strawTotal")}
+          value={`฿${formatNumber(totals.strawRevenue)}`}
+          tone="straw"
+          quality={METRIC_QUALITY.straw}
+          language={language}
+        />
       </div>
       <div className={`mt-2 rounded-md px-2.5 py-2 ${totals.profit >= 0 ? "bg-[#eef6ed] text-[#2f6b48]" : "bg-[#fbefeb] text-[#a24b2b]"}`}>
         <div className="flex items-center justify-between gap-2">
@@ -264,10 +312,16 @@ function IndicatorGrid({ indicators }) {
         <div key={name} className="rounded-md border border-[#e5e9de] bg-white px-2 py-2">
           <div className="flex items-baseline justify-between gap-1 text-[9px]">
             <span className="min-w-0 truncate text-[#3c473a]">{name}</span>
-            <b className="font-display" style={{ color }}>{value}{suffix}</b>
+            <b className="font-display" style={{ color }}>
+              {value}
+              {suffix}
+            </b>
           </div>
           <div className="mt-1.5 h-[6px] overflow-hidden rounded-[7px] bg-[#eef1e7]">
-            <div className="h-full rounded-[7px] transition-[width] duration-500" style={{ width: `${Math.max(value, 2)}%`, background: color }} />
+            <div
+              className="h-full rounded-[7px] transition-[width] duration-500"
+              style={{ width: `${Math.max(value, 2)}%`, background: color }}
+            />
           </div>
         </div>
       ))}
@@ -328,7 +382,8 @@ function StrawCard({ simulation }) {
         <div className="leading-tight">
           <div className="text-[10px] font-semibold text-[#5f755c]">{t(language, "strawPrice")}</div>
           <div className="text-[8.5px] text-rice-faint">
-            RPR {model.straw.residueToPaddyRatio} · SAF {model.straw.surplusAvailabilityFactor} · {t(language, "collectionAdjusted")} {model.straw.collectionPercent}%
+            RPR {model.straw.residueToPaddyRatio} · SAF {model.straw.surplusAvailabilityFactor} · {t(language, "collectionAdjusted")}{" "}
+            {model.straw.collectionPercent}%
           </div>
         </div>
         <div className="flex items-center gap-[5px]">
@@ -359,8 +414,8 @@ function StrawCard({ simulation }) {
           {formatNumber(model.straw.surplusKgPerRai)} kg/{t(language, "rai")}
         </div>
         <div>
-          <span className="block font-semibold text-[#5f755c]">{t(language, "strawRevenue")}</span>
-          ฿{formatNumber(model.straw.revenuePerRai)}
+          <span className="block font-semibold text-[#5f755c]">{t(language, "strawRevenue")}</span>฿
+          {formatNumber(model.straw.revenuePerRai)}
         </div>
       </div>
     </section>
@@ -380,14 +435,11 @@ function CostEditorCard({ language, model, simulation, variety }) {
           {t(language, "reset")}
         </button>
       </div>
-      <div className="mb-2 text-[10px] text-rice-faint">{variety.icon} {pickLang(language, variety.en, variety.name)} · {t(language, "editablePerRai")}</div>
+      <div className="mb-2 text-[10px] text-rice-faint">
+        {variety.icon} {pickLang(language, variety.en, variety.name)} · {t(language, "editablePerRai")}
+      </div>
       {model.costBreakdown.map((item) => (
-        <CostRow
-          key={item.key}
-          language={language}
-          item={item}
-          onChange={(value) => simulation.setCostItem(item.key, value)}
-        />
+        <CostRow key={item.key} language={language} item={item} onChange={(value) => simulation.setCostItem(item.key, value)} />
       ))}
       <ChemicalProgramNote language={language} model={model} />
       <TotalCostRow language={language} value={model.costPerRai} onChange={simulation.setTotalCostPerRai} />
@@ -402,7 +454,8 @@ function ProfitPair({ language, model, profitPositive }) {
         <div className="text-[9.5px] text-rice-faint">{t(language, "revenue")}</div>
         <div className="font-display text-[15px] font-semibold text-[#3c473a]">฿{formatNumber(model.revenuePerRai)}</div>
         <div className="text-[9px] text-[#b6ad8a]">
-          {t(language, "riceRevenue")} ฿{formatNumber(model.riceRevenuePerRai)} + {language === "th" ? "ฟาง" : "straw"} ฿{formatNumber(model.straw.revenuePerRai)}
+          {t(language, "riceRevenue")} ฿{formatNumber(model.riceRevenuePerRai)} + {language === "th" ? "ฟาง" : "straw"} ฿
+          {formatNumber(model.straw.revenuePerRai)}
         </div>
       </div>
       <div className={`rounded-lg px-[11px] py-2.5 ${profitPositive ? "bg-[#2f6b48] text-white" : "bg-[#a24b2b] text-white"}`}>
@@ -452,9 +505,7 @@ function CostDriversCard({ language, model }) {
           <div className="text-[9.5px] text-rice-faint">{t(language, "autoCostImpact")}</div>
         </div>
         <div className="text-right">
-          <div className="font-display text-[18px] font-bold text-[#a24b2b]">
-            +฿{formatNumber(model.costDrivers?.total ?? 0)}
-          </div>
+          <div className="font-display text-[18px] font-bold text-[#a24b2b]">+฿{formatNumber(model.costDrivers?.total ?? 0)}</div>
           <div className="text-[8.5px] text-rice-faint">/{t(language, "rai")}</div>
         </div>
       </div>
@@ -462,7 +513,10 @@ function CostDriversCard({ language, model }) {
       {visibleDrivers.length ? (
         <div className="mt-2 flex flex-col gap-1 border-t border-[#f0e3bf] pt-2">
           {visibleDrivers.map((item, index) => (
-            <div key={`${item.itemKey}-${item.label}-${index}`} className="flex items-start justify-between gap-2 text-[9.3px] leading-snug">
+            <div
+              key={`${item.itemKey}-${item.label}-${index}`}
+              className="flex items-start justify-between gap-2 text-[9.3px] leading-snug"
+            >
               <span className="min-w-0 text-[#6d644f]">{pickLang(language, item.label, item.th)}</span>
               <span className={`flex-none font-display font-bold ${item.tone === "danger" ? "text-[#a24b2b]" : "text-[#8a7040]"}`}>
                 +฿{formatNumber(item.amount)}
@@ -489,9 +543,7 @@ function CostDriversCard({ language, model }) {
         })}
       </div>
 
-      <div className="mt-1.5 text-[8.5px] leading-snug text-[#9f8b62]">
-        {t(language, "moistureNote")}
-      </div>
+      <div className="mt-1.5 text-[8.5px] leading-snug text-[#9f8b62]">{t(language, "moistureNote")}</div>
     </section>
   );
 }
@@ -503,7 +555,9 @@ function CostRow({ language, item, onChange }) {
     <div className="flex items-center justify-between gap-2 border-b border-[#f2f4ee] py-[5px] text-[10.5px] text-rice-muted">
       <span className="min-w-0 flex-1 leading-tight">
         {label}
-        <span className={`ml-1 rounded px-1 py-0.5 text-[8px] font-semibold ${item.isOverridden ? "bg-[#fff2df] text-[#a66c18]" : "bg-[#eef5ea] text-[#5f755c]"}`}>
+        <span
+          className={`ml-1 rounded px-1 py-0.5 text-[8px] font-semibold ${item.isOverridden ? "bg-[#fff2df] text-[#a66c18]" : "bg-[#eef5ea] text-[#5f755c]"}`}
+        >
           {item.isOverridden ? "manual" : "auto"}
         </span>
       </span>
@@ -551,7 +605,9 @@ function ChemicalProgramNote({ language, model }) {
         ))}
       </div>
       <div className="mt-1 text-[8.5px] leading-snug text-[#b19b70]">
-        {language === "th" ? "ใช้จริงควรพ่นเมื่อสำรวจพบ/ถึงระดับระบาด และใช้อัตราตามฉลาก" : "Use real products only after scouting/thresholds and follow label rates."}
+        {language === "th"
+          ? "ใช้จริงควรพ่นเมื่อสำรวจพบ/ถึงระดับระบาด และใช้อัตราตามฉลาก"
+          : "Use real products only after scouting/thresholds and follow label rates."}
       </div>
     </div>
   );
@@ -597,11 +653,15 @@ function CarbonCard({ simulation }) {
       <div className="mt-2 flex items-center justify-between rounded-lg bg-rice-dark px-3 py-2.5 text-white">
         <div className="leading-tight">
           <div className="text-[10.5px] opacity-90">{t(language, "carbonCredit")}</div>
-          <div className="text-[9px] opacity-80">vs continuous flooding · {simulation.farmSize} {t(language, "rai")}</div>
+          <div className="text-[9px] opacity-80">
+            vs continuous flooding · {simulation.farmSize} {t(language, "rai")}
+          </div>
         </div>
         <div className="text-right">
           <div className="font-display text-[17px] font-bold">฿{formatNumber(model.carbon.creditPerRai * simulation.farmSize)}</div>
-          <div className="text-[9px] opacity-85">฿{formatNumber(model.carbon.creditPerRai)}/{t(language, "rai")}</div>
+          <div className="text-[9px] opacity-85">
+            ฿{formatNumber(model.carbon.creditPerRai)}/{t(language, "rai")}
+          </div>
         </div>
       </div>
       <div className="mt-1.5 text-[9px] leading-snug text-[#9aa394]">
@@ -618,7 +678,8 @@ function CarbonMetric({ label, value, positive = false }) {
     <div className="rounded-[10px] border border-[#e0ebd9] bg-white px-2.5 py-2">
       <div className="text-[9.5px] text-rice-faint">{label}</div>
       <div className={`font-display text-[15px] font-bold ${positive ? "text-rice-green" : "text-[#3c473a]"}`}>
-        {value}<span className="text-[9px] text-[#9aa394]"> t/rai</span>
+        {value}
+        <span className="text-[9px] text-[#9aa394]"> t/rai</span>
       </div>
     </div>
   );

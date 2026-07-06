@@ -11,7 +11,11 @@ export default function RiceFieldAnimation({ simulation }) {
           <RuralScenery />
           <Plot field={field} condition={liveModel.condition} />
           {phase !== "setup" ? <StageCaption language={language} stage={stage} index={displayStageIndex} /> : null}
-          {field.awd ? <Badge className="bottom-3.5 left-[84px] bg-[#217696]/95">💧 {language === "th" ? "ระบบน้ำ AWD · เปียกสลับแห้ง" : "AWD water system"}</Badge> : null}
+          {field.awd ? (
+            <Badge className="bottom-3.5 left-[84px] bg-[#217696]/95">
+              💧 {language === "th" ? "ระบบน้ำ AWD · เปียกสลับแห้ง" : "AWD water system"}
+            </Badge>
+          ) : null}
           {phase === "setup" ? (
             <Badge className="bottom-3.5 right-4 bg-rice-text/85">
               <span className="inline-block h-2 w-2 rounded-full bg-rice-amber animate-shimmer" />
@@ -20,7 +24,6 @@ export default function RiceFieldAnimation({ simulation }) {
           ) : null}
         </div>
       </div>
-
     </section>
   );
 }
@@ -98,11 +101,7 @@ function RuralScenery() {
           ["70%", 160, 44, "#a3c47f"],
           ["88%", 120, 34, "#94ba6f"],
         ].map(([left, width, height, color]) => (
-          <div
-            key={left}
-            className="absolute bottom-0 rounded-t-full"
-            style={{ left, width, height, background: color }}
-          />
+          <div key={left} className="absolute bottom-0 rounded-t-full" style={{ left, width, height, background: color }} />
         ))}
       </div>
       <Farmhouse />
@@ -148,15 +147,18 @@ function Palm() {
   return (
     <div className="absolute right-40 top-[120px] z-[2] h-24 w-[54px]">
       <div className="absolute left-6 top-[26px] h-16 w-[5px] origin-bottom -rotate-[5deg] bg-gradient-to-b from-[#8a6a44] to-[#6e4f30]" />
-      {[[-34, 6, 20, "#3f8f4e"], [-8, 18, 14, "#46994f"], [18, 4, 16, "#46994f"], [36, 20, 18, "#3f8f4e"]].map(
-        ([rotate, left, top, color]) => (
-          <div
-            key={`${rotate}-${left}`}
-            className="absolute h-[9px] w-8 rounded-[70%_0_70%_0]"
-            style={{ left, top, background: color, transform: `rotate(${rotate}deg)` }}
-          />
-        ),
-      )}
+      {[
+        [-34, 6, 20, "#3f8f4e"],
+        [-8, 18, 14, "#46994f"],
+        [18, 4, 16, "#46994f"],
+        [36, 20, 18, "#3f8f4e"],
+      ].map(([rotate, left, top, color]) => (
+        <div
+          key={`${rotate}-${left}`}
+          className="absolute h-[9px] w-8 rounded-[70%_0_70%_0]"
+          style={{ left, top, background: color, transform: `rotate(${rotate}deg)` }}
+        />
+      ))}
     </div>
   );
 }
@@ -249,11 +251,7 @@ function RiceCell({ cell }) {
               style={cell.clumpBaseStyle}
             />
             {cell.leaves.map((leaf, index) => (
-              <div
-                key={index}
-                className="rice-leaf absolute bottom-0 left-1/2 origin-bottom"
-                style={leaf}
-              />
+              <div key={index} className="rice-leaf absolute bottom-0 left-1/2 origin-bottom" style={leaf} />
             ))}
             {cell.showPanicle ? (
               <div
