@@ -46,7 +46,7 @@ export default function SummaryDashboard({ simulation }) {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(37,42,38,.46)] p-6">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[rgba(37,42,38,.46)] p-6">
       <section className="max-h-[92vh] w-[920px] max-w-[96%] animate-fade-up overflow-y-auto rounded-xl bg-rice-panel shadow-modal">
         <header className="flex items-center justify-between rounded-t-xl border-b border-[#d8ddd2] bg-[#2f5d50] px-[26px] py-5 text-white">
           <div>

@@ -3,6 +3,7 @@ import { LANGUAGES, pickLang, t } from "../i18n.js";
 export default function AppLayout({
   children,
   farmSize,
+  hideMobileNav = false,
   language,
   mobileTab,
   showPanel,
@@ -103,29 +104,31 @@ export default function AppLayout({
         ) : null}
       </div>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-[70] grid grid-cols-5 border-t border-[#d8ddd2] bg-[#fffdf7]/96 px-1.5 py-1.5 shadow-[0_-8px_20px_rgba(47,54,48,.12)] backdrop-blur md:hidden">
-        {mobileTabs.map((tab) => {
-          const active = mobileTab === tab.key;
-          const handleClick = () => {
-            if (tab.action) tab.action();
-            else onSetMobileTab(tab.key);
-          };
+      {!hideMobileNav ? (
+        <nav className="fixed bottom-0 left-0 right-0 z-[70] grid grid-cols-5 border-t border-[#d8ddd2] bg-[#fffdf7]/96 px-1.5 py-1.5 shadow-[0_-8px_20px_rgba(47,54,48,.12)] backdrop-blur md:hidden">
+          {mobileTabs.map((tab) => {
+            const active = mobileTab === tab.key;
+            const handleClick = () => {
+              if (tab.action) tab.action();
+              else onSetMobileTab(tab.key);
+            };
 
-          return (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={handleClick}
-              className={`flex min-w-0 flex-col items-center justify-center rounded-lg px-1 py-1.5 text-[9px] font-bold transition ${
-                active ? "bg-[#edf6e9] text-rice-dark ring-1 ring-rice-green/20" : "text-[#768171] hover:bg-[#f5f3ea]"
-              }`}
-            >
-              <span className="font-display text-[14px] leading-none">{tab.icon}</span>
-              <span className="mt-0.5 max-w-full truncate">{tab.label}</span>
-            </button>
-          );
-        })}
-      </nav>
+            return (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={handleClick}
+                className={`flex min-w-0 flex-col items-center justify-center rounded-lg px-1 py-1.5 text-[9px] font-bold transition ${
+                  active ? "bg-[#edf6e9] text-rice-dark ring-1 ring-rice-green/20" : "text-[#768171] hover:bg-[#f5f3ea]"
+                }`}
+              >
+                <span className="font-display text-[14px] leading-none">{tab.icon}</span>
+                <span className="mt-0.5 max-w-full truncate">{tab.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+      ) : null}
     </div>
   );
 }

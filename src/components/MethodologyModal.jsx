@@ -8,7 +8,7 @@ export default function MethodologyModal({ onClose, simulation }) {
   const formulaRows = buildFormulaRows({ language, liveModel, pricePerTon, strawPricePerKg, varietyInfo });
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[rgba(37,42,38,.46)] p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[rgba(37,42,38,.46)] p-4">
       <section className="max-h-[92vh] w-[860px] max-w-[96vw] animate-fade-up overflow-y-auto rounded-xl bg-rice-panel shadow-modal">
         <header className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-[#d8ddd2] bg-[#fffdf7]/95 px-5 py-4 backdrop-blur">
           <div>

@@ -71,7 +71,7 @@ export default function GoalWizardModal({ simulation, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1e2f28]/55 px-3 py-5 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#1e2f28]/55 px-3 py-5 backdrop-blur-sm">
       <section className="max-h-[92vh] w-full max-w-[760px] overflow-y-auto rounded-2xl border border-[#d8ddd2] bg-[#fffdf8] shadow-float">
         <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-[#ebe7dd] bg-[#fffdf8]/95 px-5 py-4 backdrop-blur">
           <div>

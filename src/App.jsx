@@ -32,6 +32,7 @@ export default function App() {
   return (
     <AppLayout
       farmSize={simulation.farmSize}
+      hideMobileNav={showMethodology || showExportReport || showGoalWizard || showOnboarding || simulation.showSummary}
       language={simulation.language}
       mobileTab={mobileTab}
       showPanel={simulation.showPanel}

@@ -55,7 +55,7 @@ export default function ExportReportModal({ onClose, simulation }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[rgba(37,42,38,.46)] p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[rgba(37,42,38,.46)] p-4">
       <section className="max-h-[92vh] w-[820px] max-w-[96vw] animate-fade-up overflow-y-auto rounded-xl bg-rice-panel shadow-modal">
         <header className="no-print sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-[#d8ddd2] bg-[#fffdf7]/95 px-5 py-4 backdrop-blur">
           <div>
