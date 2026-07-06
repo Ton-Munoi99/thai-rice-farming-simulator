@@ -2,6 +2,8 @@
 
 All notable changes to the Thai Wet-Season Rice Simulator are documented here.
 
+Thai version: [CHANGELOG.th.md](CHANGELOG.th.md)
+
 This project follows a lightweight changelog style inspired by [Keep a Changelog](https://keepachangelog.com/). Dates use `YYYY-MM-DD`.
 
 ## [0.1.0] - 2026-07-06
