@@ -2,7 +2,6 @@ import { formatNumber, riskColor, scoreColor, signedBaht } from "../utils/format
 import { COST_LABELS, pickLang, t } from "../i18n.js";
 import { METRIC_QUALITY } from "../data/methodologyData.js";
 import AssumptionSourcePanel from "./AssumptionSourcePanel.jsx";
-import AutoPlanPanel from "./AutoPlanPanel.jsx";
 import CalibrationPanel from "./CalibrationPanel.jsx";
 import CompareScenariosPanel from "./CompareScenariosPanel.jsx";
 import DataQualityBadge from "./DataQualityBadge.jsx";
@@ -14,7 +13,6 @@ import RecommendationPanel from "./RecommendationPanel.jsx";
 import RiskContributionPanel from "./RiskContributionPanel.jsx";
 import ScenarioHistoryPanel from "./ScenarioHistoryPanel.jsx";
 import SensitivityPanel from "./SensitivityPanel.jsx";
-import SurvivalTargetPanel from "./SurvivalTargetPanel.jsx";
 
 export default function ScorePanel({ mobileActive = true, mobileMode = null, simulation }) {
   const model = simulation.liveModel;
@@ -51,8 +49,6 @@ export default function ScorePanel({ mobileActive = true, mobileMode = null, sim
         <GroupDetails title={t(language, "financeGroup")} defaultOpen={mobileMode !== "results"}>
           <FinancialRiskCard language={language} model={model} />
           <FarmTotalsCard language={language} farmSize={simulation.farmSize} totals={totals} />
-          <SurvivalTargetPanel simulation={simulation} />
-          <AutoPlanPanel simulation={simulation} />
           <CompactDetails title={t(language, "sensitivityTitle")}>
             <SensitivityPanel simulation={simulation} />
           </CompactDetails>
