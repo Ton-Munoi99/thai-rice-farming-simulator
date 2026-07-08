@@ -54,7 +54,7 @@ Netlify uses the settings in `netlify.toml`:
 
 The simulator currently uses mock formulas and calibrated assumptions intended for planning UX and early validation. It is not an official agronomic recommendation engine.
 
-Reference sources used during prototype calibration include:
+Reference sources used during prototype assumptions include:
 
 - Thai Rice Knowledge Bank, Rice Department: https://rkb.ricethailand.go.th/
 - Department of Agricultural Extension rice pest and disease materials: https://esc.doae.go.th/

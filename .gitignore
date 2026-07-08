@@ -23,5 +23,9 @@ pnpm-debug.log*
 # Netlify local state
 .netlify/
 
+# Generated local artifacts
+outputs/
+docs/*.docx
+
 # Original design handoff prototype
 Rice Farm Simulator.dc.html

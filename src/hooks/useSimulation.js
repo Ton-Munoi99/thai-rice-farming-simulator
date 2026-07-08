@@ -438,27 +438,6 @@ export function useSimulation() {
     [persistScenarioHistory, scenarioHistory],
   );
 
-  const applySurvivalPlan = useCallback(
-    (planKey) => {
-      const plan = survivalPlans.find((item) => item.key === planKey);
-      if (!plan) return;
-
-      resetToSetup();
-      setCostOverrides({});
-      setCostProfile({
-        ...plan.payload.costProfile,
-        fertilizerReferenceCost: fertilizerNutrients(plan.payload.inputs.applications).cost,
-      });
-      setStrawPricePerKgState(plan.payload.strawPricePerKg);
-      setYieldPotentialOverride(plan.payload.yieldPotentialOverride ?? null);
-      setActiveScenarioKey(null);
-      setActiveFarmSystemPresetKey(null);
-      setActiveSurvivalPresetKey(null);
-      setInputs(cloneInputs(plan.payload.inputs));
-    },
-    [resetToSetup, survivalPlans],
-  );
-
   const applyGoalWizardRecommendation = useCallback(
     ({ costBase, strawMarket, targetProfit, waterAccess }) => {
       const costProfileKey =
@@ -626,7 +605,6 @@ export function useSimulation() {
     saveScenarioHistory,
     loadScenarioHistory,
     deleteScenarioHistory,
-    applySurvivalPlan,
     applyGoalWizardRecommendation,
     runSimulation,
   };
