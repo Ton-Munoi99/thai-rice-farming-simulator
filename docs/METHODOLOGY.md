@@ -121,14 +121,15 @@ Debt/cashflow is a rough planning layer. It currently assumes a six-month workin
 
 Carbon is shown as a separate optional estimate, especially for AWD compared with continuous flooding. It is not counted as farmer income unless a real project contract exists.
 
-## 8. Calibration
+## 8. Model Limits And Future Data
 
-The app includes low-confidence calibration anchors to compare model output with practical reference cases. These anchors are placeholders for future replacement by:
+The current app keeps the model lightweight and client-side. It uses linked planning assumptions, not certified local agronomic formulas. Future phases should replace or tune the default assumptions with:
 
 - Farm accounting records.
 - Official survey tables.
 - Local field trial data.
-- Farmer profile data.
+- Province-specific fertilizer, water, pest, disease, weed, yield, and price datasets.
+- Farmer field profiles and saved seasonal records.
 
 ## 9. Data Quality Badges
 
@@ -144,4 +145,4 @@ The app includes low-confidence calibration anchors to compare model output with
 - OCSC policy-study straw scenario context.
 - TGO Premium T-VER AWD project context.
 
-Future phases should replace mock anchors with official datasets, farm profiles, API data, and database-backed scenario records.
+Future phases should replace mock assumptions with official datasets, farm profiles, API data, and database-backed scenario records.
