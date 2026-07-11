@@ -32,7 +32,7 @@ export default function AppLayout({
           <div className="flex h-[32px] w-[32px] flex-none items-center justify-center rounded-lg bg-white/10 text-[18px] sm:h-[34px] sm:w-[34px] sm:text-[19px]">
             🌾
           </div>
-          <div className="min-w-0 leading-tight">
+          <div className="hidden min-w-0 leading-tight sm:block">
             <div className="truncate text-[14px] font-bold tracking-[.2px] sm:text-[16px]">{t(language, "appTitle")}</div>
             <div className="hidden truncate text-[11px] opacity-85 sm:block">
               {t(language, "farmSubtitle")} - {variety.icon} {pickLang(language, variety.en, variety.name)}
@@ -57,8 +57,12 @@ export default function AppLayout({
             <span className="hidden text-[11px] opacity-90 sm:inline">{t(language, "rai")}</span>
           </div>
 
-          <HeaderActionButton onClick={onOpenMethodology}>{t(language, "methodologyShort")}</HeaderActionButton>
-          <HeaderActionButton onClick={onOpenWizard}>{t(language, "goalWizardShort")}</HeaderActionButton>
+          <HeaderActionButton className="hidden md:block" onClick={onOpenMethodology}>
+            {t(language, "methodologyShort")}
+          </HeaderActionButton>
+          <HeaderActionButton className="hidden md:block" onClick={onOpenWizard}>
+            {t(language, "goalWizardShort")}
+          </HeaderActionButton>
           <HeaderActionButton onClick={onOpenExport}>{t(language, "exportShort")}</HeaderActionButton>
 
           <button
@@ -73,7 +77,7 @@ export default function AppLayout({
           <button
             type="button"
             onClick={onTogglePanel}
-            className="whitespace-nowrap rounded-lg bg-white/10 px-3 py-[7px] text-[12px] font-semibold text-white transition hover:bg-white/20"
+            className="hidden whitespace-nowrap rounded-lg bg-white/10 px-3 py-[7px] text-[12px] font-semibold text-white transition hover:bg-white/20 md:block"
           >
             {showPanel ? t(language, "hidePanel") : t(language, "showPanel")}
           </button>
@@ -133,12 +137,12 @@ export default function AppLayout({
   );
 }
 
-function HeaderActionButton({ children, onClick }) {
+function HeaderActionButton({ children, className = "", onClick }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="whitespace-nowrap rounded-lg bg-white/10 px-3 py-[7px] text-[12px] font-semibold text-white transition hover:bg-white/20"
+      className={`whitespace-nowrap rounded-lg bg-white/10 px-3 py-[7px] text-[12px] font-semibold text-white transition hover:bg-white/20 ${className}`}
     >
       {children}
     </button>
